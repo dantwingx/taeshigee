@@ -21,13 +21,18 @@ export const useAuthStore = create<AuthStore>()(
           // TODO: 실제 API 호출로 대체
           await new Promise(resolve => setTimeout(resolve, 1000))
           
+          // 이메일 기반으로 고유한 사용자 ID 생성
+          const userId = btoa(credentials.email).replace(/[^a-zA-Z0-9]/g, '').substring(0, 8)
+          
           // 임시 사용자 데이터 (실제로는 API 응답에서 받아옴)
           const mockUser = {
-            id: '1',
+            id: userId,
             email: credentials.email,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           }
+          
+          console.log(`[AuthStore] 로그인 성공: ${credentials.email} (ID: ${userId})`)
           
           set({
             user: mockUser,
@@ -61,13 +66,18 @@ export const useAuthStore = create<AuthStore>()(
           // TODO: 실제 API 호출로 대체
           await new Promise(resolve => setTimeout(resolve, 1000))
           
+          // 이메일 기반으로 고유한 사용자 ID 생성
+          const userId = btoa(credentials.email).replace(/[^a-zA-Z0-9]/g, '').substring(0, 8)
+          
           // 임시 사용자 데이터 (실제로는 API 응답에서 받아옴)
           const mockUser = {
-            id: '1',
+            id: userId,
             email: credentials.email,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           }
+          
+          console.log(`[AuthStore] 회원가입 성공: ${credentials.email} (ID: ${userId})`)
           
           set({
             user: mockUser,

@@ -61,14 +61,14 @@ const loadTasksFromStorage = (): Record<string, Task[]> => {
     const stored = localStorage.getItem(TASKS_STORAGE_KEY)
     const tasksByUser = stored ? JSON.parse(stored) : {}
     
-    // 테스트용 샘플 데이터 (첫 번째 사용자만)
-    if (!tasksByUser['1'] || tasksByUser['1'].length === 0) {
-      tasksByUser['1'] = [
+    // 테스트용 샘플 데이터 (여러 사용자용)
+    const sampleUsers = {
+      'dGVzdEB0ZXN0': [ // test@test.com
         {
           id: '1',
           title: '프로젝트 기획서 작성',
           description: '새로운 웹 애플리케이션 프로젝트의 기획서를 작성합니다.',
-          dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 내일
+          dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
           recurrenceType: 'none',
           recurrenceDetail: null,
           importance: 'high',
@@ -78,14 +78,14 @@ const loadTasksFromStorage = (): Record<string, Task[]> => {
           category: 'work',
           attachments: [],
           subtasks: [],
-          createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2일 전
+          createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
           updatedAt: new Date().toISOString(),
         },
         {
           id: '2',
           title: '팀 미팅 참석',
           description: '주간 팀 미팅에 참석하여 진행 상황을 공유합니다.',
-          dueDate: new Date().toISOString(), // 오늘
+          dueDate: new Date().toISOString(),
           recurrenceType: 'weekly',
           recurrenceDetail: 'monday',
           importance: 'medium',
@@ -95,14 +95,16 @@ const loadTasksFromStorage = (): Record<string, Task[]> => {
           category: 'work',
           attachments: [],
           subtasks: [],
-          createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 1주일 전
+          createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
           updatedAt: new Date().toISOString(),
         },
+      ],
+      'dXNlcjFAdGVzdA': [ // user1@test
         {
           id: '3',
           title: '운동하기',
           description: '헬스장에서 1시간 운동을 합니다.',
-          dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), // 2일 후
+          dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
           recurrenceType: 'daily',
           recurrenceDetail: 'weekdays',
           importance: 'medium',
@@ -112,14 +114,14 @@ const loadTasksFromStorage = (): Record<string, Task[]> => {
           category: 'health',
           attachments: [],
           subtasks: [],
-          createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1일 전
+          createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
           updatedAt: new Date().toISOString(),
         },
         {
           id: '4',
           title: 'React 학습',
           description: 'React Hooks와 Context API에 대해 학습합니다.',
-          dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3일 후
+          dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
           recurrenceType: 'none',
           recurrenceDetail: null,
           importance: 'high',
@@ -129,14 +131,16 @@ const loadTasksFromStorage = (): Record<string, Task[]> => {
           category: 'study',
           attachments: [],
           subtasks: [],
-          createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3일 전
+          createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
           updatedAt: new Date().toISOString(),
         },
+      ],
+      'dXNlcjJAdGVzdA': [ // user2@test
         {
           id: '5',
           title: '장보기',
           description: '주말 장보기를 위해 필요한 물건들을 구매합니다.',
-          dueDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(), // 4일 후
+          dueDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(),
           recurrenceType: 'weekly',
           recurrenceDetail: 'saturday',
           importance: 'low',
@@ -146,14 +150,21 @@ const loadTasksFromStorage = (): Record<string, Task[]> => {
           category: 'personal',
           attachments: [],
           subtasks: [],
-          createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1일 전
+          createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
           updatedAt: new Date().toISOString(),
         },
-      ]
-      
-      // 샘플 데이터를 로컬 스토리지에 저장
-      localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasksByUser))
+      ],
     }
+    
+    // 샘플 데이터가 없으면 추가
+    Object.entries(sampleUsers).forEach(([userId, tasks]) => {
+      if (!tasksByUser[userId] || tasksByUser[userId].length === 0) {
+        tasksByUser[userId] = tasks
+      }
+    })
+    
+    // 샘플 데이터를 로컬 스토리지에 저장
+    localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasksByUser))
     
     return tasksByUser
   } catch (error) {
@@ -183,11 +194,13 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
   // Actions
   setCurrentUser: (userId: string) => {
+    console.log(`[TaskStore] 사용자 설정: ${userId}`)
     set({ currentUserId: userId })
     get().loadUserTasks(userId)
   },
 
   clearCurrentUser: () => {
+    console.log('[TaskStore] 사용자 정보 정리')
     set({ 
       currentUserId: null, 
       tasks: [], 
@@ -197,6 +210,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   },
 
   loadUserTasks: async (userId: string) => {
+    console.log(`[TaskStore] 사용자 태스크 로드: ${userId}`)
     set({ isLoading: true, error: null })
     
     try {
@@ -206,6 +220,8 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       const tasksByUser = loadTasksFromStorage()
       const userTasks = tasksByUser[userId] || []
       
+      console.log(`[TaskStore] 로드된 태스크 수: ${userTasks.length}개`)
+      
       set({ 
         tasks: userTasks,
         isLoading: false 
@@ -213,6 +229,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       
       get().updateStats()
     } catch (error) {
+      console.error('[TaskStore] 태스크 로드 실패:', error)
       set({
         isLoading: false,
         error: error instanceof Error ? error.message : '태스크 로드에 실패했습니다.',
