@@ -126,7 +126,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
       onClose={handleClose}
       title={
         <div className="flex items-center space-x-2">
-          {task && <Edit3 className="h-5 w-5 text-primary-600" />}
+          {task && <Edit3 className="h-5 w-5 text-primary-600 dark:text-primary-400" />}
           <span>{task ? '태스크 수정' : '새 태스크'}</span>
         </div>
       }
@@ -138,7 +138,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {/* 제목 */}
             <div>
-              <label htmlFor="title" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+              <label htmlFor="title" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                 <Type className="h-4 w-4" />
                 <span>제목 *</span>
               </label>
@@ -146,18 +146,18 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
                 {...register('title')}
                 type="text"
                 id="title"
-                className={`input text-lg ${errors.title ? 'border-error-500' : ''}`}
+                className={`input text-lg ${errors.title ? 'border-error-500 dark:border-error-400' : ''}`}
                 placeholder="태스크 제목을 입력하세요"
                 disabled={isLoading}
               />
               {errors.title && (
-                <p className="mt-1 text-sm text-error-600">{errors.title.message}</p>
+                <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.title.message}</p>
               )}
             </div>
 
             {/* 설명 */}
             <div>
-              <label htmlFor="description" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+              <label htmlFor="description" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                 <FileText className="h-4 w-4" />
                 <span>설명</span>
               </label>
@@ -165,24 +165,24 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
                 {...register('description')}
                 id="description"
                 rows={3}
-                className={`input resize-none ${errors.description ? 'border-error-500' : ''}`}
+                className={`input resize-none ${errors.description ? 'border-error-500 dark:border-error-400' : ''}`}
                 placeholder="태스크에 대한 자세한 설명을 입력하세요"
                 disabled={isLoading}
               />
               {errors.description && (
-                <p className="mt-1 text-sm text-error-600">{errors.description.message}</p>
+                <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.description.message}</p>
               )}
             </div>
 
             {/* 마감일 및 마감시간 */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="dueDate" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+                <label htmlFor="dueDate" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                   <Calendar className="h-4 w-4" />
                   <span>마감일</span>
                 </label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                  <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400 dark:text-neutral-500" />
                   <input
                     {...register('dueDate')}
                     type="date"
@@ -194,12 +194,12 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
               </div>
               
               <div>
-                <label htmlFor="dueTime" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+                <label htmlFor="dueTime" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                   <Clock className="h-4 w-4" />
                   <span>마감시간</span>
                 </label>
                 <div className="relative">
-                  <Clock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                  <Clock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400 dark:text-neutral-500" />
                   <input
                     {...register('dueTime')}
                     type="time"
@@ -213,7 +213,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
 
             {/* 태그 */}
             <div>
-              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                 <Tag className="h-4 w-4" />
                 <span>태그</span>
               </label>
@@ -227,7 +227,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
 
             {/* 중요도 */}
             <div>
-              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                 <AlertTriangle className="h-4 w-4" />
                 <span>중요도</span>
               </label>
@@ -239,8 +239,8 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
                     onClick={() => handleImportanceSelect(option.value as 'low' | 'medium' | 'high')}
                     className={`p-2 rounded-lg border-2 transition-colors ${
                       watch('importance') === option.value
-                        ? 'border-primary-500 bg-primary-50 text-primary-700'
-                        : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
+                        ? 'border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-300'
+                        : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:border-neutral-500'
                     }`}
                     disabled={isLoading}
                   >
@@ -255,7 +255,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
 
             {/* 우선순위 */}
             <div>
-              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                 <Target className="h-4 w-4" />
                 <span>우선순위</span>
               </label>
@@ -267,8 +267,8 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
                     onClick={() => handlePrioritySelect(option.value as 'low' | 'medium' | 'high')}
                     className={`p-2 rounded-lg border-2 transition-colors ${
                       watch('priority') === option.value
-                        ? 'border-primary-500 bg-primary-50 text-primary-700'
-                        : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
+                        ? 'border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-300'
+                        : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:border-neutral-500'
                     }`}
                     disabled={isLoading}
                   >
@@ -283,7 +283,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
 
             {/* 카테고리 */}
             <div>
-              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                 <Folder className="h-4 w-4" />
                 <span>카테고리</span>
               </label>
@@ -295,8 +295,8 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
                     onClick={() => handleCategorySelect(option.value)}
                     className={`p-2 rounded-lg border-2 transition-colors ${
                       watch('category') === option.value
-                        ? 'border-primary-500 bg-primary-50 text-primary-700'
-                        : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
+                        ? 'border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-300'
+                        : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:border-neutral-500'
                     }`}
                     disabled={isLoading}
                   >
@@ -311,7 +311,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
 
             {/* 공개 여부 */}
             <div>
-              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                 {watch('isPublic') ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                 <span>공개 여부</span>
               </label>
@@ -321,27 +321,27 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
                     {...register('isPublic')}
                     type="radio"
                     value="false"
-                    className="text-primary-600"
+                    className="text-primary-600 dark:text-primary-400"
                     disabled={isLoading}
                   />
-                  <span className="text-sm">비공개</span>
+                  <span className="text-sm text-neutral-700 dark:text-neutral-300">비공개</span>
                 </label>
                 <label className="flex items-center space-x-2">
                   <input
                     {...register('isPublic')}
                     type="radio"
                     value="true"
-                    className="text-primary-600"
+                    className="text-primary-600 dark:text-primary-400"
                     disabled={isLoading}
                   />
-                  <span className="text-sm">공개</span>
+                  <span className="text-sm text-neutral-700 dark:text-neutral-300">공개</span>
                 </label>
               </div>
             </div>
           </div>
 
           {/* 고정된 버튼 영역 */}
-          <div className="flex justify-end space-x-3 p-4 border-t bg-white flex-shrink-0">
+          <div className="flex justify-end space-x-3 p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 flex-shrink-0">
             <button
               type="button"
               onClick={handleClose}

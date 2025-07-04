@@ -1,14 +1,18 @@
 import { Routes, Route } from 'react-router-dom'
 import { Layout } from '@/components/layout/Layout'
 import { AuthGuard } from '@/components/common/AuthGuard'
+import { ToastContainer } from '@/components/ui/Toast'
 import { HomePage } from '@/domains/tasks/components/HomePage'
 import { TasksPage } from '@/domains/tasks/components/TasksPage'
 import { AnalyticsPage } from '@/domains/analytics/components/AnalyticsPage'
 import { SettingsPage } from '@/domains/settings/components/SettingsPage'
 import { LoginPage } from '@/domains/auth/components/LoginPage'
 import { RegisterPage } from '@/domains/auth/components/RegisterPage'
+import { useToastStore } from '@/stores'
 
 function App() {
+  const { toasts, removeToast } = useToastStore()
+
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-200">
       <Routes>
@@ -31,6 +35,9 @@ function App() {
           <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Routes>
+
+      {/* Toast 컨테이너 */}
+      <ToastContainer toasts={toasts} onClose={removeToast} />
     </div>
   )
 }

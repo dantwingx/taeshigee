@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react'
 import { Plus } from 'lucide-react'
 import { TaskForm } from './TaskForm'
 import { TaskCard } from './TaskCard'
-import { useTaskStore } from '@/stores/taskStore'
+import { useTaskStore, useToastStore } from '@/stores'
 import { useAuthStore } from '@/stores/authStore'
 import type { Task, CreateTaskData, UpdateTaskData } from '@/types/task'
 
 export function HomePage() {
   const { user } = useAuthStore()
+  const { showToast } = useToastStore()
   const {
     tasks,
     isLoading,
@@ -48,13 +49,23 @@ export function HomePage() {
     .slice(0, 3)
 
   const handleCreateTask = async (data: CreateTaskData) => {
-    await createTask(data)
+    try {
+      await createTask(data)
+      showToast('success', '태스크가 성공적으로 생성되었습니다.')
+    } catch (error) {
+      showToast('error', '태스크 생성에 실패했습니다.')
+    }
   }
 
   const handleUpdateTask = async (data: UpdateTaskData) => {
     if (editingTask) {
-      await updateTask(editingTask.id, data)
-      setEditingTask(null)
+      try {
+        await updateTask(editingTask.id, data)
+        setEditingTask(null)
+        showToast('success', '태스크가 성공적으로 수정되었습니다.')
+      } catch (error) {
+        showToast('error', '태스크 수정에 실패했습니다.')
+      }
     }
   }
 
@@ -64,13 +75,17 @@ export function HomePage() {
   }
 
   const handleDeleteTask = async (id: string) => {
-    if (window.confirm('정말로 이 태스크를 삭제하시겠습니까?')) {
-      await deleteTask(id)
-    }
+    // 커스텀 확인 다이얼로그 대신 toast로 안내
+    showToast('warning', '태스크를 삭제하려면 태스크 카드의 삭제 버튼을 사용하세요.')
   }
 
   const handleToggleComplete = async (id: string) => {
-    await toggleTaskCompletion(id)
+    try {
+      await toggleTaskCompletion(id)
+      showToast('success', '태스크 상태가 변경되었습니다.')
+    } catch (error) {
+      showToast('error', '태스크 상태 변경에 실패했습니다.')
+    }
   }
 
   return (
@@ -78,8 +93,8 @@ export function HomePage() {
       {/* 헤더 */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-neutral-900">오늘의 태스크</h1>
-          <p className="text-sm text-neutral-600">오늘 마감 예정인 태스크들을 확인해보세요</p>
+          <h1 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">오늘의 태스크</h1>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">오늘 마감 예정인 태스크들을 확인해보세요</p>
         </div>
         <button
           onClick={() => setIsTaskFormOpen(true)}
@@ -91,39 +106,39 @@ export function HomePage() {
 
       {/* 에러 메시지 */}
       {error && (
-        <div className="p-3 rounded-lg bg-error-50 border border-error-200">
-          <p className="text-sm text-error-700">{error}</p>
+        <div className="p-3 rounded-lg bg-error-50 border border-error-200 dark:bg-error-900/20 dark:border-error-800">
+          <p className="text-sm text-error-700 dark:text-error-300">{error}</p>
         </div>
       )}
       
       {/* 통계 카드 */}
       <div className="grid grid-cols-2 gap-3">
         <div className="card p-4">
-          <h3 className="font-semibold text-neutral-900 mb-1 text-sm">전체</h3>
-          <p className="text-xl font-bold text-neutral-600">{stats.total}</p>
+          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-1 text-sm">전체</h3>
+          <p className="text-xl font-bold text-neutral-600 dark:text-neutral-400">{stats.total}</p>
         </div>
         
         <div className="card p-4">
-          <h3 className="font-semibold text-neutral-900 mb-1 text-sm">오늘 마감</h3>
-          <p className="text-xl font-bold text-primary-600">{todayTasks.length}</p>
+          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-1 text-sm">오늘 마감</h3>
+          <p className="text-xl font-bold text-primary-600 dark:text-primary-400">{todayTasks.length}</p>
         </div>
         
         <div className="card p-4">
-          <h3 className="font-semibold text-neutral-900 mb-1 text-sm">완료됨</h3>
-          <p className="text-xl font-bold text-success-600">{stats.completed}</p>
+          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-1 text-sm">완료됨</h3>
+          <p className="text-xl font-bold text-success-600 dark:text-success-400">{stats.completed}</p>
         </div>
         
         <div className="card p-4">
-          <h3 className="font-semibold text-neutral-900 mb-1 text-sm">진행률</h3>
-          <p className="text-xl font-bold text-warning-600">{stats.completionRate}%</p>
+          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-1 text-sm">진행률</h3>
+          <p className="text-xl font-bold text-warning-600 dark:text-warning-400">{stats.completionRate}%</p>
         </div>
       </div>
 
       {/* 오늘 마감 예정 태스크 */}
       <div className="card p-4">
-        <h2 className="text-lg font-semibold text-neutral-900 mb-3">오늘 마감 예정</h2>
+        <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-3">오늘 마감 예정</h2>
         {todayTasks.length === 0 ? (
-          <p className="text-center text-neutral-500 py-6 text-sm">
+          <p className="text-center text-neutral-500 dark:text-neutral-400 py-6 text-sm">
             오늘 마감 예정인 태스크가 없습니다.
           </p>
         ) : (
@@ -144,9 +159,9 @@ export function HomePage() {
 
       {/* 최근 태스크 */}
       <div className="card p-4">
-        <h2 className="text-lg font-semibold text-neutral-900 mb-3">최근 태스크</h2>
+        <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-3">최근 태스크</h2>
         {recentTasks.length === 0 ? (
-          <p className="text-center text-neutral-500 py-6 text-sm">
+          <p className="text-center text-neutral-500 dark:text-neutral-400 py-6 text-sm">
             아직 태스크가 없습니다. 새 태스크를 추가해보세요!
           </p>
         ) : (

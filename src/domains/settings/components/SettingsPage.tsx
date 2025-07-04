@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { User, Moon, Sun, Folder, AlertTriangle, Target, Plus, X } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
-import { useDarkModeStore } from '@/stores'
+import { useDarkModeStore, useToastStore } from '@/stores'
 import { applyDarkMode } from '@/utils/darkMode'
 
 interface Category {
@@ -27,6 +27,7 @@ interface PriorityLevel {
 export function SettingsPage() {
   const { user } = useAuthStore()
   const { isDarkMode, toggleDarkMode } = useDarkModeStore()
+  const { showToast } = useToastStore()
   const [categories, setCategories] = useState<Category[]>([
     { id: '1', name: '업무', color: 'bg-blue-100 text-blue-700' },
     { id: '2', name: '개인', color: 'bg-green-100 text-green-700' },
@@ -61,7 +62,7 @@ export function SettingsPage() {
       )
       
       if (isDuplicate) {
-        alert('이미 존재하는 카테고리입니다.')
+        showToast('warning', '이미 존재하는 카테고리입니다.')
         return
       }
 
@@ -72,11 +73,13 @@ export function SettingsPage() {
       }
       setCategories([...categories, newCat])
       setNewCategory('')
+      showToast('success', '카테고리가 추가되었습니다.')
     }
   }
 
   const removeCategory = (id: string) => {
     setCategories(categories.filter(cat => cat.id !== id))
+    showToast('info', '카테고리가 삭제되었습니다.')
   }
 
   const addImportance = () => {
@@ -88,7 +91,7 @@ export function SettingsPage() {
       )
       
       if (isDuplicate) {
-        alert('이미 존재하는 중요도입니다.')
+        showToast('warning', '이미 존재하는 중요도입니다.')
         return
       }
 
@@ -100,11 +103,13 @@ export function SettingsPage() {
       }
       setImportanceLevels([...importanceLevels, newImp])
       setNewImportance('')
+      showToast('success', '중요도가 추가되었습니다.')
     }
   }
 
   const removeImportance = (id: string) => {
     setImportanceLevels(importanceLevels.filter(imp => imp.id !== id))
+    showToast('info', '중요도가 삭제되었습니다.')
   }
 
   const addPriority = () => {
@@ -116,7 +121,7 @@ export function SettingsPage() {
       )
       
       if (isDuplicate) {
-        alert('이미 존재하는 우선순위입니다.')
+        showToast('warning', '이미 존재하는 우선순위입니다.')
         return
       }
 
@@ -128,11 +133,13 @@ export function SettingsPage() {
       }
       setPriorityLevels([...priorityLevels, newPri])
       setNewPriority('')
+      showToast('success', '우선순위가 추가되었습니다.')
     }
   }
 
   const removePriority = (id: string) => {
     setPriorityLevels(priorityLevels.filter(pri => pri.id !== id))
+    showToast('info', '우선순위가 삭제되었습니다.')
   }
 
   return (
