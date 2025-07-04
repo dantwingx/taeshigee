@@ -1,14 +1,20 @@
 import { useAuthStore } from '@/stores/authStore'
 import { useTaskStore } from '@/stores/taskStore'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
 export function Header() {
   const { user, logout } = useAuthStore()
   const { tasks, currentUserId } = useTaskStore()
   const { t } = useTranslation()
+  const navigate = useNavigate()
 
   const handleLogout = () => {
     logout()
+  }
+
+  const handleLogoClick = () => {
+    navigate('/')
   }
 
   return (
@@ -16,7 +22,7 @@ export function Header() {
       <div className="max-w-md mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-3">
           {/* 로고 */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 cursor-pointer" onClick={handleLogoClick}>
             <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center shadow-sm">
               <span className="text-white font-bold text-sm">T</span>
             </div>

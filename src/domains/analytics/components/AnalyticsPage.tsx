@@ -312,7 +312,7 @@ export function AnalyticsPage() {
                   <div className="flex items-center space-x-2">
                     <span className="text-sm text-neutral-600 dark:text-neutral-300">{t('task.priority')}:</span>
                     <span className="text-sm font-medium">
-                      {getPriorityIcon(selectedTask.priority)} {selectedTask.priority === 'low' ? t('task.priorityLow') : t('task.priorityMedium') : t('task.priorityHigh')}
+                      {getPriorityIcon(selectedTask.priority)} {selectedTask.priority === 'low' ? t('task.priorityLow') : selectedTask.priority === 'medium' ? t('task.priorityMedium') : t('task.priorityHigh')}
                     </span>
                   </div>
                 </div>
