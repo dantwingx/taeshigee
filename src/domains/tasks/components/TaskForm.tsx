@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { 
   Calendar, 
   Tag, 
@@ -71,6 +72,7 @@ const visibilityOptions = [
 ]
 
 export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFormProps) {
+  const { t } = useTranslation()
   const {
     register,
     handleSubmit,
@@ -167,7 +169,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
       title={
         <div className="flex items-center space-x-2">
           {task && <Edit3 className="h-5 w-5 text-primary-600 dark:text-primary-400" />}
-          <span>{task ? '태스크 수정' : '새 태스크'}</span>
+          <span>{task ? t('task.editTask') : t('task.createTask')}</span>
         </div>
       }
       size="full"
@@ -179,14 +181,14 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
           <div>
             <label htmlFor="title" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
               <Type className="h-4 w-4" />
-              <span>제목 *</span>
+              <span>{t('task.title')} *</span>
             </label>
             <input
               {...register('title')}
               type="text"
               id="title"
               className={`input text-lg ${errors.title ? 'border-error-500 dark:border-error-400' : ''}`}
-              placeholder="태스크 제목을 입력하세요"
+              placeholder={t('task.titleRequired')}
               disabled={isLoading}
             />
             {errors.title && (

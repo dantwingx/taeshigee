@@ -1,15 +1,17 @@
 import { Link, useLocation } from 'react-router-dom'
 import { Home, List, BarChart3, User } from 'lucide-react'
-
-const navigation = [
-  { name: '홈', href: '/', icon: Home },
-  { name: '태스크', href: '/tasks', icon: List },
-  { name: '공개', href: '/analytics', icon: BarChart3 },
-  { name: '마이', href: '/settings', icon: User },
-]
+import { useTranslation } from 'react-i18next'
 
 export function BottomNavigation() {
   const location = useLocation()
+  const { t } = useTranslation()
+
+  const navigation = [
+    { name: t('navigation.home'), href: '/', icon: Home },
+    { name: t('navigation.tasks'), href: '/tasks', icon: List },
+    { name: t('analytics.title'), href: '/analytics', icon: BarChart3 },
+    { name: t('navigation.my'), href: '/settings', icon: User },
+  ]
 
   return (
     <nav className="bg-white dark:bg-neutral-800 border-t border-neutral-200 dark:border-neutral-700 fixed bottom-0 left-0 right-0 z-40 transition-colors duration-200">

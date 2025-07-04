@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Calendar, Tag, MoreVertical, Edit, Trash2, Check, Clock, Eye, EyeOff, AlertTriangle, Target } from 'lucide-react'
 import { useTagStore, useToastStore } from '@/stores'
 import type { Task } from '@/types/task'
+import { useTranslation } from 'react-i18next'
 
 interface TaskCardProps {
   task: Task
@@ -39,6 +40,7 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, isLoading }
   const [showMenu, setShowMenu] = useState(false)
   const { getTagColor } = useTagStore()
   const { showToast } = useToastStore()
+  const { t } = useTranslation()
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -66,9 +68,9 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, isLoading }
   const handleDelete = async () => {
     try {
       await onDelete(task.id)
-      showToast('success', '태스크가 삭제되었습니다.')
+      showToast('success', t('toast.taskDeleted'))
     } catch (error) {
-      showToast('error', '태스크 삭제에 실패했습니다.')
+      showToast('error', t('toast.error'))
     }
     setShowMenu(false)
   }
@@ -134,14 +136,14 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, isLoading }
                     className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
                   >
                     <Edit className="h-4 w-4" />
-                    <span>수정</span>
+                    <span>{t('common.edit')}</span>
                   </button>
                   <button
                     onClick={handleDelete}
                     className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-error-700 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20 transition-colors"
                   >
                     <Trash2 className="h-4 w-4" />
-                    <span>삭제</span>
+                    <span>{t('common.delete')}</span>
                   </button>
                 </div>
               )}
@@ -196,11 +198,11 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, isLoading }
             <div className="flex items-center space-x-1">
               <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${importanceColors[task.importance]}`}>
                 <AlertTriangle className="h-3 w-3" />
-                <span>{importanceIcons[task.importance]} {task.importance === 'low' ? '낮음' : task.importance === 'medium' ? '보통' : '높음'}</span>
+                <span>{importanceIcons[task.importance]} {task.importance === 'low' ? t('task.importanceLow') : task.importance === 'medium' ? t('task.importanceMedium') : t('task.importanceHigh')}</span>
               </span>
               <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${priorityColors[task.priority]}`}>
                 <Target className="h-3 w-3" />
-                <span>{priorityIcons[task.priority]} {task.priority === 'low' ? '낮음' : task.priority === 'medium' ? '보통' : '높음'}</span>
+                <span>{priorityIcons[task.priority]} {task.priority === 'low' ? t('task.priorityLow') : task.priority === 'medium' ? t('task.priorityMedium') : t('task.priorityHigh')}</span>
               </span>
             </div>
           </div>

@@ -45,10 +45,10 @@ export function TasksPage() {
   const categoryOptions = useMemo(() => {
     const categories = Array.from(new Set(userTasks.map(task => task.category).filter(Boolean) as string[]))
     return [
-      { value: '', label: '전체 카테고리' },
+      { value: '', label: t('task.filterByCategory') },
       ...categories.map(category => ({ value: category, label: category }))
     ]
-  }, [userTasks])
+  }, [userTasks, t])
 
   // 필터링된 태스크
   const filteredTasks = useMemo(() => {
@@ -160,7 +160,7 @@ export function TasksPage() {
   }
 
   const handleDeleteTask = async (id: string) => {
-    if (window.confirm('정말로 이 태스크를 삭제하시겠습니까?')) {
+    if (window.confirm(t('task.confirmDeleteTask'))) {
       await deleteTask(id)
     }
   }
@@ -191,7 +191,7 @@ export function TasksPage() {
       {/* 헤더 */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-neutral-900">모든 태스크</h1>
+          <h1 className="text-xl font-bold text-neutral-900">{t('navigation.tasks')}</h1>
           <p className="text-sm text-neutral-600">
             총 {userTasks.length}개 중 {filteredTasks.length}개 표시
           </p>
@@ -218,7 +218,7 @@ export function TasksPage() {
           <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
           <input
             type="text"
-            placeholder={t('Task Search...')}
+            placeholder={t('task.searchTasks')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="input pl-12"
@@ -229,14 +229,14 @@ export function TasksPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <CheckCircle className="h-4 w-4 text-neutral-600" />
-            <span className="text-sm font-medium text-neutral-700">상태</span>
+            <span className="text-sm font-medium text-neutral-700">{t('task.filterByStatus')}</span>
           </div>
           <div className="flex items-center space-x-2">
             {[
-              { value: 'all', label: '전체' },
-              { value: 'pending', label: '진행 중' },
-              { value: 'completed', label: '완료됨' },
-              { value: 'overdue', label: '지연됨' },
+              { value: 'all', label: t('common.all') },
+              { value: 'pending', label: t('common.pending') },
+              { value: 'completed', label: t('common.completed') },
+              { value: 'overdue', label: t('common.overdue') },
             ].map((option) => (
               <button
                 key={option.value}
@@ -261,14 +261,14 @@ export function TasksPage() {
             className="flex items-center space-x-2 text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
           >
             <Filter className="h-4 w-4" />
-            <span>고급 필터</span>
+            <span>{t('task.filterByStatus')}</span>
             {isFilterExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </button>
           <button
             onClick={clearFilters}
             className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
           >
-            초기화
+            {t('common.reset')}
           </button>
         </div>
 
@@ -279,14 +279,14 @@ export function TasksPage() {
             <div>
               <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
                 <AlertTriangle className="h-4 w-4" />
-                <span>중요도</span>
+                <span>{t('task.importance')}</span>
               </label>
               <div className="grid grid-cols-4 gap-2">
                 {[
-                  { value: 'all', label: '전체', icon: '🔍' },
-                  { value: 'low', label: '낮음', icon: '🟢' },
-                  { value: 'medium', label: '보통', icon: '🟡' },
-                  { value: 'high', label: '높음', icon: '🔴' },
+                  { value: 'all', label: t('common.all'), icon: '🔍' },
+                  { value: 'low', label: t('task.importanceLow'), icon: '🟢' },
+                  { value: 'medium', label: t('task.importanceMedium'), icon: '🟡' },
+                  { value: 'high', label: t('task.importanceHigh'), icon: '🔴' },
                 ].map((option) => (
                   <button
                     key={option.value}
@@ -311,14 +311,14 @@ export function TasksPage() {
             <div>
               <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
                 <Target className="h-4 w-4" />
-                <span>우선순위</span>
+                <span>{t('task.priority')}</span>
               </label>
               <div className="grid grid-cols-4 gap-2">
                 {[
-                  { value: 'all', label: '전체', icon: '🔍' },
-                  { value: 'low', label: '낮음', icon: '📌' },
-                  { value: 'medium', label: '보통', icon: '📍' },
-                  { value: 'high', label: '높음', icon: '🎯' },
+                  { value: 'all', label: t('common.all'), icon: '🔍' },
+                  { value: 'low', label: t('task.priorityLow'), icon: '📌' },
+                  { value: 'medium', label: t('task.priorityMedium'), icon: '📍' },
+                  { value: 'high', label: t('task.priorityHigh'), icon: '🎯' },
                 ].map((option) => (
                   <button
                     key={option.value}
@@ -343,13 +343,13 @@ export function TasksPage() {
             <div>
               <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
                 <Eye className="h-4 w-4" />
-                <span>공개 여부</span>
+                <span>{t('task.isPublic')}</span>
               </label>
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { value: 'all', label: '전체', icon: '🔍' },
-                  { value: 'private', label: '비공개', icon: '👁️‍🗨️' },
-                  { value: 'public', label: '공개', icon: '👁️' },
+                  { value: 'all', label: t('common.all'), icon: '🔍' },
+                  { value: 'private', label: t('common.private'), icon: '👁️‍🗨️' },
+                  { value: 'public', label: t('common.public'), icon: '👁️' },
                 ].map((option) => (
                   <button
                     key={option.value}
@@ -376,11 +376,11 @@ export function TasksPage() {
                 value={sortField}
                 onChange={(value) => setSortField(value as SortField)}
                 options={[
-                  { value: 'createdAt', label: '생성일' },
-                  { value: 'dueDate', label: '마감일' },
-                  { value: 'title', label: '제목' },
-                  { value: 'importance', label: '중요도' },
-                  { value: 'priority', label: '우선순위' },
+                  { value: 'createdAt', label: t('analytics.createdAt') },
+                  { value: 'dueDate', label: t('task.dueDate') },
+                  { value: 'title', label: t('task.title') },
+                  { value: 'importance', label: t('task.importance') },
+                  { value: 'priority', label: t('task.priority') },
                 ]}
                 className="w-32"
               />
@@ -405,15 +405,15 @@ export function TasksPage() {
           <div className="card p-8 text-center">
             <p className="text-neutral-500 mb-4">
               {filteredTasks.length === 0 && userTasks.length > 0
-                ? '검색 조건에 맞는 태스크가 없습니다.'
-                : '아직 태스크가 없습니다. 새 태스크를 추가해보세요!'}
+                ? t('task.noTasksFound')
+                : t('task.noTasks')}
             </p>
             {filteredTasks.length === 0 && userTasks.length > 0 && (
               <button
                 onClick={clearFilters}
                 className="btn-secondary"
               >
-                필터 초기화
+                {t('common.reset')}
               </button>
             )}
           </div>

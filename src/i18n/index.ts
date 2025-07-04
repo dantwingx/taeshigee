@@ -1,0 +1,63 @@
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
+import { ko } from './ko';
+import { en } from './en';
+
+// 리소스 객체 생성
+const resources = {
+  ko: {
+    translation: ko
+  },
+  en: {
+    translation: en
+  }
+};
+
+// i18n 초기화
+i18n
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    resources,
+    fallbackLng: 'ko',
+    debug: false, // 개발 시에만 true로 설정
+    interpolation: {
+      escapeValue: false, // React에서는 이미 XSS 방지가 되어있음
+    },
+    detection: {
+      order: ['localStorage', 'navigator'],
+      caches: ['localStorage'],
+      lookupLocalStorage: 'i18nextLng',
+    },
+    react: {
+      useSuspense: false, // React 18+ 호환성을 위해 false로 설정
+    }
+  });
+
+export default i18n;
+
+// 언어 변경 함수
+export const changeLanguage = async (language: string) => {
+  try {
+    await i18n.changeLanguage(language);
+    localStorage.setItem('i18nextLng', language);
+    return true;
+  } catch (error) {
+    console.error('Language change failed:', error);
+    return false;
+  }
+};
+
+// 현재 언어 가져오기
+export const getCurrentLanguage = (): string => {
+  return i18n.language || 'ko';
+};
+
+// 지원하는 언어 목록
+export const supportedLanguages = ['ko', 'en'];
+
+// 언어가 지원되는지 확인
+export const isLanguageSupported = (language: string): boolean => {
+  return supportedLanguages.includes(language);
+}; 

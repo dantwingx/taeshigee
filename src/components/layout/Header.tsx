@@ -1,9 +1,11 @@
 import { useAuthStore } from '@/stores/authStore'
 import { useTaskStore } from '@/stores/taskStore'
+import { useTranslation } from 'react-i18next'
 
 export function Header() {
   const { user, logout } = useAuthStore()
   const { tasks, currentUserId } = useTaskStore()
+  const { t } = useTranslation()
 
   const handleLogout = () => {
     logout()
@@ -35,7 +37,7 @@ export function Header() {
         <div className="flex items-center space-x-3">
           {user && (
             <div className="text-xs text-neutral-500 dark:text-neutral-400">
-              <span className="hidden sm:inline">태스크 </span>
+              <span className="hidden sm:inline">{t('navigation.tasks')} </span>
               <span className="font-medium text-neutral-900 dark:text-neutral-100">{tasks.length}개</span>
             </div>
           )}
@@ -43,7 +45,7 @@ export function Header() {
             onClick={handleLogout}
             className="text-xs text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors px-2 py-1 rounded"
           >
-            로그아웃
+            {t('auth.logout')}
           </button>
         </div>
       </div>

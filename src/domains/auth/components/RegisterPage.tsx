@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Eye, EyeOff, UserPlus, ArrowRight } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
+import { useTranslation } from 'react-i18next'
 
 const registerSchema = z.object({
   email: z.string().email('올바른 이메일 주소를 입력해주세요'),
@@ -23,6 +24,7 @@ export function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
   const { register: registerUser } = useAuthStore()
+  const { t } = useTranslation()
 
   const {
     register,
@@ -45,7 +47,7 @@ export function RegisterPage() {
     } catch (error) {
       setError('root', {
         type: 'manual',
-        message: '회원가입에 실패했습니다. 다시 시도해주세요.',
+        message: t('toast.error'),
       })
     } finally {
       setIsLoading(false)
@@ -61,14 +63,14 @@ export function RegisterPage() {
             <UserPlus className="h-12 w-12 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-neutral-900 mb-2">Task Manager</h1>
-          <p className="text-neutral-600">효율적인 태스크 관리의 시작</p>
+          <p className="text-neutral-600">{t('home.welcome')}</p>
         </div>
 
         {/* 회원가입 폼 */}
         <div className="bg-white rounded-2xl shadow-xl p-6">
           <div className="text-center mb-6">
-            <h2 className="text-xl font-semibold text-neutral-900 mb-2">회원가입</h2>
-            <p className="text-sm text-neutral-600">새로운 계정을 만들어 태스크를 관리하세요</p>
+            <h2 className="text-xl font-semibold text-neutral-900 mb-2">{t('auth.register')}</h2>
+            <p className="text-sm text-neutral-600">{t('home.welcome')}</p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -82,7 +84,7 @@ export function RegisterPage() {
             {/* 이메일 */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-neutral-700 mb-1">
-                이메일
+                {t('auth.email')}
               </label>
               <input
                 {...register('email')}
@@ -100,7 +102,7 @@ export function RegisterPage() {
             {/* 비밀번호 */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-neutral-700 mb-1">
-                비밀번호
+                {t('auth.password')}
               </label>
               <div className="relative">
                 <input
@@ -128,7 +130,7 @@ export function RegisterPage() {
             {/* 비밀번호 확인 */}
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-neutral-700 mb-1">
-                비밀번호 확인
+                {t('auth.confirmPassword')}
               </label>
               <div className="relative">
                 <input
@@ -166,7 +168,7 @@ export function RegisterPage() {
                 </>
               ) : (
                 <>
-                  <span>회원가입</span>
+                  <span>{t('auth.register')}</span>
                   <ArrowRight className="h-4 w-4" />
                 </>
               )}
@@ -176,12 +178,12 @@ export function RegisterPage() {
           {/* 로그인 링크 */}
           <div className="mt-6 text-center">
             <p className="text-sm text-neutral-600">
-              이미 계정이 있으신가요?{' '}
+              {t('auth.alreadyHaveAccount')}{' '}
               <Link
                 to="/login"
                 className="text-primary-600 hover:text-primary-700 font-medium transition-colors"
               >
-                로그인
+                {t('auth.login')}
               </Link>
             </p>
           </div>

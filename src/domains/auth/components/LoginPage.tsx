@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Eye, EyeOff, CheckCircle, ArrowRight } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
+import { useTranslation } from 'react-i18next'
 
 const loginSchema = z.object({
   email: z.string().email('올바른 이메일 주소를 입력해주세요'),
@@ -18,6 +19,7 @@ export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
   const { login } = useAuthStore()
+  const { t } = useTranslation()
 
   const {
     register,
@@ -36,7 +38,7 @@ export function LoginPage() {
     } catch (error) {
       setError('root', {
         type: 'manual',
-        message: '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.',
+        message: t('auth.invalidCredentials'),
       })
     } finally {
       setIsLoading(false)
@@ -52,14 +54,14 @@ export function LoginPage() {
             <CheckCircle className="h-12 w-12 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-neutral-900 mb-2">Task Manager</h1>
-          <p className="text-neutral-600">효율적인 태스크 관리의 시작</p>
+          <p className="text-neutral-600">{t('home.welcome')}</p>
         </div>
 
         {/* 로그인 폼 */}
         <div className="bg-white rounded-2xl shadow-xl p-6">
           <div className="text-center mb-6">
-            <h2 className="text-xl font-semibold text-neutral-900 mb-2">로그인</h2>
-            <p className="text-sm text-neutral-600">계정에 로그인하여 태스크를 관리하세요</p>
+            <h2 className="text-xl font-semibold text-neutral-900 mb-2">{t('auth.login')}</h2>
+            <p className="text-sm text-neutral-600">{t('home.welcome')}</p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -73,7 +75,7 @@ export function LoginPage() {
             {/* 이메일 */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-neutral-700 mb-1">
-                이메일
+                {t('auth.email')}
               </label>
               <input
                 {...register('email')}
@@ -91,7 +93,7 @@ export function LoginPage() {
             {/* 비밀번호 */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-neutral-700 mb-1">
-                비밀번호
+                {t('auth.password')}
               </label>
               <div className="relative">
                 <input
@@ -129,7 +131,7 @@ export function LoginPage() {
                 </>
               ) : (
                 <>
-                  <span>로그인</span>
+                  <span>{t('auth.login')}</span>
                   <ArrowRight className="h-4 w-4" />
                 </>
               )}
@@ -139,12 +141,12 @@ export function LoginPage() {
           {/* 회원가입 링크 */}
           <div className="mt-6 text-center">
             <p className="text-sm text-neutral-600">
-              계정이 없으신가요?{' '}
+              {t('auth.dontHaveAccount')}{' '}
               <Link
                 to="/register"
                 className="text-primary-600 hover:text-primary-700 font-medium transition-colors"
               >
-                회원가입
+                {t('auth.register')}
               </Link>
             </p>
           </div>
