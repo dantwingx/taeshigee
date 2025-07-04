@@ -15,7 +15,8 @@ import {
   Target,
   Eye,
   EyeOff,
-  CheckCircle
+  CheckCircle,
+  Lock
 } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
 import { Select } from '@/components/ui/Select'
@@ -61,6 +62,11 @@ const categoryOptions = [
   { value: 'personal', label: '개인' },
   { value: 'study', label: '학습' },
   { value: 'health', label: '건강' },
+]
+
+const visibilityOptions = [
+  { value: false, label: '비공개', icon: Lock },
+  { value: true, label: '공개', icon: Eye },
 ]
 
 export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFormProps) {
@@ -118,6 +124,10 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
 
   const handlePrioritySelect = (priority: 'low' | 'medium' | 'high') => {
     setValue('priority', priority)
+  }
+
+  const handleVisibilitySelect = (isPublic: boolean) => {
+    setValue('isPublic', isPublic)
   }
 
   return (
@@ -312,30 +322,31 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
             {/* 공개 여부 */}
             <div>
               <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                {watch('isPublic') ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                {watch('isPublic') ? <Eye className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
                 <span>공개 여부</span>
               </label>
-              <div className="flex items-center space-x-4">
-                <label className="flex items-center space-x-2">
-                  <input
-                    {...register('isPublic')}
-                    type="radio"
-                    value="false"
-                    className="text-primary-600 dark:text-primary-400"
-                    disabled={isLoading}
-                  />
-                  <span className="text-sm text-neutral-700 dark:text-neutral-300">비공개</span>
-                </label>
-                <label className="flex items-center space-x-2">
-                  <input
-                    {...register('isPublic')}
-                    type="radio"
-                    value="true"
-                    className="text-primary-600 dark:text-primary-400"
-                    disabled={isLoading}
-                  />
-                  <span className="text-sm text-neutral-700 dark:text-neutral-300">공개</span>
-                </label>
+              <div className="grid grid-cols-2 gap-2">
+                {visibilityOptions.map((option) => {
+                  const Icon = option.icon
+                  return (
+                    <button
+                      key={option.value.toString()}
+                      type="button"
+                      onClick={() => handleVisibilitySelect(option.value)}
+                      className={`p-2 rounded-lg border-2 transition-colors ${
+                        watch('isPublic') === option.value
+                          ? 'border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-300'
+                          : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:border-neutral-500'
+                      }`}
+                      disabled={isLoading}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <Icon className="h-3 w-3" />
+                        <span className="text-xs font-medium">{option.label}</span>
+                      </div>
+                    </button>
+                  )
+                })}
               </div>
             </div>
           </div>
