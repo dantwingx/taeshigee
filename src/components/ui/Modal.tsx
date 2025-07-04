@@ -62,7 +62,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
         </div>
         
         {/* Content */}
-        <div className={`flex-1 ${size === 'full' ? 'overflow-hidden' : 'p-4'}`}>
+        <div className={`${size === 'full' ? 'flex-1 relative' : 'p-4'}`}>
           {children}
         </div>
       </div>
