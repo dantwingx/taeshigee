@@ -4,40 +4,118 @@
 
 @layer base {
   html {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  }
-  
-  body {
-    @apply bg-neutral-50 text-neutral-900;
-  }
-  
-  * {
-    @apply border-neutral-200;
+    font-family: system-ui, sans-serif;
   }
 }
 
 @layer components {
-  .btn {
-    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
-  }
-  
+  /* 버튼 스타일 */
   .btn-primary {
-    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus-visible:ring-primary-500;
+    @apply px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
   }
-  
+
   .btn-secondary {
-    @apply btn bg-neutral-100 text-neutral-900 hover:bg-neutral-200 focus-visible:ring-neutral-500;
+    @apply px-4 py-2 bg-neutral-100 text-neutral-700 rounded-lg hover:bg-neutral-200 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
   }
-  
-  .btn-ghost {
-    @apply btn hover:bg-neutral-100 hover:text-neutral-900 focus-visible:ring-neutral-500;
+
+  .btn-danger {
+    @apply px-4 py-2 bg-error-600 text-white rounded-lg hover:bg-error-700 focus:outline-none focus:ring-2 focus:ring-error-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
   }
-  
+
+  /* 입력 필드 스타일 */
   .input {
-    @apply flex h-10 w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* 카드 스타일 */
+  .card {
+    @apply bg-white rounded-lg border border-neutral-200 p-6 shadow-sm;
+  }
+
+  /* 텍스트 스타일 */
+  .text-primary {
+    @apply text-primary-600;
+  }
+
+  .text-success {
+    @apply text-success-600;
+  }
+
+  .text-warning {
+    @apply text-warning-600;
+  }
+
+  .text-error {
+    @apply text-error-600;
+  }
+
+  /* 유틸리티 클래스 */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* 스크롤바 스타일 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 포커스 스타일 */
+.focus-visible:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 640px) {
+  .card {
+    @apply p-4;
   }
   
-  .card {
-    @apply rounded-lg border bg-white p-6 shadow-sm;
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger {
+    @apply px-3 py-2 text-sm;
   }
 } 
