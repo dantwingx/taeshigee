@@ -35,6 +35,12 @@ export const useAuthStore = create<AuthStore>()(
             isLoading: false,
             error: null,
           })
+
+          // 태스크 스토어에 현재 사용자 설정
+          // 동적 import로 순환 참조 방지
+          const { useTaskStore } = await import('./taskStore')
+          const taskStore = useTaskStore.getState()
+          taskStore.setCurrentUser(mockUser.id)
         } catch (error) {
           set({
             isLoading: false,
@@ -69,6 +75,11 @@ export const useAuthStore = create<AuthStore>()(
             isLoading: false,
             error: null,
           })
+
+          // 태스크 스토어에 현재 사용자 설정
+          const { useTaskStore } = await import('./taskStore')
+          const taskStore = useTaskStore.getState()
+          taskStore.setCurrentUser(mockUser.id)
         } catch (error) {
           set({
             isLoading: false,
@@ -78,6 +89,12 @@ export const useAuthStore = create<AuthStore>()(
       },
 
       logout: () => {
+        // 태스크 스토어에서 현재 사용자 정리
+        import('./taskStore').then(({ useTaskStore }) => {
+          const taskStore = useTaskStore.getState()
+          taskStore.clearCurrentUser()
+        })
+
         set({
           user: null,
           isAuthenticated: false,
