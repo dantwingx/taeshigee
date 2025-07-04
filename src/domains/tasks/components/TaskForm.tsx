@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Calendar, Tag, Folder, Clock, X, Save } from 'lucide-react'
+import { Calendar, Tag, Folder, Clock, X, Save, Edit3 } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
 import { Select } from '@/components/ui/Select'
 import { TagInput } from '@/components/ui/TagInput'
@@ -91,14 +91,23 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
     setValue('tags', tags)
   }
 
+  const handleCategorySelect = (category: string) => {
+    setValue('category', category)
+  }
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title={task ? '태스크 수정' : '새 태스크'}
+      title={
+        <div className="flex items-center space-x-2">
+          {task && <Edit3 className="h-5 w-5 text-primary-600" />}
+          <span>{task ? '태스크 수정' : '새 태스크'}</span>
+        </div>
+      }
       size="full"
     >
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6 px-4 py-2">
         {/* 제목 */}
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-neutral-700 mb-2">
@@ -147,7 +156,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
                 {...register('dueDate')}
                 type="date"
                 id="dueDate"
-                className="input pl-10"
+                className="input pl-10 text-center"
                 disabled={isLoading}
               />
             </div>
@@ -163,7 +172,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
                 {...register('dueTime')}
                 type="time"
                 id="dueTime"
-                className="input pl-10"
+                className="input pl-10 text-center"
                 disabled={isLoading}
               />
             </div>
@@ -214,16 +223,25 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
           <label className="block text-sm font-medium text-neutral-700 mb-2">
             카테고리
           </label>
-          <div className="relative">
-            <Folder className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-            <Select
-              value={watch('category') || ''}
-              onChange={(value) => setValue('category', value)}
-              options={categoryOptions}
-              placeholder="카테고리를 선택하세요"
-              disabled={isLoading}
-              className="pl-10"
-            />
+          <div className="grid grid-cols-2 gap-2">
+            {categoryOptions.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => handleCategorySelect(option.value)}
+                className={`p-3 rounded-lg border-2 transition-colors ${
+                  watch('category') === option.value
+                    ? 'border-primary-500 bg-primary-50 text-primary-700'
+                    : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
+                }`}
+                disabled={isLoading}
+              >
+                <div className="flex items-center space-x-2">
+                  <Folder className="h-4 w-4" />
+                  <span className="text-sm font-medium">{option.label}</span>
+                </div>
+              </button>
+            ))}
           </div>
         </div>
 
