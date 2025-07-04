@@ -6,6 +6,10 @@
   html {
     font-family: system-ui, sans-serif;
   }
+  
+  body {
+    @apply bg-neutral-50;
+  }
 }
 
 @layer components {
@@ -29,7 +33,7 @@
 
   /* 카드 스타일 */
   .card {
-    @apply bg-white rounded-lg border border-neutral-200 p-6 shadow-sm;
+    @apply bg-white rounded-lg border border-neutral-200 shadow-sm;
   }
 
   /* 텍스트 스타일 */
@@ -67,18 +71,18 @@
 
 /* 스크롤바 스타일 */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #c1c1c1;
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -107,7 +111,7 @@
   animation: fadeIn 0.3s ease-out;
 }
 
-/* 반응형 디자인 */
+/* 모바일 최적화 */
 @media (max-width: 640px) {
   .card {
     @apply p-4;
@@ -117,5 +121,22 @@
   .btn-secondary,
   .btn-danger {
     @apply px-3 py-2 text-sm;
+  }
+  
+  .input {
+    @apply px-3 py-2 text-sm;
+  }
+}
+
+/* 모바일 터치 최적화 */
+@media (hover: none) and (pointer: coarse) {
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger {
+    @apply min-h-[44px];
+  }
+  
+  .input {
+    @apply min-h-[44px];
   }
 } 

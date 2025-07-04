@@ -1,17 +1,22 @@
 import { Outlet } from 'react-router-dom'
 import { Header } from './Header'
-import { Sidebar } from './Sidebar'
+import { BottomNavigation } from './BottomNavigation'
 
 export function Layout() {
   return (
-    <div className="flex h-screen bg-neutral-50">
-      <Sidebar />
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <Header />
-        <main className="flex-1 overflow-auto p-6">
+    <div className="min-h-screen bg-neutral-50 flex flex-col">
+      {/* 헤더 */}
+      <Header />
+      
+      {/* 메인 콘텐츠 */}
+      <main className="flex-1 pb-20">
+        <div className="max-w-md mx-auto px-4 py-4">
           <Outlet />
-        </main>
-      </div>
+        </div>
+      </main>
+      
+      {/* 하단 네비게이션 */}
+      <BottomNavigation />
     </div>
   )
 } 

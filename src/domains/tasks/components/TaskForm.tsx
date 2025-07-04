@@ -1,18 +1,21 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Calendar, Tag, Folder } from 'lucide-react'
+import { Calendar, Tag, Folder, Clock, X } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
 import { Select } from '@/components/ui/Select'
+import { TagInput } from '@/components/ui/TagInput'
 import type { Task, CreateTaskData, UpdateTaskData } from '@/types/task'
 
 const taskSchema = z.object({
   title: z.string().min(1, '제목을 입력해주세요').max(100, '제목은 100자 이하여야 합니다'),
   description: z.string().max(500, '설명은 500자 이하여야 합니다').optional(),
   dueDate: z.string().optional(),
+  dueTime: z.string().optional(),
   importance: z.enum(['low', 'medium', 'high']).default('medium'),
   priority: z.enum(['low', 'medium', 'high']).default('medium'),
   category: z.string().optional(),
+  tags: z.array(z.string()).default([]),
 })
 
 type TaskFormData = z.infer<typeof taskSchema>
@@ -58,9 +61,11 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
       title: task?.title || '',
       description: task?.description || '',
       dueDate: task?.dueDate ? task.dueDate.split('T')[0] : '',
+      dueTime: task?.dueTime || '',
       importance: task?.importance || 'medium',
       priority: task?.priority || 'medium',
       category: task?.category || '',
+      tags: task?.tags || [],
     },
   })
 
@@ -82,14 +87,18 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
     onClose()
   }
 
+  const handleTagsChange = (tags: string[]) => {
+    setValue('tags', tags)
+  }
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
       title={task ? '태스크 수정' : '새 태스크'}
-      size="lg"
+      size="full"
     >
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
         {/* 제목 */}
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-neutral-700 mb-1">
@@ -126,25 +135,56 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
           )}
         </div>
 
-        {/* 마감일 */}
-        <div>
-          <label htmlFor="dueDate" className="block text-sm font-medium text-neutral-700 mb-1">
-            마감일
-          </label>
-          <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-            <input
-              {...register('dueDate')}
-              type="date"
-              id="dueDate"
-              className="input pl-10"
-              disabled={isLoading}
-            />
+        {/* 마감일 및 마감시간 */}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label htmlFor="dueDate" className="block text-sm font-medium text-neutral-700 mb-1">
+              마감일
+            </label>
+            <div className="relative">
+              <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+              <input
+                {...register('dueDate')}
+                type="date"
+                id="dueDate"
+                className="input pl-10"
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+          
+          <div>
+            <label htmlFor="dueTime" className="block text-sm font-medium text-neutral-700 mb-1">
+              마감시간
+            </label>
+            <div className="relative">
+              <Clock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+              <input
+                {...register('dueTime')}
+                type="time"
+                id="dueTime"
+                className="input pl-10"
+                disabled={isLoading}
+              />
+            </div>
           </div>
         </div>
 
+        {/* 태그 */}
+        <div>
+          <label className="block text-sm font-medium text-neutral-700 mb-1">
+            태그
+          </label>
+          <TagInput
+            value={watch('tags')}
+            onChange={handleTagsChange}
+            placeholder="태그를 입력하세요 (Enter 또는 쉼표로 구분)"
+            disabled={isLoading}
+          />
+        </div>
+
         {/* 중요도 및 우선순위 */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-sm font-medium text-neutral-700 mb-1">
               중요도

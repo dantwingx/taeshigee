@@ -34,10 +34,10 @@ export function HomePage() {
     return dueDate.toDateString() === today.toDateString()
   })
 
-  // 최근 태스크 (최근 5개)
+  // 최근 태스크 (최근 3개)
   const recentTasks = tasks
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 5)
+    .slice(0, 3)
 
   const handleCreateTask = async (data: CreateTaskData) => {
     await createTask(data)
@@ -66,60 +66,56 @@ export function HomePage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
+      {/* 헤더 */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900">오늘의 태스크</h1>
-          <p className="text-neutral-600">오늘 마감 예정인 태스크들을 확인해보세요</p>
+          <h1 className="text-xl font-bold text-neutral-900">오늘의 태스크</h1>
+          <p className="text-sm text-neutral-600">오늘 마감 예정인 태스크들을 확인해보세요</p>
         </div>
         <button
           onClick={() => setIsTaskFormOpen(true)}
-          className="btn-primary"
+          className="btn-primary p-3 rounded-full shadow-lg"
         >
-          <Plus className="h-4 w-4 mr-2" />
-          새 태스크
+          <Plus className="h-5 w-5" />
         </button>
       </div>
 
       {/* 에러 메시지 */}
       {error && (
-        <div className="p-4 rounded-lg bg-error-50 border border-error-200">
+        <div className="p-3 rounded-lg bg-error-50 border border-error-200">
           <p className="text-sm text-error-700">{error}</p>
         </div>
       )}
       
       {/* 통계 카드 */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <div className="card">
-          <h3 className="font-semibold text-neutral-900 mb-2">전체 태스크</h3>
-          <p className="text-2xl font-bold text-neutral-600">{stats.total}</p>
-          <p className="text-sm text-neutral-600">개 태스크</p>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="card p-4">
+          <h3 className="font-semibold text-neutral-900 mb-1 text-sm">전체</h3>
+          <p className="text-xl font-bold text-neutral-600">{stats.total}</p>
         </div>
         
-        <div className="card">
-          <h3 className="font-semibold text-neutral-900 mb-2">오늘 마감</h3>
-          <p className="text-2xl font-bold text-primary-600">{todayTasks.length}</p>
-          <p className="text-sm text-neutral-600">개 태스크</p>
+        <div className="card p-4">
+          <h3 className="font-semibold text-neutral-900 mb-1 text-sm">오늘 마감</h3>
+          <p className="text-xl font-bold text-primary-600">{todayTasks.length}</p>
         </div>
         
-        <div className="card">
-          <h3 className="font-semibold text-neutral-900 mb-2">완료됨</h3>
-          <p className="text-2xl font-bold text-success-600">{stats.completed}</p>
-          <p className="text-sm text-neutral-600">개 태스크</p>
+        <div className="card p-4">
+          <h3 className="font-semibold text-neutral-900 mb-1 text-sm">완료됨</h3>
+          <p className="text-xl font-bold text-success-600">{stats.completed}</p>
         </div>
         
-        <div className="card">
-          <h3 className="font-semibold text-neutral-900 mb-2">진행률</h3>
-          <p className="text-2xl font-bold text-warning-600">{stats.completionRate}%</p>
-          <p className="text-sm text-neutral-600">완료율</p>
+        <div className="card p-4">
+          <h3 className="font-semibold text-neutral-900 mb-1 text-sm">진행률</h3>
+          <p className="text-xl font-bold text-warning-600">{stats.completionRate}%</p>
         </div>
       </div>
 
       {/* 오늘 마감 예정 태스크 */}
-      <div className="card">
-        <h2 className="text-lg font-semibold text-neutral-900 mb-4">오늘 마감 예정</h2>
+      <div className="card p-4">
+        <h2 className="text-lg font-semibold text-neutral-900 mb-3">오늘 마감 예정</h2>
         {todayTasks.length === 0 ? (
-          <p className="text-center text-neutral-500 py-8">
+          <p className="text-center text-neutral-500 py-6 text-sm">
             오늘 마감 예정인 태스크가 없습니다.
           </p>
         ) : (
@@ -139,10 +135,10 @@ export function HomePage() {
       </div>
 
       {/* 최근 태스크 */}
-      <div className="card">
-        <h2 className="text-lg font-semibold text-neutral-900 mb-4">최근 태스크</h2>
+      <div className="card p-4">
+        <h2 className="text-lg font-semibold text-neutral-900 mb-3">최근 태스크</h2>
         {recentTasks.length === 0 ? (
-          <p className="text-center text-neutral-500 py-8">
+          <p className="text-center text-neutral-500 py-6 text-sm">
             아직 태스크가 없습니다. 새 태스크를 추가해보세요!
           </p>
         ) : (

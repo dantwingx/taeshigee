@@ -3,6 +3,7 @@ export interface Task {
   title: string
   description?: string
   dueDate?: string
+  dueTime?: string // 마감시간 추가
   recurrenceType?: 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom'
   recurrenceDetail?: Record<string, any>
   importance: 'low' | 'medium' | 'high'
@@ -35,6 +36,7 @@ export interface CreateTaskData {
   title: string
   description?: string
   dueDate?: string
+  dueTime?: string // 마감시간 추가
   recurrenceType?: 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom'
   recurrenceDetail?: Record<string, any>
   importance?: 'low' | 'medium' | 'high'
@@ -61,4 +63,11 @@ export interface TaskStats {
   completed: number
   pending: number
   completionRate: number
+}
+
+// 태그 관리용 타입 추가
+export interface TagStats {
+  name: string
+  count: number
+  color?: string
 } 

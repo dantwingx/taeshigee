@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Calendar, Tag, MoreVertical, Edit, Trash2, Check } from 'lucide-react'
+import { Calendar, Tag, MoreVertical, Edit, Trash2, Check, Clock } from 'lucide-react'
+import { useTagStore } from '@/stores/tagStore'
 import type { Task } from '@/types/task'
 
 interface TaskCardProps {
@@ -24,21 +25,33 @@ const priorityColors = {
 
 export function TaskCard({ task, onToggleComplete, onEdit, onDelete, isLoading }: TaskCardProps) {
   const [showMenu, setShowMenu] = useState(false)
+  const { getTagColor } = useTagStore()
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('ko-KR', {
       month: 'short',
       day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
     })
+  }
+
+  const formatDateTime = (dateString: string, timeString?: string) => {
+    const date = new Date(dateString)
+    const dateStr = date.toLocaleDateString('ko-KR', {
+      month: 'short',
+      day: 'numeric',
+    })
+    
+    if (timeString) {
+      return `${dateStr} ${timeString}`
+    }
+    return dateStr
   }
 
   const isOverdue = task.dueDate && new Date(task.dueDate) < new Date() && !task.isCompleted
 
   return (
-    <div className={`card transition-all duration-200 ${
+    <div className={`bg-white rounded-lg border border-neutral-200 p-4 transition-all duration-200 ${
       task.isCompleted ? 'opacity-75' : ''
     } ${isOverdue ? 'border-error-300 bg-error-50' : ''}`}>
       <div className="flex items-start space-x-3">
@@ -110,33 +123,59 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, isLoading }
             </div>
           </div>
 
-          {/* 태그 및 메타 정보 */}
-          <div className="mt-3 flex items-center space-x-4 text-xs text-neutral-500">
-            {task.dueDate && (
-              <div className={`flex items-center space-x-1 ${
-                isOverdue ? 'text-error-600' : ''
-              }`}>
-                <Calendar className="h-3 w-3" />
-                <span>{formatDate(task.dueDate)}</span>
-              </div>
-            )}
+          {/* 태그 */}
+          {task.tags && task.tags.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1">
+              {task.tags.slice(0, 3).map((tag, index) => (
+                <span
+                  key={index}
+                  className={`px-2 py-1 rounded-full text-xs font-medium ${getTagColor(tag)}`}
+                >
+                  #{tag}
+                </span>
+              ))}
+              {task.tags.length > 3 && (
+                <span className="px-2 py-1 rounded-full text-xs font-medium bg-neutral-100 text-neutral-600">
+                  +{task.tags.length - 3}
+                </span>
+              )}
+            </div>
+          )}
 
-            {task.category && (
-              <div className="flex items-center space-x-1">
-                <Tag className="h-3 w-3" />
-                <span>{task.category}</span>
-              </div>
-            )}
-          </div>
+          {/* 메타 정보 */}
+          <div className="mt-3 flex items-center justify-between text-xs text-neutral-500">
+            <div className="flex items-center space-x-3">
+              {task.dueDate && (
+                <div className={`flex items-center space-x-1 ${
+                  isOverdue ? 'text-error-600' : ''
+                }`}>
+                  <Calendar className="h-3 w-3" />
+                  <span>
+                    {task.dueTime 
+                      ? formatDateTime(task.dueDate, task.dueTime)
+                      : formatDate(task.dueDate)
+                    }
+                  </span>
+                </div>
+              )}
 
-          {/* 중요도 및 우선순위 배지 */}
-          <div className="mt-3 flex items-center space-x-2">
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${importanceColors[task.importance]}`}>
-              중요도: {task.importance === 'low' ? '낮음' : task.importance === 'medium' ? '보통' : '높음'}
-            </span>
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${priorityColors[task.priority]}`}>
-              우선순위: {task.priority === 'low' ? '낮음' : task.priority === 'medium' ? '보통' : '높음'}
-            </span>
+              {task.category && (
+                <div className="flex items-center space-x-1">
+                  <Tag className="h-3 w-3" />
+                  <span>{task.category}</span>
+                </div>
+              )}
+            </div>
+
+            {/* 중요도 및 우선순위 배지 */}
+            <div className="flex items-center space-x-1">
+              <span className={`px-2 py-1 rounded-full text-xs font-medium ${importanceColors[task.importance]}`}>
+                {task.importance === 'low' ? '낮음' : task.importance === 'medium' ? '보통' : '높음'}
+              </span>
+              <span className={`px-2 py-1 rounded-full text-xs font-medium ${priorityColors[task.priority]}`}>
+                {task.priority === 'low' ? '낮음' : task.priority === 'medium' ? '보통' : '높음'}
+              </span>
+            </div>
           </div>
         </div>
       </div>

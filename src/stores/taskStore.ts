@@ -69,12 +69,13 @@ const loadTasksFromStorage = (): Record<string, Task[]> => {
           title: '프로젝트 기획서 작성',
           description: '새로운 웹 애플리케이션 프로젝트의 기획서를 작성합니다.',
           dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          dueTime: '18:00',
           recurrenceType: 'none',
           recurrenceDetail: null,
           importance: 'high',
           priority: 'high',
           isCompleted: false,
-          tags: ['업무', '기획'],
+          tags: ['업무', '기획', '프로젝트'],
           category: 'work',
           attachments: [],
           subtasks: [],
@@ -86,12 +87,13 @@ const loadTasksFromStorage = (): Record<string, Task[]> => {
           title: '팀 미팅 참석',
           description: '주간 팀 미팅에 참석하여 진행 상황을 공유합니다.',
           dueDate: new Date().toISOString(),
+          dueTime: '10:00',
           recurrenceType: 'weekly',
           recurrenceDetail: 'monday',
           importance: 'medium',
           priority: 'medium',
           isCompleted: true,
-          tags: ['미팅', '팀'],
+          tags: ['미팅', '팀', '주간'],
           category: 'work',
           attachments: [],
           subtasks: [],
@@ -105,12 +107,13 @@ const loadTasksFromStorage = (): Record<string, Task[]> => {
           title: '운동하기',
           description: '헬스장에서 1시간 운동을 합니다.',
           dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+          dueTime: '19:00',
           recurrenceType: 'daily',
           recurrenceDetail: 'weekdays',
           importance: 'medium',
           priority: 'low',
           isCompleted: false,
-          tags: ['건강', '운동'],
+          tags: ['건강', '운동', '헬스'],
           category: 'health',
           attachments: [],
           subtasks: [],
@@ -122,12 +125,13 @@ const loadTasksFromStorage = (): Record<string, Task[]> => {
           title: 'React 학습',
           description: 'React Hooks와 Context API에 대해 학습합니다.',
           dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+          dueTime: '20:00',
           recurrenceType: 'none',
           recurrenceDetail: null,
           importance: 'high',
           priority: 'medium',
           isCompleted: false,
-          tags: ['학습', '프로그래밍'],
+          tags: ['학습', '프로그래밍', 'React'],
           category: 'study',
           attachments: [],
           subtasks: [],
@@ -141,12 +145,13 @@ const loadTasksFromStorage = (): Record<string, Task[]> => {
           title: '장보기',
           description: '주말 장보기를 위해 필요한 물건들을 구매합니다.',
           dueDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(),
+          dueTime: '14:00',
           recurrenceType: 'weekly',
           recurrenceDetail: 'saturday',
           importance: 'low',
           priority: 'low',
           isCompleted: false,
-          tags: ['개인', '쇼핑'],
+          tags: ['개인', '쇼핑', '주말'],
           category: 'personal',
           attachments: [],
           subtasks: [],
@@ -179,6 +184,17 @@ const saveTasksToStorage = (tasksByUser: Record<string, Task[]>) => {
     localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasksByUser))
   } catch (error) {
     console.error('Failed to save tasks to storage:', error)
+  }
+}
+
+// 태그 통계 업데이트
+const updateTagStats = async (tasks: Task[], userId: string) => {
+  try {
+    const { useTagStore } = await import('./tagStore')
+    const tagStore = useTagStore.getState()
+    tagStore.updateTagStats(tasks, userId)
+  } catch (error) {
+    console.error('Failed to update tag stats:', error)
   }
 }
 
@@ -227,6 +243,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         isLoading: false 
       })
       
+      // 태그 통계 업데이트
+      await updateTagStats(userTasks, userId)
+      
       get().updateStats()
     } catch (error) {
       console.error('[TaskStore] 태스크 로드 실패:', error)
@@ -255,6 +274,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         title: taskData.title,
         description: taskData.description,
         dueDate: taskData.dueDate,
+        dueTime: taskData.dueTime,
         recurrenceType: taskData.recurrenceType || 'none',
         recurrenceDetail: taskData.recurrenceDetail,
         importance: taskData.importance || 'medium',
@@ -277,6 +297,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       const tasksByUser = loadTasksFromStorage()
       tasksByUser[currentUserId] = get().tasks
       saveTasksToStorage(tasksByUser)
+      
+      // 태그 통계 업데이트
+      await updateTagStats(get().tasks, currentUserId)
       
       get().updateStats()
     } catch (error) {
@@ -314,6 +337,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       tasksByUser[currentUserId] = get().tasks
       saveTasksToStorage(tasksByUser)
       
+      // 태그 통계 업데이트
+      await updateTagStats(get().tasks, currentUserId)
+      
       get().updateStats()
     } catch (error) {
       set({
@@ -345,6 +371,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       const tasksByUser = loadTasksFromStorage()
       tasksByUser[currentUserId] = get().tasks
       saveTasksToStorage(tasksByUser)
+      
+      // 태그 통계 업데이트
+      await updateTagStats(get().tasks, currentUserId)
       
       get().updateStats()
     } catch (error) {

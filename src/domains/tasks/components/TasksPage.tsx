@@ -146,42 +146,46 @@ export function TasksPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
+      {/* 헤더 */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900">모든 태스크</h1>
-          <p className="text-neutral-600">태스크를 관리하고 진행 상황을 확인하세요</p>
+          <h1 className="text-xl font-bold text-neutral-900">모든 태스크</h1>
+          <p className="text-sm text-neutral-600">
+            총 {tasks.length}개 중 {filteredTasks.length}개 표시
+          </p>
         </div>
         <button
           onClick={() => setIsTaskFormOpen(true)}
-          className="btn-primary"
+          className="btn-primary p-3 rounded-full shadow-lg"
         >
-          <Plus className="h-4 w-4 mr-2" />
-          새 태스크
+          <Plus className="h-5 w-5" />
         </button>
       </div>
 
       {/* 에러 메시지 */}
       {error && (
-        <div className="p-4 rounded-lg bg-error-50 border border-error-200">
+        <div className="p-3 rounded-lg bg-error-50 border border-error-200">
           <p className="text-sm text-error-700">{error}</p>
         </div>
       )}
 
-      {/* 필터 및 검색 */}
-      <div className="card">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {/* 검색 */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-            <input
-              type="text"
-              placeholder="태스크 검색..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="input pl-10"
-            />
-          </div>
+      {/* 검색 및 필터 */}
+      <div className="card p-4 space-y-3">
+        {/* 검색 */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+          <input
+            type="text"
+            placeholder="태스크 검색..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="input pl-10"
+          />
+        </div>
+
+        {/* 필터 그리드 */}
+        <div className="grid grid-cols-2 gap-2">
 
           {/* 상태 필터 */}
           <Select
@@ -203,7 +207,7 @@ export function TasksPage() {
           />
 
           {/* 정렬 */}
-          <div className="flex space-x-2">
+          <div className="flex items-center space-x-2">
             <Select
               value={sortField}
               onChange={(value) => setSortField(value as SortField)}
@@ -214,15 +218,16 @@ export function TasksPage() {
                 { value: 'importance', label: '중요도' },
                 { value: 'priority', label: '우선순위' },
               ]}
+              className="w-32"
             />
             <button
               onClick={toggleSortOrder}
-              className="p-2 rounded-lg border border-neutral-300 hover:bg-neutral-50 transition-colors"
+              className="p-2 rounded-lg hover:bg-neutral-100 transition-colors"
             >
               {sortOrder === 'asc' ? (
-                <SortAsc className="h-4 w-4 text-neutral-600" />
+                <SortAsc className="h-4 w-4 text-neutral-500" />
               ) : (
-                <SortDesc className="h-4 w-4 text-neutral-600" />
+                <SortDesc className="h-4 w-4 text-neutral-500" />
               )}
             </button>
           </div>
@@ -230,54 +235,38 @@ export function TasksPage() {
       </div>
 
       {/* 태스크 목록 */}
-      <div className="card">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-neutral-900">
-            태스크 목록 ({sortedTasks.length}개)
-          </h2>
-          {(searchTerm || statusFilter !== 'all' || categoryFilter) && (
-            <button
-              onClick={() => {
-                setSearchTerm('')
-                setStatusFilter('all')
-                setCategoryFilter('')
-              }}
-              className="text-sm text-primary-600 hover:text-primary-700"
-            >
-              필터 초기화
-            </button>
-          )}
-        </div>
-
+      <div className="space-y-3">
         {sortedTasks.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-neutral-500 mb-2">
+          <div className="card p-8 text-center">
+            <p className="text-neutral-500 mb-4">
               {searchTerm || statusFilter !== 'all' || categoryFilter
                 ? '검색 조건에 맞는 태스크가 없습니다.'
-                : '아직 태스크가 없습니다.'}
+                : '아직 태스크가 없습니다. 새 태스크를 추가해보세요!'}
             </p>
-            {!searchTerm && statusFilter === 'all' && !categoryFilter && (
+            {(searchTerm || statusFilter !== 'all' || categoryFilter) && (
               <button
-                onClick={() => setIsTaskFormOpen(true)}
-                className="text-primary-600 hover:text-primary-700 font-medium"
+                onClick={() => {
+                  setSearchTerm('')
+                  setStatusFilter('all')
+                  setCategoryFilter('')
+                }}
+                className="btn-secondary"
               >
-                첫 번째 태스크를 추가해보세요
+                필터 초기화
               </button>
             )}
           </div>
         ) : (
-          <div className="space-y-3">
-            {sortedTasks.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                onToggleComplete={handleToggleComplete}
-                onEdit={handleEditTask}
-                onDelete={handleDeleteTask}
-                isLoading={isLoading}
-              />
-            ))}
-          </div>
+          sortedTasks.map((task) => (
+            <TaskCard
+              key={task.id}
+              task={task}
+              onToggleComplete={handleToggleComplete}
+              onEdit={handleEditTask}
+              onDelete={handleDeleteTask}
+              isLoading={isLoading}
+            />
+          ))
         )}
       </div>
 
