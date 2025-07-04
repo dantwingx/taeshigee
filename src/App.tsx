@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import { Layout } from '@/components/layout/Layout'
+import { AuthGuard } from '@/components/common/AuthGuard'
 import { HomePage } from '@/domains/tasks/components/HomePage'
 import { TasksPage } from '@/domains/tasks/components/TasksPage'
 import { AnalyticsPage } from '@/domains/analytics/components/AnalyticsPage'
@@ -15,8 +16,15 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         
-        {/* 메인 레이아웃이 적용되는 페이지들 */}
-        <Route path="/" element={<Layout />}>
+        {/* 메인 레이아웃이 적용되는 페이지들 (인증 필요) */}
+        <Route
+          path="/"
+          element={
+            <AuthGuard>
+              <Layout />
+            </AuthGuard>
+          }
+        >
           <Route index element={<HomePage />} />
           <Route path="tasks" element={<TasksPage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
