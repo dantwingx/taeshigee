@@ -10,7 +10,7 @@ export function Header() {
   }
 
   return (
-    <header className="bg-white border-b border-neutral-200 px-4 py-3 sticky top-0 z-40">
+    <header className="bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700 px-4 py-3 sticky top-0 z-40 transition-colors duration-200">
       <div className="max-w-md mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-3">
           {/* 로고 */}
@@ -19,13 +19,13 @@ export function Header() {
               <span className="text-white font-bold text-sm">T</span>
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg font-bold text-neutral-900">Taeshigee</h1>
-              <p className="text-xs text-neutral-500">태스크 관리의 새로운 경험</p>
+              <h1 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">Taeshigee</h1>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">태스크 관리의 새로운 경험</p>
             </div>
           </div>
           
           {user && (
-            <div className="flex items-center space-x-2 text-xs text-neutral-500">
+            <div className="flex items-center space-x-2 text-xs text-neutral-500 dark:text-neutral-400">
               <span className="hidden sm:inline">•</span>
               <span className="hidden sm:inline">{user.email}</span>
             </div>
@@ -34,14 +34,14 @@ export function Header() {
         
         <div className="flex items-center space-x-3">
           {user && (
-            <div className="text-xs text-neutral-500">
+            <div className="text-xs text-neutral-500 dark:text-neutral-400">
               <span className="hidden sm:inline">태스크 </span>
-              <span className="font-medium">{tasks.length}개</span>
+              <span className="font-medium text-neutral-900 dark:text-neutral-100">{tasks.length}개</span>
             </div>
           )}
           <button
             onClick={handleLogout}
-            className="text-xs text-neutral-600 hover:text-neutral-900 transition-colors px-2 py-1 rounded"
+            className="text-xs text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors px-2 py-1 rounded"
           >
             로그아웃
           </button>

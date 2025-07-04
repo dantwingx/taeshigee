@@ -4,7 +4,7 @@ import { BottomNavigation } from './BottomNavigation'
 
 export function Layout() {
   return (
-    <div className="min-h-screen bg-neutral-50 flex flex-col">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-200 flex flex-col">
       {/* 헤더 */}
       <Header />
       

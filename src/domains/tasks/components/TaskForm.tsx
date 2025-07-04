@@ -14,7 +14,8 @@ import {
   AlertTriangle, 
   Target,
   Eye,
-  EyeOff
+  EyeOff,
+  CheckCircle
 } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
 import { Select } from '@/components/ui/Select'
@@ -131,239 +132,244 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
       }
       size="full"
     >
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6 px-4 py-2">
-        {/* 제목 */}
-        <div>
-          <label htmlFor="title" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
-            <Type className="h-4 w-4" />
-            <span>제목 *</span>
-          </label>
-          <input
-            {...register('title')}
-            type="text"
-            id="title"
-            className={`input text-lg ${errors.title ? 'border-error-500' : ''}`}
-            placeholder="태스크 제목을 입력하세요"
-            disabled={isLoading}
-          />
-          {errors.title && (
-            <p className="mt-1 text-sm text-error-600">{errors.title.message}</p>
-          )}
-        </div>
-
-        {/* 설명 */}
-        <div>
-          <label htmlFor="description" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
-            <FileText className="h-4 w-4" />
-            <span>설명</span>
-          </label>
-          <textarea
-            {...register('description')}
-            id="description"
-            rows={4}
-            className={`input resize-none ${errors.description ? 'border-error-500' : ''}`}
-            placeholder="태스크에 대한 자세한 설명을 입력하세요"
-            disabled={isLoading}
-          />
-          {errors.description && (
-            <p className="mt-1 text-sm text-error-600">{errors.description.message}</p>
-          )}
-        </div>
-
-        {/* 마감일 및 마감시간 */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="dueDate" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
-              <Calendar className="h-4 w-4" />
-              <span>마감일</span>
-            </label>
-            <div className="relative">
-              <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+      <div className="h-full flex flex-col">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="flex-1 flex flex-col">
+          {/* 스크롤 가능한 컨텐츠 영역 */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {/* 제목 */}
+            <div>
+              <label htmlFor="title" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+                <Type className="h-4 w-4" />
+                <span>제목 *</span>
+              </label>
               <input
-                {...register('dueDate')}
-                type="date"
-                id="dueDate"
-                className="input pl-10 text-center"
+                {...register('title')}
+                type="text"
+                id="title"
+                className={`input text-lg ${errors.title ? 'border-error-500' : ''}`}
+                placeholder="태스크 제목을 입력하세요"
+                disabled={isLoading}
+              />
+              {errors.title && (
+                <p className="mt-1 text-sm text-error-600">{errors.title.message}</p>
+              )}
+            </div>
+
+            {/* 설명 */}
+            <div>
+              <label htmlFor="description" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+                <FileText className="h-4 w-4" />
+                <span>설명</span>
+              </label>
+              <textarea
+                {...register('description')}
+                id="description"
+                rows={3}
+                className={`input resize-none ${errors.description ? 'border-error-500' : ''}`}
+                placeholder="태스크에 대한 자세한 설명을 입력하세요"
+                disabled={isLoading}
+              />
+              {errors.description && (
+                <p className="mt-1 text-sm text-error-600">{errors.description.message}</p>
+              )}
+            </div>
+
+            {/* 마감일 및 마감시간 */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="dueDate" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+                  <Calendar className="h-4 w-4" />
+                  <span>마감일</span>
+                </label>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                  <input
+                    {...register('dueDate')}
+                    type="date"
+                    id="dueDate"
+                    className="input pl-10 text-center"
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label htmlFor="dueTime" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+                  <Clock className="h-4 w-4" />
+                  <span>마감시간</span>
+                </label>
+                <div className="relative">
+                  <Clock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                  <input
+                    {...register('dueTime')}
+                    type="time"
+                    id="dueTime"
+                    className="input pl-10 text-center"
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 태그 */}
+            <div>
+              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+                <Tag className="h-4 w-4" />
+                <span>태그</span>
+              </label>
+              <TagInput
+                value={watch('tags')}
+                onChange={handleTagsChange}
+                placeholder="태그를 입력하세요 (Enter 또는 쉼표로 구분)"
                 disabled={isLoading}
               />
             </div>
-          </div>
-          
-          <div>
-            <label htmlFor="dueTime" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
-              <Clock className="h-4 w-4" />
-              <span>마감시간</span>
-            </label>
-            <div className="relative">
-              <Clock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-              <input
-                {...register('dueTime')}
-                type="time"
-                id="dueTime"
-                className="input pl-10 text-center"
-                disabled={isLoading}
-              />
+
+            {/* 중요도 */}
+            <div>
+              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+                <AlertTriangle className="h-4 w-4" />
+                <span>중요도</span>
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {importanceOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => handleImportanceSelect(option.value as 'low' | 'medium' | 'high')}
+                    className={`p-2 rounded-lg border-2 transition-colors ${
+                      watch('importance') === option.value
+                        ? 'border-primary-500 bg-primary-50 text-primary-700'
+                        : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
+                    }`}
+                    disabled={isLoading}
+                  >
+                    <div className="flex flex-col items-center space-y-1">
+                      <span className="text-sm">{option.icon}</span>
+                      <span className="text-xs font-medium">{option.label}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 우선순위 */}
+            <div>
+              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+                <Target className="h-4 w-4" />
+                <span>우선순위</span>
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {priorityOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => handlePrioritySelect(option.value as 'low' | 'medium' | 'high')}
+                    className={`p-2 rounded-lg border-2 transition-colors ${
+                      watch('priority') === option.value
+                        ? 'border-primary-500 bg-primary-50 text-primary-700'
+                        : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
+                    }`}
+                    disabled={isLoading}
+                  >
+                    <div className="flex flex-col items-center space-y-1">
+                      <span className="text-sm">{option.icon}</span>
+                      <span className="text-xs font-medium">{option.label}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 카테고리 */}
+            <div>
+              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+                <Folder className="h-4 w-4" />
+                <span>카테고리</span>
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {categoryOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => handleCategorySelect(option.value)}
+                    className={`p-2 rounded-lg border-2 transition-colors ${
+                      watch('category') === option.value
+                        ? 'border-primary-500 bg-primary-50 text-primary-700'
+                        : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
+                    }`}
+                    disabled={isLoading}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <Folder className="h-3 w-3" />
+                      <span className="text-xs font-medium">{option.label}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 공개 여부 */}
+            <div>
+              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+                {watch('isPublic') ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                <span>공개 여부</span>
+              </label>
+              <div className="flex items-center space-x-4">
+                <label className="flex items-center space-x-2">
+                  <input
+                    {...register('isPublic')}
+                    type="radio"
+                    value="false"
+                    className="text-primary-600"
+                    disabled={isLoading}
+                  />
+                  <span className="text-sm">비공개</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <input
+                    {...register('isPublic')}
+                    type="radio"
+                    value="true"
+                    className="text-primary-600"
+                    disabled={isLoading}
+                  />
+                  <span className="text-sm">공개</span>
+                </label>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* 태그 */}
-        <div>
-          <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
-            <Tag className="h-4 w-4" />
-            <span>태그</span>
-          </label>
-          <TagInput
-            value={watch('tags')}
-            onChange={handleTagsChange}
-            placeholder="태그를 입력하세요 (Enter 또는 쉼표로 구분)"
-            disabled={isLoading}
-          />
-        </div>
-
-        {/* 중요도 */}
-        <div>
-          <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
-            <AlertTriangle className="h-4 w-4" />
-            <span>중요도</span>
-          </label>
-          <div className="grid grid-cols-3 gap-2">
-            {importanceOptions.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => handleImportanceSelect(option.value as 'low' | 'medium' | 'high')}
-                className={`p-3 rounded-lg border-2 transition-colors ${
-                  watch('importance') === option.value
-                    ? 'border-primary-500 bg-primary-50 text-primary-700'
-                    : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
-                }`}
-                disabled={isLoading}
-              >
-                <div className="flex flex-col items-center space-y-1">
-                  <span className="text-lg">{option.icon}</span>
-                  <span className="text-sm font-medium">{option.label}</span>
-                </div>
-              </button>
-            ))}
+          {/* 고정된 버튼 영역 */}
+          <div className="flex justify-end space-x-3 p-4 border-t bg-white flex-shrink-0">
+            <button
+              type="button"
+              onClick={handleClose}
+              className="btn-secondary px-6 py-3"
+              disabled={isLoading}
+            >
+              취소
+            </button>
+            <button
+              type="submit"
+              className="btn-primary px-6 py-3 flex items-center space-x-2"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>저장 중...</span>
+                </>
+              ) : (
+                <>
+                  <Save className="h-4 w-4" />
+                  <span>{task ? '수정' : '생성'}</span>
+                </>
+              )}
+            </button>
           </div>
-        </div>
-
-        {/* 우선순위 */}
-        <div>
-          <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
-            <Target className="h-4 w-4" />
-            <span>우선순위</span>
-          </label>
-          <div className="grid grid-cols-3 gap-2">
-            {priorityOptions.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => handlePrioritySelect(option.value as 'low' | 'medium' | 'high')}
-                className={`p-3 rounded-lg border-2 transition-colors ${
-                  watch('priority') === option.value
-                    ? 'border-primary-500 bg-primary-50 text-primary-700'
-                    : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
-                }`}
-                disabled={isLoading}
-              >
-                <div className="flex flex-col items-center space-y-1">
-                  <span className="text-lg">{option.icon}</span>
-                  <span className="text-sm font-medium">{option.label}</span>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 카테고리 */}
-        <div>
-          <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
-            <Folder className="h-4 w-4" />
-            <span>카테고리</span>
-          </label>
-          <div className="grid grid-cols-2 gap-2">
-            {categoryOptions.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => handleCategorySelect(option.value)}
-                className={`p-3 rounded-lg border-2 transition-colors ${
-                  watch('category') === option.value
-                    ? 'border-primary-500 bg-primary-50 text-primary-700'
-                    : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
-                }`}
-                disabled={isLoading}
-              >
-                <div className="flex items-center space-x-2">
-                  <Folder className="h-4 w-4" />
-                  <span className="text-sm font-medium">{option.label}</span>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 공개 여부 */}
-        <div>
-          <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
-            {watch('isPublic') ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-            <span>공개 여부</span>
-          </label>
-          <div className="flex items-center space-x-4">
-            <label className="flex items-center space-x-2">
-              <input
-                {...register('isPublic')}
-                type="radio"
-                value="false"
-                className="text-primary-600"
-                disabled={isLoading}
-              />
-              <span className="text-sm">비공개</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <input
-                {...register('isPublic')}
-                type="radio"
-                value="true"
-                className="text-primary-600"
-                disabled={isLoading}
-              />
-              <span className="text-sm">공개</span>
-            </label>
-          </div>
-        </div>
-
-        {/* 버튼 */}
-        <div className="flex justify-end space-x-3 pt-6 border-t">
-          <button
-            type="button"
-            onClick={handleClose}
-            className="btn-secondary px-6 py-3"
-            disabled={isLoading}
-          >
-            취소
-          </button>
-          <button
-            type="submit"
-            className="btn-primary px-6 py-3 flex items-center space-x-2"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>저장 중...</span>
-              </>
-            ) : (
-              <>
-                <Save className="h-4 w-4" />
-                <span>{task ? '수정' : '생성'}</span>
-              </>
-            )}
-          </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </Modal>
   )
 } 

@@ -47,22 +47,22 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
       />
       
       {/* Modal */}
-      <div className={`relative bg-white w-full mx-4 ${sizeClasses[size]} ${
-        size === 'full' ? 'h-full rounded-none' : 'rounded-lg shadow-xl'
-      }`}>
+      <div className={`relative bg-white dark:bg-neutral-800 w-full mx-4 ${sizeClasses[size]} ${
+        size === 'full' ? 'h-full rounded-none flex flex-col' : 'rounded-lg shadow-xl'
+      } transition-colors duration-200`}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold text-neutral-900">{title}</h2>
+        <div className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-700 flex-shrink-0">
+          <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{title}</h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-neutral-100 transition-colors"
+            className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
           >
-            <X className="h-5 w-5 text-neutral-500" />
+            <X className="h-5 w-5 text-neutral-500 dark:text-neutral-400" />
           </button>
         </div>
         
         {/* Content */}
-        <div className={`${size === 'full' ? 'h-full overflow-y-auto' : 'p-4'}`}>
+        <div className={`flex-1 ${size === 'full' ? 'overflow-hidden' : 'p-4'}`}>
           {children}
         </div>
       </div>

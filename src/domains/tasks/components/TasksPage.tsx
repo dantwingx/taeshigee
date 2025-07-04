@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Plus, Search, Filter, SortAsc, SortDesc, AlertTriangle, Target, Eye, EyeOff } from 'lucide-react'
+import { Plus, Search, Filter, SortAsc, SortDesc, AlertTriangle, Target, Eye, EyeOff, ChevronDown, ChevronUp, CheckCircle } from 'lucide-react'
 import { TaskForm } from './TaskForm'
 import { TaskCard } from './TaskCard'
 import { Select } from '@/components/ui/Select'
@@ -33,6 +33,7 @@ export function TasksPage() {
   const [publicFilter, setPublicFilter] = useState('all')
   const [sortField, setSortField] = useState<SortField>('createdAt')
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc')
+  const [isFilterExpanded, setIsFilterExpanded] = useState(false)
 
   // 사용자별 태스크 필터링
   const userTasks = user ? tasks.filter(task => task.userId === user.id) : []
@@ -178,6 +179,10 @@ export function TasksPage() {
     setPublicFilter('all')
   }
 
+  const toggleFilterExpansion = () => {
+    setIsFilterExpanded(!isFilterExpanded)
+  }
+
   return (
     <div className="space-y-4">
       {/* 헤더 */}
@@ -217,131 +222,152 @@ export function TasksPage() {
           />
         </div>
 
-        {/* 필터 그리드 */}
-        <div className="space-y-3">
-          {/* 상태 필터 */}
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">상태</label>
-            <div className="grid grid-cols-4 gap-2">
-              {[
-                { value: 'all', label: '전체' },
-                { value: 'pending', label: '진행 중' },
-                { value: 'completed', label: '완료됨' },
-                { value: 'overdue', label: '지연됨' },
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setStatusFilter(option.value as FilterStatus)}
-                  className={`p-2 rounded-lg border-2 transition-colors text-sm ${
-                    statusFilter === option.value
-                      ? 'border-primary-500 bg-primary-50 text-primary-700'
-                      : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
-                  }`}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
+        {/* 기본 필터 (항상 표시) */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <CheckCircle className="h-4 w-4 text-neutral-600" />
+            <span className="text-sm font-medium text-neutral-700">상태</span>
           </div>
-
-          {/* 중요도 필터 */}
-          <div>
-            <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
-              <AlertTriangle className="h-4 w-4" />
-              <span>중요도</span>
-            </label>
-            <div className="grid grid-cols-4 gap-2">
-              {[
-                { value: 'all', label: '전체', icon: '🔍' },
-                { value: 'low', label: '낮음', icon: '🟢' },
-                { value: 'medium', label: '보통', icon: '🟡' },
-                { value: 'high', label: '높음', icon: '🔴' },
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setImportanceFilter(option.value)}
-                  className={`p-2 rounded-lg border-2 transition-colors text-sm ${
-                    importanceFilter === option.value
-                      ? 'border-primary-500 bg-primary-50 text-primary-700'
-                      : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
-                  }`}
-                >
-                  <div className="flex flex-col items-center space-y-1">
-                    <span>{option.icon}</span>
-                    <span>{option.label}</span>
-                  </div>
-                </button>
-              ))}
-            </div>
+          <div className="flex items-center space-x-2">
+            {[
+              { value: 'all', label: '전체' },
+              { value: 'pending', label: '진행 중' },
+              { value: 'completed', label: '완료됨' },
+              { value: 'overdue', label: '지연됨' },
+            ].map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setStatusFilter(option.value as FilterStatus)}
+                className={`px-3 py-1 rounded-lg border-2 transition-colors text-xs ${
+                  statusFilter === option.value
+                    ? 'border-primary-500 bg-primary-50 text-primary-700'
+                    : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
           </div>
+        </div>
 
-          {/* 우선순위 필터 */}
-          <div>
-            <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
-              <Target className="h-4 w-4" />
-              <span>우선순위</span>
-            </label>
-            <div className="grid grid-cols-4 gap-2">
-              {[
-                { value: 'all', label: '전체', icon: '🔍' },
-                { value: 'low', label: '낮음', icon: '📌' },
-                { value: 'medium', label: '보통', icon: '📍' },
-                { value: 'high', label: '높음', icon: '🎯' },
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setPriorityFilter(option.value)}
-                  className={`p-2 rounded-lg border-2 transition-colors text-sm ${
-                    priorityFilter === option.value
-                      ? 'border-primary-500 bg-primary-50 text-primary-700'
-                      : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
-                  }`}
-                >
-                  <div className="flex flex-col items-center space-y-1">
-                    <span>{option.icon}</span>
-                    <span>{option.label}</span>
-                  </div>
-                </button>
-              ))}
+        {/* 고급 필터 토글 */}
+        <div className="flex items-center justify-between">
+          <button
+            onClick={toggleFilterExpansion}
+            className="flex items-center space-x-2 text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
+          >
+            <Filter className="h-4 w-4" />
+            <span>고급 필터</span>
+            {isFilterExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </button>
+          <button
+            onClick={clearFilters}
+            className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
+          >
+            초기화
+          </button>
+        </div>
+
+        {/* 고급 필터 (폴딩) */}
+        {isFilterExpanded && (
+          <div className="space-y-3 pt-3 border-t">
+            {/* 중요도 필터 */}
+            <div>
+              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+                <AlertTriangle className="h-4 w-4" />
+                <span>중요도</span>
+              </label>
+              <div className="grid grid-cols-4 gap-2">
+                {[
+                  { value: 'all', label: '전체', icon: '🔍' },
+                  { value: 'low', label: '낮음', icon: '🟢' },
+                  { value: 'medium', label: '보통', icon: '🟡' },
+                  { value: 'high', label: '높음', icon: '🔴' },
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setImportanceFilter(option.value)}
+                    className={`p-2 rounded-lg border-2 transition-colors text-xs ${
+                      importanceFilter === option.value
+                        ? 'border-primary-500 bg-primary-50 text-primary-700'
+                        : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
+                    }`}
+                  >
+                    <div className="flex flex-col items-center space-y-1">
+                      <span className="text-xs">{option.icon}</span>
+                      <span className="text-xs">{option.label}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* 공개 여부 필터 */}
-          <div>
-            <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
-              <Eye className="h-4 w-4" />
-              <span>공개 여부</span>
-            </label>
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { value: 'all', label: '전체', icon: '🔍' },
-                { value: 'private', label: '비공개', icon: '👁️‍🗨️' },
-                { value: 'public', label: '공개', icon: '👁️' },
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setPublicFilter(option.value)}
-                  className={`p-2 rounded-lg border-2 transition-colors text-sm ${
-                    publicFilter === option.value
-                      ? 'border-primary-500 bg-primary-50 text-primary-700'
-                      : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
-                  }`}
-                >
-                  <div className="flex flex-col items-center space-y-1">
-                    <span>{option.icon}</span>
-                    <span>{option.label}</span>
-                  </div>
-                </button>
-              ))}
+            {/* 우선순위 필터 */}
+            <div>
+              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+                <Target className="h-4 w-4" />
+                <span>우선순위</span>
+              </label>
+              <div className="grid grid-cols-4 gap-2">
+                {[
+                  { value: 'all', label: '전체', icon: '🔍' },
+                  { value: 'low', label: '낮음', icon: '📌' },
+                  { value: 'medium', label: '보통', icon: '📍' },
+                  { value: 'high', label: '높음', icon: '🎯' },
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setPriorityFilter(option.value)}
+                    className={`p-2 rounded-lg border-2 transition-colors text-xs ${
+                      priorityFilter === option.value
+                        ? 'border-primary-500 bg-primary-50 text-primary-700'
+                        : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
+                    }`}
+                  >
+                    <div className="flex flex-col items-center space-y-1">
+                      <span className="text-xs">{option.icon}</span>
+                      <span className="text-xs">{option.label}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* 정렬 및 초기화 */}
-          <div className="flex items-center justify-between">
+            {/* 공개 여부 필터 */}
+            <div>
+              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+                <Eye className="h-4 w-4" />
+                <span>공개 여부</span>
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { value: 'all', label: '전체', icon: '🔍' },
+                  { value: 'private', label: '비공개', icon: '👁️‍🗨️' },
+                  { value: 'public', label: '공개', icon: '👁️' },
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setPublicFilter(option.value)}
+                    className={`p-2 rounded-lg border-2 transition-colors text-xs ${
+                      publicFilter === option.value
+                        ? 'border-primary-500 bg-primary-50 text-primary-700'
+                        : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
+                    }`}
+                  >
+                    <div className="flex flex-col items-center space-y-1">
+                      <span className="text-xs">{option.icon}</span>
+                      <span className="text-xs">{option.label}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 정렬 */}
             <div className="flex items-center space-x-2">
               <Select
                 value={sortField}
@@ -366,14 +392,8 @@ export function TasksPage() {
                 )}
               </button>
             </div>
-            <button
-              onClick={clearFilters}
-              className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
-            >
-              초기화
-            </button>
           </div>
-        </div>
+        )}
       </div>
 
       {/* 태스크 목록 */}

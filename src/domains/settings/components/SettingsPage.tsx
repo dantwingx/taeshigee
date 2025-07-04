@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { User, Moon, Sun, Folder, AlertTriangle, Target, Plus, X } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
+import { useDarkModeStore } from '@/stores'
+import { applyDarkMode } from '@/utils/darkMode'
 
 interface Category {
   id: string
@@ -24,7 +26,7 @@ interface PriorityLevel {
 
 export function SettingsPage() {
   const { user } = useAuthStore()
-  const [isDarkMode, setIsDarkMode] = useState(false)
+  const { isDarkMode, toggleDarkMode } = useDarkModeStore()
   const [categories, setCategories] = useState<Category[]>([
     { id: '1', name: '업무', color: 'bg-blue-100 text-blue-700' },
     { id: '2', name: '개인', color: 'bg-green-100 text-green-700' },
@@ -46,15 +48,26 @@ export function SettingsPage() {
   const [newPriority, setNewPriority] = useState('')
 
   const handleToggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode)
-    // TODO: 실제 다크모드 구현
+    toggleDarkMode()
+    applyDarkMode(!isDarkMode)
   }
 
   const addCategory = () => {
-    if (newCategory.trim()) {
+    const trimmedName = newCategory.trim()
+    if (trimmedName) {
+      // 중복 체크
+      const isDuplicate = categories.some(cat => 
+        cat.name.toLowerCase() === trimmedName.toLowerCase()
+      )
+      
+      if (isDuplicate) {
+        alert('이미 존재하는 카테고리입니다.')
+        return
+      }
+
       const newCat: Category = {
         id: Date.now().toString(),
-        name: newCategory.trim(),
+        name: trimmedName,
         color: 'bg-gray-100 text-gray-700',
       }
       setCategories([...categories, newCat])
@@ -67,10 +80,21 @@ export function SettingsPage() {
   }
 
   const addImportance = () => {
-    if (newImportance.trim()) {
+    const trimmedName = newImportance.trim()
+    if (trimmedName) {
+      // 중복 체크
+      const isDuplicate = importanceLevels.some(imp => 
+        imp.name.toLowerCase() === trimmedName.toLowerCase()
+      )
+      
+      if (isDuplicate) {
+        alert('이미 존재하는 중요도입니다.')
+        return
+      }
+
       const newImp: ImportanceLevel = {
         id: Date.now().toString(),
-        name: newImportance.trim(),
+        name: trimmedName,
         icon: '⚡',
         color: 'bg-gray-100 text-gray-700',
       }
@@ -84,10 +108,21 @@ export function SettingsPage() {
   }
 
   const addPriority = () => {
-    if (newPriority.trim()) {
+    const trimmedName = newPriority.trim()
+    if (trimmedName) {
+      // 중복 체크
+      const isDuplicate = priorityLevels.some(pri => 
+        pri.name.toLowerCase() === trimmedName.toLowerCase()
+      )
+      
+      if (isDuplicate) {
+        alert('이미 존재하는 우선순위입니다.')
+        return
+      }
+
       const newPri: PriorityLevel = {
         id: Date.now().toString(),
-        name: newPriority.trim(),
+        name: trimmedName,
         icon: '📌',
         color: 'bg-gray-100 text-gray-700',
       }
@@ -104,32 +139,32 @@ export function SettingsPage() {
     <div className="space-y-6">
       {/* 헤더 */}
       <div>
-        <h1 className="text-xl font-bold text-neutral-900">마이</h1>
-        <p className="text-sm text-neutral-600">내 정보와 설정을 관리하세요</p>
+        <h1 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">마이</h1>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">내 정보와 설정을 관리하세요</p>
       </div>
 
       {/* 사용자 정보 */}
       <div className="card p-4">
         <div className="flex items-center space-x-3 mb-4">
-          <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
-            <User className="h-6 w-6 text-primary-600" />
+          <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center">
+            <User className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h2 className="font-semibold text-neutral-900">{user?.email}</h2>
-            <p className="text-sm text-neutral-600">사용자 ID: {user?.id}</p>
+            <h2 className="font-semibold text-neutral-900 dark:text-neutral-100">{user?.email}</h2>
+            <p className="text-sm text-neutral-600 dark:text-neutral-400">사용자 ID: {user?.id}</p>
           </div>
         </div>
         
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <span className="text-neutral-600">가입일:</span>
-            <span className="ml-2 text-neutral-900">
+            <span className="text-neutral-600 dark:text-neutral-400">가입일:</span>
+            <span className="ml-2 text-neutral-900 dark:text-neutral-100">
               {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('ko-KR') : '-'}
             </span>
           </div>
           <div>
-            <span className="text-neutral-600">마지막 업데이트:</span>
-            <span className="ml-2 text-neutral-900">
+            <span className="text-neutral-600 dark:text-neutral-400">마지막 업데이트:</span>
+            <span className="ml-2 text-neutral-900 dark:text-neutral-100">
               {user?.updatedAt ? new Date(user.updatedAt).toLocaleDateString('ko-KR') : '-'}
             </span>
           </div>
@@ -140,10 +175,10 @@ export function SettingsPage() {
       <div className="card p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            {isDarkMode ? <Moon className="h-5 w-5 text-neutral-600" /> : <Sun className="h-5 w-5 text-neutral-600" />}
+            {isDarkMode ? <Moon className="h-5 w-5 text-neutral-600 dark:text-neutral-400" /> : <Sun className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />}
             <div>
-              <h3 className="font-medium text-neutral-900">다크모드</h3>
-              <p className="text-sm text-neutral-600">어두운 테마로 변경</p>
+              <h3 className="font-medium text-neutral-900 dark:text-neutral-100">다크모드</h3>
+              <p className="text-sm text-neutral-600 dark:text-neutral-400">어두운 테마로 변경</p>
             </div>
           </div>
           <button
@@ -165,8 +200,8 @@ export function SettingsPage() {
       <div className="card p-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
-            <Folder className="h-5 w-5 text-neutral-600" />
-            <h3 className="font-medium text-neutral-900">카테고리</h3>
+            <Folder className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
+            <h3 className="font-medium text-neutral-900 dark:text-neutral-100">카테고리</h3>
           </div>
           <div className="flex items-center space-x-2">
             <input
@@ -179,9 +214,9 @@ export function SettingsPage() {
             />
             <button
               onClick={addCategory}
-              className="p-1 rounded-lg hover:bg-neutral-100 transition-colors"
+              className="p-1 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
             >
-              <Plus className="h-4 w-4 text-neutral-600" />
+              <Plus className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
             </button>
           </div>
         </div>
@@ -190,16 +225,16 @@ export function SettingsPage() {
           {categories.map((category) => (
             <div
               key={category.id}
-              className="flex items-center justify-between p-2 rounded-lg border border-neutral-200"
+              className="flex items-center justify-between p-2 rounded-lg border border-neutral-200 dark:border-neutral-700"
             >
               <span className={`px-2 py-1 rounded text-xs font-medium ${category.color}`}>
                 {category.name}
               </span>
               <button
                 onClick={() => removeCategory(category.id)}
-                className="p-1 rounded hover:bg-neutral-100 transition-colors"
+                className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
               >
-                <X className="h-3 w-3 text-neutral-500" />
+                <X className="h-3 w-3 text-neutral-500 dark:text-neutral-400" />
               </button>
             </div>
           ))}
@@ -210,8 +245,8 @@ export function SettingsPage() {
       <div className="card p-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
-            <AlertTriangle className="h-5 w-5 text-neutral-600" />
-            <h3 className="font-medium text-neutral-900">중요도</h3>
+            <AlertTriangle className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
+            <h3 className="font-medium text-neutral-900 dark:text-neutral-100">중요도</h3>
           </div>
           <div className="flex items-center space-x-2">
             <input
@@ -224,9 +259,9 @@ export function SettingsPage() {
             />
             <button
               onClick={addImportance}
-              className="p-1 rounded-lg hover:bg-neutral-100 transition-colors"
+              className="p-1 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
             >
-              <Plus className="h-4 w-4 text-neutral-600" />
+              <Plus className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
             </button>
           </div>
         </div>
@@ -235,16 +270,16 @@ export function SettingsPage() {
           {importanceLevels.map((importance) => (
             <div
               key={importance.id}
-              className="flex items-center justify-between p-2 rounded-lg border border-neutral-200"
+              className="flex items-center justify-between p-2 rounded-lg border border-neutral-200 dark:border-neutral-700"
             >
               <span className={`px-2 py-1 rounded text-xs font-medium ${importance.color}`}>
                 {importance.icon} {importance.name}
               </span>
               <button
                 onClick={() => removeImportance(importance.id)}
-                className="p-1 rounded hover:bg-neutral-100 transition-colors"
+                className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
               >
-                <X className="h-3 w-3 text-neutral-500" />
+                <X className="h-3 w-3 text-neutral-500 dark:text-neutral-400" />
               </button>
             </div>
           ))}
@@ -255,8 +290,8 @@ export function SettingsPage() {
       <div className="card p-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
-            <Target className="h-5 w-5 text-neutral-600" />
-            <h3 className="font-medium text-neutral-900">우선순위</h3>
+            <Target className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
+            <h3 className="font-medium text-neutral-900 dark:text-neutral-100">우선순위</h3>
           </div>
           <div className="flex items-center space-x-2">
             <input
@@ -269,9 +304,9 @@ export function SettingsPage() {
             />
             <button
               onClick={addPriority}
-              className="p-1 rounded-lg hover:bg-neutral-100 transition-colors"
+              className="p-1 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
             >
-              <Plus className="h-4 w-4 text-neutral-600" />
+              <Plus className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
             </button>
           </div>
         </div>
@@ -280,16 +315,16 @@ export function SettingsPage() {
           {priorityLevels.map((priority) => (
             <div
               key={priority.id}
-              className="flex items-center justify-between p-2 rounded-lg border border-neutral-200"
+              className="flex items-center justify-between p-2 rounded-lg border border-neutral-200 dark:border-neutral-700"
             >
               <span className={`px-2 py-1 rounded text-xs font-medium ${priority.color}`}>
                 {priority.icon} {priority.name}
               </span>
               <button
                 onClick={() => removePriority(priority.id)}
-                className="p-1 rounded hover:bg-neutral-100 transition-colors"
+                className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
               >
-                <X className="h-3 w-3 text-neutral-500" />
+                <X className="h-3 w-3 text-neutral-500 dark:text-neutral-400" />
               </button>
             </div>
           ))}

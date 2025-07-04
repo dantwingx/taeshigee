@@ -4,6 +4,10 @@ import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import App from './App.tsx'
 import './styles/globals.css'
+import { initializeDarkMode } from './utils/darkMode'
+
+// 다크모드 초기화
+initializeDarkMode()
 
 const queryClient = new QueryClient({
   defaultOptions: {
