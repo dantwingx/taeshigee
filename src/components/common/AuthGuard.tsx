@@ -9,7 +9,7 @@ interface AuthGuardProps {
 
 export function AuthGuard({ children }: AuthGuardProps) {
   const { isAuthenticated, user } = useAuthStore()
-  const { setCurrentUser } = useTaskStore()
+  const { setCurrentUserId } = useTaskStore()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -19,9 +19,9 @@ export function AuthGuard({ children }: AuthGuardProps) {
       navigate('/login', { state: { from: location } })
     } else if (user) {
       // 인증된 사용자가 있으면 태스크 로드
-      setCurrentUser(user.id)
+      setCurrentUserId(user.id)
     }
-  }, [isAuthenticated, user, setCurrentUser, navigate, location])
+  }, [isAuthenticated, user, setCurrentUserId, navigate, location])
 
   if (!isAuthenticated) {
     return null

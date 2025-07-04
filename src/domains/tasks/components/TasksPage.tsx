@@ -4,6 +4,7 @@ import { TaskForm } from './TaskForm'
 import { TaskCard } from './TaskCard'
 import { Select } from '@/components/ui/Select'
 import { useTaskStore } from '@/stores/taskStore'
+import { useAuthStore } from '@/stores/authStore'
 import type { Task, CreateTaskData, UpdateTaskData } from '@/types/task'
 
 type SortField = 'createdAt' | 'dueDate' | 'title' | 'importance' | 'priority'
@@ -11,6 +12,7 @@ type SortOrder = 'asc' | 'desc'
 type FilterStatus = 'all' | 'completed' | 'pending' | 'overdue'
 
 export function TasksPage() {
+  const { user } = useAuthStore()
   const {
     tasks,
     isLoading,
@@ -32,18 +34,21 @@ export function TasksPage() {
   const [sortField, setSortField] = useState<SortField>('createdAt')
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc')
 
+  // 사용자별 태스크 필터링
+  const userTasks = user ? tasks.filter(task => task.userId === user.id) : []
+
   // 카테고리 옵션 생성
   const categoryOptions = useMemo(() => {
-    const categories = Array.from(new Set(tasks.map(task => task.category).filter(Boolean) as string[]))
+    const categories = Array.from(new Set(userTasks.map(task => task.category).filter(Boolean) as string[]))
     return [
       { value: '', label: '전체 카테고리' },
       ...categories.map(category => ({ value: category, label: category }))
     ]
-  }, [tasks])
+  }, [userTasks])
 
   // 필터링된 태스크
   const filteredTasks = useMemo(() => {
-    let filtered = tasks
+    let filtered = userTasks
 
     // 검색 필터
     if (searchTerm) {
@@ -91,7 +96,7 @@ export function TasksPage() {
     }
 
     return filtered
-  }, [tasks, searchTerm, statusFilter, categoryFilter, importanceFilter, priorityFilter, publicFilter])
+  }, [userTasks, searchTerm, statusFilter, categoryFilter, importanceFilter, priorityFilter, publicFilter])
 
   // 정렬된 태스크
   const sortedTasks = useMemo(() => {
@@ -180,7 +185,7 @@ export function TasksPage() {
         <div>
           <h1 className="text-xl font-bold text-neutral-900">모든 태스크</h1>
           <p className="text-sm text-neutral-600">
-            총 {tasks.length}개 중 {filteredTasks.length}개 표시
+            총 {userTasks.length}개 중 {filteredTasks.length}개 표시
           </p>
         </div>
         <button
@@ -376,11 +381,11 @@ export function TasksPage() {
         {sortedTasks.length === 0 ? (
           <div className="card p-8 text-center">
             <p className="text-neutral-500 mb-4">
-              {filteredTasks.length === 0 && tasks.length > 0
+              {filteredTasks.length === 0 && userTasks.length > 0
                 ? '검색 조건에 맞는 태스크가 없습니다.'
                 : '아직 태스크가 없습니다. 새 태스크를 추가해보세요!'}
             </p>
-            {filteredTasks.length === 0 && tasks.length > 0 && (
+            {filteredTasks.length === 0 && userTasks.length > 0 && (
               <button
                 onClick={clearFilters}
                 className="btn-secondary"

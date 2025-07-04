@@ -3,31 +3,39 @@ import { Plus } from 'lucide-react'
 import { TaskForm } from './TaskForm'
 import { TaskCard } from './TaskCard'
 import { useTaskStore } from '@/stores/taskStore'
+import { useAuthStore } from '@/stores/authStore'
 import type { Task, CreateTaskData, UpdateTaskData } from '@/types/task'
 
 export function HomePage() {
+  const { user } = useAuthStore()
   const {
     tasks,
-    stats,
     isLoading,
     error,
     createTask,
     updateTask,
     deleteTask,
     toggleTaskCompletion,
-    updateStats,
+    getTaskStats,
   } = useTaskStore()
 
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false)
   const [editingTask, setEditingTask] = useState<Task | null>(null)
 
-  // 컴포넌트 마운트 시 통계 업데이트
-  useEffect(() => {
-    updateStats()
-  }, [updateStats])
+  // 사용자별 통계 계산
+  const stats = user ? getTaskStats(user.id) : {
+    total: 0,
+    completed: 0,
+    pending: 0,
+    overdue: 0,
+    completionRate: 0,
+  }
+
+  // 사용자별 태스크 필터링
+  const userTasks = user ? tasks.filter(task => task.userId === user.id) : []
 
   // 오늘 마감 예정 태스크 필터링
-  const todayTasks = tasks.filter(task => {
+  const todayTasks = userTasks.filter(task => {
     if (!task.dueDate) return false
     const today = new Date()
     const dueDate = new Date(task.dueDate)
@@ -35,7 +43,7 @@ export function HomePage() {
   })
 
   // 최근 태스크 (최근 3개)
-  const recentTasks = tasks
+  const recentTasks = userTasks
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 3)
 
