@@ -1,457 +1,150 @@
 import { create } from 'zustand'
-import type { Task, CreateTaskData, UpdateTaskData, TaskFilters, TaskStats } from '@/types/task'
+import { persist } from 'zustand/middleware'
+import type { Task, CreateTaskData, UpdateTaskData } from '@/types/task'
 
-interface TaskState {
+interface TaskStore {
   tasks: Task[]
-  currentTask: Task | null
-  filters: TaskFilters
-  stats: TaskStats
+  currentUserId: string | null
   isLoading: boolean
   error: string | null
-  currentUserId: string | null
-}
-
-interface TaskActions {
-  // CRUD Operations
-  createTask: (taskData: CreateTaskData) => Promise<void>
-  updateTask: (id: string, taskData: UpdateTaskData) => Promise<void>
+  setCurrentUserId: (userId: string) => void
+  createTask: (data: CreateTaskData) => Promise<void>
+  updateTask: (id: string, data: UpdateTaskData) => Promise<void>
   deleteTask: (id: string) => Promise<void>
   toggleTaskCompletion: (id: string) => Promise<void>
-  
-  // User Management
-  setCurrentUser: (userId: string) => void
-  clearCurrentUser: () => void
-  loadUserTasks: (userId: string) => Promise<void>
-  
-  // Filters and View
-  setFilters: (filters: Partial<TaskFilters>) => void
-  clearFilters: () => void
-  
-  // Stats
-  updateStats: () => void
-  
-  // State Management
-  setCurrentTask: (task: Task | null) => void
-  clearError: () => void
-}
-
-interface TaskStore extends TaskState, TaskActions {}
-
-const defaultFilters: TaskFilters = {
-  view: 'daily',
-  date: new Date().toISOString().split('T')[0],
-  hideCompleted: false,
-  sortBy: 'dueDate',
-  order: 'asc',
-}
-
-const defaultStats: TaskStats = {
-  total: 0,
-  completed: 0,
-  pending: 0,
-  completionRate: 0,
-}
-
-// 로컬 스토리지 키
-const TASKS_STORAGE_KEY = 'taeshigee_tasks'
-
-// 로컬 스토리지에서 태스크 로드
-const loadTasksFromStorage = (): Record<string, Task[]> => {
-  try {
-    const stored = localStorage.getItem(TASKS_STORAGE_KEY)
-    const tasksByUser = stored ? JSON.parse(stored) : {}
-    
-    // 테스트용 샘플 데이터 (여러 사용자용)
-    const sampleUsers = {
-      'dGVzdEB0ZXN0': [ // test@test.com
-        {
-          id: '1',
-          title: '프로젝트 기획서 작성',
-          description: '새로운 웹 애플리케이션 프로젝트의 기획서를 작성합니다.',
-          dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-          dueTime: '18:00',
-          recurrenceType: 'none',
-          recurrenceDetail: null,
-          importance: 'high',
-          priority: 'high',
-          isCompleted: false,
-          tags: ['업무', '기획', '프로젝트'],
-          category: 'work',
-          attachments: [],
-          subtasks: [],
-          createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-        {
-          id: '2',
-          title: '팀 미팅 참석',
-          description: '주간 팀 미팅에 참석하여 진행 상황을 공유합니다.',
-          dueDate: new Date().toISOString(),
-          dueTime: '10:00',
-          recurrenceType: 'weekly',
-          recurrenceDetail: 'monday',
-          importance: 'medium',
-          priority: 'medium',
-          isCompleted: true,
-          tags: ['미팅', '팀', '주간'],
-          category: 'work',
-          attachments: [],
-          subtasks: [],
-          createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-      ],
-      'dXNlcjFAdGVzdA': [ // user1@test
-        {
-          id: '3',
-          title: '운동하기',
-          description: '헬스장에서 1시간 운동을 합니다.',
-          dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
-          dueTime: '19:00',
-          recurrenceType: 'daily',
-          recurrenceDetail: 'weekdays',
-          importance: 'medium',
-          priority: 'low',
-          isCompleted: false,
-          tags: ['건강', '운동', '헬스'],
-          category: 'health',
-          attachments: [],
-          subtasks: [],
-          createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-        {
-          id: '4',
-          title: 'React 학습',
-          description: 'React Hooks와 Context API에 대해 학습합니다.',
-          dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-          dueTime: '20:00',
-          recurrenceType: 'none',
-          recurrenceDetail: null,
-          importance: 'high',
-          priority: 'medium',
-          isCompleted: false,
-          tags: ['학습', '프로그래밍', 'React'],
-          category: 'study',
-          attachments: [],
-          subtasks: [],
-          createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-      ],
-      'dXNlcjJAdGVzdA': [ // user2@test
-        {
-          id: '5',
-          title: '장보기',
-          description: '주말 장보기를 위해 필요한 물건들을 구매합니다.',
-          dueDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(),
-          dueTime: '14:00',
-          recurrenceType: 'weekly',
-          recurrenceDetail: 'saturday',
-          importance: 'low',
-          priority: 'low',
-          isCompleted: false,
-          tags: ['개인', '쇼핑', '주말'],
-          category: 'personal',
-          attachments: [],
-          subtasks: [],
-          createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-      ],
-    }
-    
-    // 샘플 데이터가 없으면 추가
-    Object.entries(sampleUsers).forEach(([userId, tasks]) => {
-      if (!tasksByUser[userId] || tasksByUser[userId].length === 0) {
-        tasksByUser[userId] = tasks
-      }
-    })
-    
-    // 샘플 데이터를 로컬 스토리지에 저장
-    localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasksByUser))
-    
-    return tasksByUser
-  } catch (error) {
-    console.error('Failed to load tasks from storage:', error)
-    return {}
+  getTasksByUserId: (userId: string) => Task[]
+  getTaskStats: (userId: string) => {
+    total: number
+    completed: number
+    pending: number
+    overdue: number
+    completionRate: number
   }
 }
 
-// 로컬 스토리지에 태스크 저장
-const saveTasksToStorage = (tasksByUser: Record<string, Task[]>) => {
-  try {
-    localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasksByUser))
-  } catch (error) {
-    console.error('Failed to save tasks to storage:', error)
-  }
-}
+export const useTaskStore = create<TaskStore>()(
+  persist(
+    (set, get) => ({
+      tasks: [],
+      currentUserId: null,
+      isLoading: false,
+      error: null,
 
-// 태그 통계 업데이트
-const updateTagStats = async (tasks: Task[], userId: string) => {
-  try {
-    const { useTagStore } = await import('./tagStore')
-    const tagStore = useTagStore.getState()
-    tagStore.updateTagStats(tasks, userId)
-  } catch (error) {
-    console.error('Failed to update tag stats:', error)
-  }
-}
-
-export const useTaskStore = create<TaskStore>((set, get) => ({
-  // State
-  tasks: [],
-  currentTask: null,
-  filters: defaultFilters,
-  stats: defaultStats,
-  isLoading: false,
-  error: null,
-  currentUserId: null,
-
-  // Actions
-  setCurrentUser: (userId: string) => {
-    console.log(`[TaskStore] 사용자 설정: ${userId}`)
-    set({ currentUserId: userId })
-    get().loadUserTasks(userId)
-  },
-
-  clearCurrentUser: () => {
-    console.log('[TaskStore] 사용자 정보 정리')
-    set({ 
-      currentUserId: null, 
-      tasks: [], 
-      stats: defaultStats,
-      currentTask: null 
-    })
-  },
-
-  loadUserTasks: async (userId: string) => {
-    console.log(`[TaskStore] 사용자 태스크 로드: ${userId}`)
-    set({ isLoading: true, error: null })
-    
-    try {
-      // TODO: 실제 API 호출로 대체
-      await new Promise(resolve => setTimeout(resolve, 300))
-      
-      const tasksByUser = loadTasksFromStorage()
-      const userTasks = tasksByUser[userId] || []
-      
-      console.log(`[TaskStore] 로드된 태스크 수: ${userTasks.length}개`)
-      
-      set({ 
-        tasks: userTasks,
-        isLoading: false 
-      })
-      
-      // 태그 통계 업데이트
-      await updateTagStats(userTasks, userId)
-      
-      get().updateStats()
-    } catch (error) {
-      console.error('[TaskStore] 태스크 로드 실패:', error)
-      set({
-        isLoading: false,
-        error: error instanceof Error ? error.message : '태스크 로드에 실패했습니다.',
-      })
-    }
-  },
-
-  createTask: async (taskData: CreateTaskData) => {
-    const { currentUserId } = get()
-    if (!currentUserId) {
-      set({ error: '사용자가 로그인되지 않았습니다.' })
-      return
-    }
-
-    set({ isLoading: true, error: null })
-    
-    try {
-      // TODO: 실제 API 호출로 대체
-      await new Promise(resolve => setTimeout(resolve, 500))
-      
-      const newTask: Task = {
-        id: Date.now().toString(),
-        title: taskData.title,
-        description: taskData.description,
-        dueDate: taskData.dueDate,
-        dueTime: taskData.dueTime,
-        recurrenceType: taskData.recurrenceType || 'none',
-        recurrenceDetail: taskData.recurrenceDetail,
-        importance: taskData.importance || 'medium',
-        priority: taskData.priority || 'medium',
-        isCompleted: false,
-        tags: taskData.tags || [],
-        category: taskData.category,
-        attachments: [],
-        subtasks: [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }
-      
-      set(state => ({
-        tasks: [...state.tasks, newTask],
-        isLoading: false,
-      }))
-      
-      // 로컬 스토리지에 저장
-      const tasksByUser = loadTasksFromStorage()
-      tasksByUser[currentUserId] = get().tasks
-      saveTasksToStorage(tasksByUser)
-      
-      // 태그 통계 업데이트
-      await updateTagStats(get().tasks, currentUserId)
-      
-      get().updateStats()
-    } catch (error) {
-      set({
-        isLoading: false,
-        error: error instanceof Error ? error.message : '태스크 생성에 실패했습니다.',
-      })
-    }
-  },
-
-  updateTask: async (id: string, taskData: UpdateTaskData) => {
-    const { currentUserId } = get()
-    if (!currentUserId) {
-      set({ error: '사용자가 로그인되지 않았습니다.' })
-      return
-    }
-
-    set({ isLoading: true, error: null })
-    
-    try {
-      // TODO: 실제 API 호출로 대체
-      await new Promise(resolve => setTimeout(resolve, 500))
-      
-      set(state => ({
-        tasks: state.tasks.map(task =>
-          task.id === id
-            ? { ...task, ...taskData, updatedAt: new Date().toISOString() }
-            : task
-        ),
-        isLoading: false,
-      }))
-      
-      // 로컬 스토리지에 저장
-      const tasksByUser = loadTasksFromStorage()
-      tasksByUser[currentUserId] = get().tasks
-      saveTasksToStorage(tasksByUser)
-      
-      // 태그 통계 업데이트
-      await updateTagStats(get().tasks, currentUserId)
-      
-      get().updateStats()
-    } catch (error) {
-      set({
-        isLoading: false,
-        error: error instanceof Error ? error.message : '태스크 수정에 실패했습니다.',
-      })
-    }
-  },
-
-  deleteTask: async (id: string) => {
-    const { currentUserId } = get()
-    if (!currentUserId) {
-      set({ error: '사용자가 로그인되지 않았습니다.' })
-      return
-    }
-
-    set({ isLoading: true, error: null })
-    
-    try {
-      // TODO: 실제 API 호출로 대체
-      await new Promise(resolve => setTimeout(resolve, 500))
-      
-      set(state => ({
-        tasks: state.tasks.filter(task => task.id !== id),
-        isLoading: false,
-      }))
-      
-      // 로컬 스토리지에 저장
-      const tasksByUser = loadTasksFromStorage()
-      tasksByUser[currentUserId] = get().tasks
-      saveTasksToStorage(tasksByUser)
-      
-      // 태그 통계 업데이트
-      await updateTagStats(get().tasks, currentUserId)
-      
-      get().updateStats()
-    } catch (error) {
-      set({
-        isLoading: false,
-        error: error instanceof Error ? error.message : '태스크 삭제에 실패했습니다.',
-      })
-    }
-  },
-
-  toggleTaskCompletion: async (id: string) => {
-    const { currentUserId } = get()
-    if (!currentUserId) {
-      set({ error: '사용자가 로그인되지 않았습니다.' })
-      return
-    }
-
-    set({ isLoading: true, error: null })
-    
-    try {
-      // TODO: 실제 API 호출로 대체
-      await new Promise(resolve => setTimeout(resolve, 300))
-      
-      set(state => ({
-        tasks: state.tasks.map(task =>
-          task.id === id
-            ? { ...task, isCompleted: !task.isCompleted, updatedAt: new Date().toISOString() }
-            : task
-        ),
-        isLoading: false,
-      }))
-      
-      // 로컬 스토리지에 저장
-      const tasksByUser = loadTasksFromStorage()
-      tasksByUser[currentUserId] = get().tasks
-      saveTasksToStorage(tasksByUser)
-      
-      get().updateStats()
-    } catch (error) {
-      set({
-        isLoading: false,
-        error: error instanceof Error ? error.message : '태스크 상태 변경에 실패했습니다.',
-      })
-    }
-  },
-
-  setFilters: (filters: Partial<TaskFilters>) => {
-    set(state => ({
-      filters: { ...state.filters, ...filters },
-    }))
-  },
-
-  clearFilters: () => {
-    set({ filters: defaultFilters })
-  },
-
-  updateStats: () => {
-    const { tasks } = get()
-    const total = tasks.length
-    const completed = tasks.filter(task => task.isCompleted).length
-    const pending = total - completed
-    const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0
-    
-    set({
-      stats: {
-        total,
-        completed,
-        pending,
-        completionRate,
+      setCurrentUserId: (userId: string) => {
+        set({ currentUserId: userId })
       },
-    })
-  },
 
-  setCurrentTask: (task: Task | null) => {
-    set({ currentTask: task })
-  },
+      createTask: async (data: CreateTaskData) => {
+        set({ isLoading: true, error: null })
+        try {
+          const newTask: Task = {
+            id: Date.now().toString(),
+            ...data,
+            isCompleted: false,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            userId: get().currentUserId || 'anonymous',
+          }
+          
+          set((state) => ({
+            tasks: [...state.tasks, newTask],
+            isLoading: false,
+          }))
+        } catch (error) {
+          set({
+            error: error instanceof Error ? error.message : '태스크 생성에 실패했습니다.',
+            isLoading: false,
+          })
+        }
+      },
 
-  clearError: () => {
-    set({ error: null })
-  },
-})) 
+      updateTask: async (id: string, data: UpdateTaskData) => {
+        set({ isLoading: true, error: null })
+        try {
+          set((state) => ({
+            tasks: state.tasks.map((task) =>
+              task.id === id
+                ? {
+                    ...task,
+                    ...data,
+                    updatedAt: new Date().toISOString(),
+                  }
+                : task
+            ),
+            isLoading: false,
+          }))
+        } catch (error) {
+          set({
+            error: error instanceof Error ? error.message : '태스크 수정에 실패했습니다.',
+            isLoading: false,
+          })
+        }
+      },
+
+      deleteTask: async (id: string) => {
+        set({ isLoading: true, error: null })
+        try {
+          set((state) => ({
+            tasks: state.tasks.filter((task) => task.id !== id),
+            isLoading: false,
+          }))
+        } catch (error) {
+          set({
+            error: error instanceof Error ? error.message : '태스크 삭제에 실패했습니다.',
+            isLoading: false,
+          })
+        }
+      },
+
+      toggleTaskCompletion: async (id: string) => {
+        set({ isLoading: true, error: null })
+        try {
+          set((state) => ({
+            tasks: state.tasks.map((task) =>
+              task.id === id
+                ? {
+                    ...task,
+                    isCompleted: !task.isCompleted,
+                    updatedAt: new Date().toISOString(),
+                  }
+                : task
+            ),
+            isLoading: false,
+          }))
+        } catch (error) {
+          set({
+            error: error instanceof Error ? error.message : '태스크 상태 변경에 실패했습니다.',
+            isLoading: false,
+          })
+        }
+      },
+
+      getTasksByUserId: (userId: string) => {
+        return get().tasks.filter((task) => task.userId === userId)
+      },
+
+      getTaskStats: (userId: string) => {
+        const userTasks = get().getTasksByUserId(userId)
+        const total = userTasks.length
+        const completed = userTasks.filter((task) => task.isCompleted).length
+        const pending = total - completed
+        const overdue = userTasks.filter(
+          (task) => !task.isCompleted && task.dueDate && new Date(task.dueDate) < new Date()
+        ).length
+        const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0
+
+        return {
+          total,
+          completed,
+          pending,
+          overdue,
+          completionRate,
+        }
+      },
+    }),
+    {
+      name: 'task-storage',
+      partialize: (state) => ({ tasks: state.tasks }),
+    }
+  )
+) 

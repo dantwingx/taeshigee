@@ -1,7 +1,21 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Calendar, Tag, Folder, Clock, X, Save, Edit3 } from 'lucide-react'
+import { 
+  Calendar, 
+  Tag, 
+  Folder, 
+  Clock, 
+  X, 
+  Save, 
+  Edit3, 
+  Type, 
+  FileText, 
+  AlertTriangle, 
+  Target,
+  Eye,
+  EyeOff
+} from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
 import { Select } from '@/components/ui/Select'
 import { TagInput } from '@/components/ui/TagInput'
@@ -16,6 +30,7 @@ const taskSchema = z.object({
   priority: z.enum(['low', 'medium', 'high']).default('medium'),
   category: z.string().optional(),
   tags: z.array(z.string()).default([]),
+  isPublic: z.boolean().default(false),
 })
 
 type TaskFormData = z.infer<typeof taskSchema>
@@ -29,15 +44,15 @@ interface TaskFormProps {
 }
 
 const importanceOptions = [
-  { value: 'low', label: '낮음' },
-  { value: 'medium', label: '보통' },
-  { value: 'high', label: '높음' },
+  { value: 'low', label: '낮음', icon: '🟢' },
+  { value: 'medium', label: '보통', icon: '🟡' },
+  { value: 'high', label: '높음', icon: '🔴' },
 ]
 
 const priorityOptions = [
-  { value: 'low', label: '낮음' },
-  { value: 'medium', label: '보통' },
-  { value: 'high', label: '높음' },
+  { value: 'low', label: '낮음', icon: '📌' },
+  { value: 'medium', label: '보통', icon: '📍' },
+  { value: 'high', label: '높음', icon: '🎯' },
 ]
 
 const categoryOptions = [
@@ -66,6 +81,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
       priority: task?.priority || 'medium',
       category: task?.category || '',
       tags: task?.tags || [],
+      isPublic: task?.isPublic || false,
     },
   })
 
@@ -95,6 +111,14 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
     setValue('category', category)
   }
 
+  const handleImportanceSelect = (importance: 'low' | 'medium' | 'high') => {
+    setValue('importance', importance)
+  }
+
+  const handlePrioritySelect = (priority: 'low' | 'medium' | 'high') => {
+    setValue('priority', priority)
+  }
+
   return (
     <Modal
       isOpen={isOpen}
@@ -110,8 +134,9 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6 px-4 py-2">
         {/* 제목 */}
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-neutral-700 mb-2">
-            제목 *
+          <label htmlFor="title" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+            <Type className="h-4 w-4" />
+            <span>제목 *</span>
           </label>
           <input
             {...register('title')}
@@ -128,8 +153,9 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
 
         {/* 설명 */}
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-neutral-700 mb-2">
-            설명
+          <label htmlFor="description" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+            <FileText className="h-4 w-4" />
+            <span>설명</span>
           </label>
           <textarea
             {...register('description')}
@@ -147,8 +173,9 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
         {/* 마감일 및 마감시간 */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="dueDate" className="block text-sm font-medium text-neutral-700 mb-2">
-              마감일
+            <label htmlFor="dueDate" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+              <Calendar className="h-4 w-4" />
+              <span>마감일</span>
             </label>
             <div className="relative">
               <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
@@ -163,8 +190,9 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
           </div>
           
           <div>
-            <label htmlFor="dueTime" className="block text-sm font-medium text-neutral-700 mb-2">
-              마감시간
+            <label htmlFor="dueTime" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+              <Clock className="h-4 w-4" />
+              <span>마감시간</span>
             </label>
             <div className="relative">
               <Clock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
@@ -181,8 +209,9 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
 
         {/* 태그 */}
         <div>
-          <label className="block text-sm font-medium text-neutral-700 mb-2">
-            태그
+          <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+            <Tag className="h-4 w-4" />
+            <span>태그</span>
           </label>
           <TagInput
             value={watch('tags')}
@@ -192,36 +221,67 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
           />
         </div>
 
-        {/* 중요도 및 우선순위 */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
-              중요도
-            </label>
-            <Select
-              value={watch('importance')}
-              onChange={(value) => setValue('importance', value as 'low' | 'medium' | 'high')}
-              options={importanceOptions}
-              disabled={isLoading}
-            />
+        {/* 중요도 */}
+        <div>
+          <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+            <AlertTriangle className="h-4 w-4" />
+            <span>중요도</span>
+          </label>
+          <div className="grid grid-cols-3 gap-2">
+            {importanceOptions.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => handleImportanceSelect(option.value as 'low' | 'medium' | 'high')}
+                className={`p-3 rounded-lg border-2 transition-colors ${
+                  watch('importance') === option.value
+                    ? 'border-primary-500 bg-primary-50 text-primary-700'
+                    : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
+                }`}
+                disabled={isLoading}
+              >
+                <div className="flex flex-col items-center space-y-1">
+                  <span className="text-lg">{option.icon}</span>
+                  <span className="text-sm font-medium">{option.label}</span>
+                </div>
+              </button>
+            ))}
           </div>
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
-              우선순위
-            </label>
-            <Select
-              value={watch('priority')}
-              onChange={(value) => setValue('priority', value as 'low' | 'medium' | 'high')}
-              options={priorityOptions}
-              disabled={isLoading}
-            />
+        </div>
+
+        {/* 우선순위 */}
+        <div>
+          <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+            <Target className="h-4 w-4" />
+            <span>우선순위</span>
+          </label>
+          <div className="grid grid-cols-3 gap-2">
+            {priorityOptions.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => handlePrioritySelect(option.value as 'low' | 'medium' | 'high')}
+                className={`p-3 rounded-lg border-2 transition-colors ${
+                  watch('priority') === option.value
+                    ? 'border-primary-500 bg-primary-50 text-primary-700'
+                    : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
+                }`}
+                disabled={isLoading}
+              >
+                <div className="flex flex-col items-center space-y-1">
+                  <span className="text-lg">{option.icon}</span>
+                  <span className="text-sm font-medium">{option.label}</span>
+                </div>
+              </button>
+            ))}
           </div>
         </div>
 
         {/* 카테고리 */}
         <div>
-          <label className="block text-sm font-medium text-neutral-700 mb-2">
-            카테고리
+          <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+            <Folder className="h-4 w-4" />
+            <span>카테고리</span>
           </label>
           <div className="grid grid-cols-2 gap-2">
             {categoryOptions.map((option) => (
@@ -242,6 +302,36 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
                 </div>
               </button>
             ))}
+          </div>
+        </div>
+
+        {/* 공개 여부 */}
+        <div>
+          <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
+            {watch('isPublic') ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+            <span>공개 여부</span>
+          </label>
+          <div className="flex items-center space-x-4">
+            <label className="flex items-center space-x-2">
+              <input
+                {...register('isPublic')}
+                type="radio"
+                value="false"
+                className="text-primary-600"
+                disabled={isLoading}
+              />
+              <span className="text-sm">비공개</span>
+            </label>
+            <label className="flex items-center space-x-2">
+              <input
+                {...register('isPublic')}
+                type="radio"
+                value="true"
+                className="text-primary-600"
+                disabled={isLoading}
+              />
+              <span className="text-sm">공개</span>
+            </label>
           </div>
         </div>
 

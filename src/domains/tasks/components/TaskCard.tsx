@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Calendar, Tag, MoreVertical, Edit, Trash2, Check, Clock } from 'lucide-react'
+import { Calendar, Tag, MoreVertical, Edit, Trash2, Check, Clock, Eye, EyeOff, AlertTriangle, Target } from 'lucide-react'
 import { useTagStore } from '@/stores/tagStore'
 import type { Task } from '@/types/task'
 
@@ -21,6 +21,18 @@ const priorityColors = {
   low: 'bg-neutral-100 text-neutral-700',
   medium: 'bg-primary-100 text-primary-700',
   high: 'bg-error-100 text-error-700',
+}
+
+const importanceIcons = {
+  low: '🟢',
+  medium: '🟡',
+  high: '🔴',
+}
+
+const priorityIcons = {
+  low: '📌',
+  medium: '📍',
+  high: '🎯',
 }
 
 export function TaskCard({ task, onToggleComplete, onEdit, onDelete, isLoading }: TaskCardProps) {
@@ -72,11 +84,16 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, isLoading }
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
-              <h3 className={`font-medium text-neutral-900 truncate ${
-                task.isCompleted ? 'line-through text-neutral-500' : ''
-              }`}>
-                {task.title}
-              </h3>
+              <div className="flex items-center space-x-2 mb-1">
+                <h3 className={`font-medium text-neutral-900 truncate ${
+                  task.isCompleted ? 'line-through text-neutral-500' : ''
+                }`}>
+                  {task.title}
+                </h3>
+                {task.isPublic && (
+                  <Eye className="h-4 w-4 text-primary-600" />
+                )}
+              </div>
               
               {task.description && (
                 <p className={`mt-1 text-sm text-neutral-600 line-clamp-2 ${
@@ -169,11 +186,13 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, isLoading }
 
             {/* 중요도 및 우선순위 배지 */}
             <div className="flex items-center space-x-1">
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${importanceColors[task.importance]}`}>
-                {task.importance === 'low' ? '낮음' : task.importance === 'medium' ? '보통' : '높음'}
+              <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${importanceColors[task.importance]}`}>
+                <AlertTriangle className="h-3 w-3" />
+                <span>{importanceIcons[task.importance]} {task.importance === 'low' ? '낮음' : task.importance === 'medium' ? '보통' : '높음'}</span>
               </span>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${priorityColors[task.priority]}`}>
-                {task.priority === 'low' ? '낮음' : task.priority === 'medium' ? '보통' : '높음'}
+              <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${priorityColors[task.priority]}`}>
+                <Target className="h-3 w-3" />
+                <span>{priorityIcons[task.priority]} {task.priority === 'low' ? '낮음' : task.priority === 'medium' ? '보통' : '높음'}</span>
               </span>
             </div>
           </div>

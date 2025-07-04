@@ -1,67 +1,29 @@
-export interface Task {
+export type Task = {
   id: string
   title: string
   description?: string
   dueDate?: string
-  dueTime?: string // 마감시간 추가
-  recurrenceType?: 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom'
-  recurrenceDetail?: Record<string, any>
+  dueTime?: string
   importance: 'low' | 'medium' | 'high'
   priority: 'low' | 'medium' | 'high'
-  isCompleted: boolean
-  tags: string[]
   category?: string
-  attachments?: Attachment[]
-  subtasks?: Subtask[]
+  tags: string[]
+  isCompleted: boolean
+  isPublic: boolean
   createdAt: string
   updatedAt: string
+  userId: string
 }
 
-export interface Attachment {
-  id: string
-  fileName: string
-  fileUrl: string
-  fileType: string
-  fileSize: number
-  uploadedAt: string
-}
+export type CreateTaskData = Omit<Task, 'id' | 'isCompleted' | 'createdAt' | 'updatedAt' | 'userId'>
 
-export interface Subtask {
-  id: string
-  content: string
-  isCompleted: boolean
-}
+export type UpdateTaskData = Partial<Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'userId'>>
 
-export interface CreateTaskData {
-  title: string
-  description?: string
-  dueDate?: string
-  dueTime?: string // 마감시간 추가
-  recurrenceType?: 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom'
-  recurrenceDetail?: Record<string, any>
-  importance?: 'low' | 'medium' | 'high'
-  priority?: 'low' | 'medium' | 'high'
-  tags?: string[]
-  category?: string
-}
-
-export interface UpdateTaskData extends Partial<CreateTaskData> {
-  isCompleted?: boolean
-}
-
-export interface TaskFilters {
-  view?: 'daily' | 'weekly' | 'monthly'
-  date?: string
-  tags?: string[]
-  hideCompleted?: boolean
-  sortBy?: 'dueDate' | 'priority' | 'importance' | 'createdAt'
-  order?: 'asc' | 'desc'
-}
-
-export interface TaskStats {
+export type TaskStats = {
   total: number
   completed: number
   pending: number
+  overdue: number
   completionRate: number
 }
 
