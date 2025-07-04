@@ -289,13 +289,13 @@ export function TasksPage() {
                     key={option.value}
                     type="button"
                     onClick={() => setImportanceFilter(option.value)}
-                    className={`p-2 rounded-lg border-2 transition-colors text-xs ${
+                    className={`px-2 py-1 rounded-lg border-2 transition-colors text-xs ${
                       importanceFilter === option.value
                         ? 'border-primary-500 bg-primary-50 text-primary-700'
                         : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
                     }`}
                   >
-                    <div className="flex flex-col items-center space-y-1">
+                    <div className="flex items-center space-x-1">
                       <span className="text-xs">{option.icon}</span>
                       <span className="text-xs">{option.label}</span>
                     </div>
@@ -321,13 +321,13 @@ export function TasksPage() {
                     key={option.value}
                     type="button"
                     onClick={() => setPriorityFilter(option.value)}
-                    className={`p-2 rounded-lg border-2 transition-colors text-xs ${
+                    className={`px-2 py-1 rounded-lg border-2 transition-colors text-xs ${
                       priorityFilter === option.value
                         ? 'border-primary-500 bg-primary-50 text-primary-700'
                         : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
                     }`}
                   >
-                    <div className="flex flex-col items-center space-y-1">
+                    <div className="flex items-center space-x-1">
                       <span className="text-xs">{option.icon}</span>
                       <span className="text-xs">{option.label}</span>
                     </div>
@@ -352,13 +352,13 @@ export function TasksPage() {
                     key={option.value}
                     type="button"
                     onClick={() => setPublicFilter(option.value)}
-                    className={`p-2 rounded-lg border-2 transition-colors text-xs ${
+                    className={`px-2 py-1 rounded-lg border-2 transition-colors text-xs ${
                       publicFilter === option.value
                         ? 'border-primary-500 bg-primary-50 text-primary-700'
                         : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
                     }`}
                   >
-                    <div className="flex flex-col items-center space-y-1">
+                    <div className="flex items-center space-x-1">
                       <span className="text-xs">{option.icon}</span>
                       <span className="text-xs">{option.label}</span>
                     </div>
