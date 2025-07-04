@@ -34,7 +34,8 @@ export default {
     home: 'Home',
     tasks: 'Tasks',
     analytics: 'Analytics',
-    my: 'My'
+    my: 'My',
+    myPage: 'My Page'
   },
 
   // Auth
@@ -108,7 +109,13 @@ export default {
     categoryStudy: 'Study',
     categoryHealth: 'Health',
     categoryFinance: 'Finance',
-    categoryOther: 'Other'
+    categoryOther: 'Other',
+    totalTasksDisplay: 'Showing 0 of 0 total',
+    statusFilter: 'Filter by Status',
+    importanceFilter: 'Importance',
+    priorityFilter: 'Priority',
+    publicFilter: 'Public',
+    createdAt: 'Created Date'
   },
 
   // Home
@@ -132,6 +139,7 @@ export default {
   analytics: {
     title: 'Analytics',
     publicTasks: 'Public Tasks',
+    completedTasks: 'Completed Tasks',
     taskAnalytics: 'Task Analytics',
     completionTrends: 'Completion Trends',
     categoryDistribution: 'Category Distribution',

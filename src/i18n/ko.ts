@@ -34,7 +34,8 @@ export default {
     home: '홈',
     tasks: '태스크',
     analytics: '분석',
-    my: '마이'
+    my: '마이',
+    myPage: '마이페이지'
   },
 
   // 인증
@@ -108,7 +109,13 @@ export default {
     categoryStudy: '학습',
     categoryHealth: '건강',
     categoryFinance: '재정',
-    categoryOther: '기타'
+    categoryOther: '기타',
+    totalTasksDisplay: '총 0개중 0개 표시',
+    statusFilter: '상태별 필터',
+    importanceFilter: '중요도',
+    priorityFilter: '우선순위',
+    publicFilter: '공개여부',
+    createdAt: '작성일'
   },
 
   // 홈
@@ -132,6 +139,7 @@ export default {
   analytics: {
     title: '분석',
     publicTasks: '공개 태스크',
+    completedTasks: '완료된 태스크',
     taskAnalytics: '태스크 분석',
     completionTrends: '완료 추이',
     categoryDistribution: '카테고리 분포',
