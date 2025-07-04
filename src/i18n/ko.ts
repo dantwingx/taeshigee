@@ -1,4 +1,4 @@
-export const ko = {
+export default {
   // 공통
   common: {
     create: '생성',

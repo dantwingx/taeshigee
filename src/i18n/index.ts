@@ -1,21 +1,72 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import { ko } from './ko';
-import { en } from './en';
+
+// 모든 언어 파일 import
+import ko from './ko';
+import en from './en';
+import fr from './fr';
+import es from './es';
+import ja from './ja';
+import zh from './zh';
+import de from './de';
+import it from './it';
+import pt from './pt';
+import ru from './ru';
+import ar from './ar';
+import hi from './hi';
+import th from './th';
+import vi from './vi';
+import id from './id';
+import ms from './ms';
+import tr from './tr';
+import pl from './pl';
+import nl from './nl';
+import sv from './sv';
+
 import { languages } from './languages';
 
-// 기본 번역 (한국어)
-const defaultTranslation = ko;
+// 언어별 번역 리소스 매핑
+const translationResources = {
+  ko,
+  en,
+  fr,
+  es,
+  ja,
+  zh,
+  de,
+  it,
+  pt,
+  ru,
+  ar,
+  hi,
+  th,
+  vi,
+  id,
+  ms,
+  tr,
+  pl,
+  nl,
+  sv,
+};
 
-// 리소스 객체 생성 - 모든 언어에 대해 기본 번역을 사용
+// 리소스 객체 생성
 const resources: { [key: string]: { translation: typeof ko } } = {};
 
-// 모든 언어에 대해 기본 번역을 할당
+// 모든 언어에 대해 실제 번역을 할당
 languages.forEach(lang => {
-  resources[lang.code] = {
-    translation: lang.code === 'ko' ? ko : en // 한국어가 아니면 영어 사용
-  };
+  const translation = translationResources[lang.code as keyof typeof translationResources];
+  if (translation) {
+    resources[lang.code] = {
+      translation
+    };
+  } else {
+    // 번역이 없는 경우 영어를 fallback으로 사용
+    console.warn(`Translation for ${lang.code} not found, using English as fallback`);
+    resources[lang.code] = {
+      translation: en
+    };
+  }
 });
 
 // i18n 초기화

@@ -21,10 +21,13 @@ export function SettingsPage() {
   }
 
   const handleLangSelect = async (code: string) => {
+    console.log('Language change requested:', code)
     const success = await changeLanguage(code)
+    console.log('Language change result:', success)
     if (success) {
       setSelectedLang(code)
       const language = languages.find(l => l.code === code)
+      console.log('Current i18n language:', i18n.language)
       showToast('success', `${t('settings.languageChanged')}: ${language?.nativeName}`)
     } else {
       showToast('error', t('toast.error'))
