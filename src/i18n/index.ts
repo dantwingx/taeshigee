@@ -14,7 +14,7 @@ const resources: { [key: string]: { translation: typeof ko } } = {};
 // 모든 언어에 대해 기본 번역을 할당
 languages.forEach(lang => {
   resources[lang.code] = {
-    translation: lang.code === 'ko' ? ko : lang.code === 'en' ? en : defaultTranslation
+    translation: lang.code === 'ko' ? ko : en // 한국어가 아니면 영어 사용
   };
 });
 
@@ -25,7 +25,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'ko',
-    debug: false, // 개발 시에만 true로 설정
+    debug: true, // 개발 시에만 true로 설정
     interpolation: {
       escapeValue: false, // React에서는 이미 XSS 방지가 되어있음
     },
