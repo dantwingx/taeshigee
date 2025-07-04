@@ -13,6 +13,7 @@ interface TagInputProps {
 export function TagInput({ value, onChange, placeholder = "태그를 입력하세요", disabled, className }: TagInputProps) {
   const [inputValue, setInputValue] = useState('')
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const [isComposing, setIsComposing] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const { tags, addTag } = useTagStore()
 
@@ -24,7 +25,18 @@ export function TagInput({ value, onChange, placeholder = "태그를 입력하�
     setShowSuggestions(e.target.value.length > 0)
   }
 
+  const handleCompositionStart = () => {
+    setIsComposing(true)
+  }
+
+  const handleCompositionEnd = () => {
+    setIsComposing(false)
+  }
+
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // IME 조합 중에는 처리하지 않음
+    if (isComposing) return
+
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault()
       addNewTag()
@@ -103,6 +115,8 @@ export function TagInput({ value, onChange, placeholder = "태그를 입력하�
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleInputKeyDown}
+          onCompositionStart={handleCompositionStart}
+          onCompositionEnd={handleCompositionEnd}
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
           placeholder={value.length === 0 ? placeholder : ''}

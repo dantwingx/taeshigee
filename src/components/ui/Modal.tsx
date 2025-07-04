@@ -47,22 +47,22 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
       />
       
       {/* Modal */}
-      <div className={`relative bg-white rounded-lg shadow-xl w-full mx-4 ${sizeClasses[size]} ${
-        size === 'full' ? 'h-full rounded-none' : ''
+      <div className={`relative bg-white w-full mx-4 ${sizeClasses[size]} ${
+        size === 'full' ? 'h-full rounded-none' : 'rounded-lg shadow-xl'
       }`}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-lg font-semibold text-neutral-900">{title}</h2>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg hover:bg-neutral-100 transition-colors"
+            className="p-2 rounded-lg hover:bg-neutral-100 transition-colors"
           >
             <X className="h-5 w-5 text-neutral-500" />
           </button>
         </div>
         
         {/* Content */}
-        <div className="p-4">
+        <div className={`${size === 'full' ? 'h-full overflow-y-auto' : 'p-4'}`}>
           {children}
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Calendar, Tag, Folder, Clock, X } from 'lucide-react'
+import { Calendar, Tag, Folder, Clock, X, Save } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
 import { Select } from '@/components/ui/Select'
 import { TagInput } from '@/components/ui/TagInput'
@@ -98,17 +98,17 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
       title={task ? '태스크 수정' : '새 태스크'}
       size="full"
     >
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
         {/* 제목 */}
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-neutral-700 mb-1">
+          <label htmlFor="title" className="block text-sm font-medium text-neutral-700 mb-2">
             제목 *
           </label>
           <input
             {...register('title')}
             type="text"
             id="title"
-            className={`input ${errors.title ? 'border-error-500' : ''}`}
+            className={`input text-lg ${errors.title ? 'border-error-500' : ''}`}
             placeholder="태스크 제목을 입력하세요"
             disabled={isLoading}
           />
@@ -119,13 +119,13 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
 
         {/* 설명 */}
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-neutral-700 mb-1">
+          <label htmlFor="description" className="block text-sm font-medium text-neutral-700 mb-2">
             설명
           </label>
           <textarea
             {...register('description')}
             id="description"
-            rows={3}
+            rows={4}
             className={`input resize-none ${errors.description ? 'border-error-500' : ''}`}
             placeholder="태스크에 대한 자세한 설명을 입력하세요"
             disabled={isLoading}
@@ -136,9 +136,9 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
         </div>
 
         {/* 마감일 및 마감시간 */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="dueDate" className="block text-sm font-medium text-neutral-700 mb-1">
+            <label htmlFor="dueDate" className="block text-sm font-medium text-neutral-700 mb-2">
               마감일
             </label>
             <div className="relative">
@@ -154,7 +154,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
           </div>
           
           <div>
-            <label htmlFor="dueTime" className="block text-sm font-medium text-neutral-700 mb-1">
+            <label htmlFor="dueTime" className="block text-sm font-medium text-neutral-700 mb-2">
               마감시간
             </label>
             <div className="relative">
@@ -172,7 +172,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
 
         {/* 태그 */}
         <div>
-          <label className="block text-sm font-medium text-neutral-700 mb-1">
+          <label className="block text-sm font-medium text-neutral-700 mb-2">
             태그
           </label>
           <TagInput
@@ -184,9 +184,9 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
         </div>
 
         {/* 중요도 및 우선순위 */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-1">
+            <label className="block text-sm font-medium text-neutral-700 mb-2">
               중요도
             </label>
             <Select
@@ -197,7 +197,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-1">
+            <label className="block text-sm font-medium text-neutral-700 mb-2">
               우선순위
             </label>
             <Select
@@ -211,7 +211,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
 
         {/* 카테고리 */}
         <div>
-          <label className="block text-sm font-medium text-neutral-700 mb-1">
+          <label className="block text-sm font-medium text-neutral-700 mb-2">
             카테고리
           </label>
           <div className="relative">
@@ -228,21 +228,31 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
         </div>
 
         {/* 버튼 */}
-        <div className="flex justify-end space-x-3 pt-4 border-t">
+        <div className="flex justify-end space-x-3 pt-6 border-t">
           <button
             type="button"
             onClick={handleClose}
-            className="btn-secondary"
+            className="btn-secondary px-6 py-3"
             disabled={isLoading}
           >
             취소
           </button>
           <button
             type="submit"
-            className="btn-primary"
+            className="btn-primary px-6 py-3 flex items-center space-x-2"
             disabled={isLoading}
           >
-            {isLoading ? '저장 중...' : (task ? '수정' : '생성')}
+            {isLoading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>저장 중...</span>
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4" />
+                <span>{task ? '수정' : '생성'}</span>
+              </>
+            )}
           </button>
         </div>
       </form>
