@@ -234,13 +234,13 @@ export function AnalyticsPage() {
       {/* 태스크 상세 모달 */}
       {selectedTask && isDetailOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[80vh] overflow-y-auto">
+          <div className="bg-white dark:bg-neutral-800 rounded-lg max-w-md w-full max-h-[80vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-neutral-900">태스크 상세</h2>
+                <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">태스크 상세</h2>
                 <button
                   onClick={() => setIsDetailOpen(false)}
-                  className="text-neutral-500 hover:text-neutral-700"
+                  className="text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
                 >
                   ✕
                 </button>
@@ -248,9 +248,9 @@ export function AnalyticsPage() {
 
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-medium text-neutral-900 mb-2">{selectedTask.title}</h3>
+                  <h3 className="font-medium text-neutral-900 dark:text-neutral-100 mb-2">{selectedTask.title}</h3>
                   {selectedTask.description && (
-                    <p className="text-sm text-neutral-600">{selectedTask.description}</p>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-300">{selectedTask.description}</p>
                   )}
                 </div>
 
@@ -286,12 +286,12 @@ export function AnalyticsPage() {
 
                 {selectedTask.tags && selectedTask.tags.length > 0 && (
                   <div>
-                    <span className="text-sm text-neutral-600">태그:</span>
+                    <span className="text-sm text-neutral-600 dark:text-neutral-300">태그:</span>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {selectedTask.tags.map((tag, index) => (
                         <span
                           key={index}
-                          className="px-2 py-1 rounded-full text-xs font-medium bg-neutral-100 text-neutral-700"
+                          className="px-2 py-1 rounded-full text-xs font-medium bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200"
                         >
                           #{tag}
                         </span>
@@ -300,22 +300,22 @@ export function AnalyticsPage() {
                   </div>
                 )}
 
-                <div className="flex items-center justify-between pt-4 border-t">
+                <div className="flex items-center justify-between pt-4 border-t border-neutral-200 dark:border-neutral-700">
                   <div className="flex items-center space-x-2">
-                    <span className="text-sm text-neutral-600">중요도:</span>
+                    <span className="text-sm text-neutral-600 dark:text-neutral-300">중요도:</span>
                     <span className="text-sm font-medium">
                       {getImportanceIcon(selectedTask.importance)} {selectedTask.importance === 'low' ? '낮음' : selectedTask.importance === 'medium' ? '보통' : '높음'}
                     </span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="text-sm text-neutral-600">우선순위:</span>
+                    <span className="text-sm text-neutral-600 dark:text-neutral-300">우선순위:</span>
                     <span className="text-sm font-medium">
                       {getPriorityIcon(selectedTask.priority)} {selectedTask.priority === 'low' ? '낮음' : selectedTask.priority === 'medium' ? '보통' : '높음'}
                     </span>
                   </div>
                 </div>
 
-                <div className="text-xs text-neutral-500 text-center pt-4 border-t">
+                <div className="text-xs text-neutral-500 dark:text-neutral-400 text-center pt-4 border-t border-neutral-200 dark:border-neutral-700">
                   공개일: {formatDate(selectedTask.createdAt)}
                 </div>
               </div>

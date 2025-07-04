@@ -6,6 +6,7 @@ import { Select } from '@/components/ui/Select'
 import { useTaskStore } from '@/stores/taskStore'
 import { useAuthStore } from '@/stores/authStore'
 import type { Task, CreateTaskData, UpdateTaskData } from '@/types/task'
+import { useTranslation } from 'react-i18next'
 
 type SortField = 'createdAt' | 'dueDate' | 'title' | 'importance' | 'priority'
 type SortOrder = 'asc' | 'desc'
@@ -34,6 +35,8 @@ export function TasksPage() {
   const [sortField, setSortField] = useState<SortField>('createdAt')
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc')
   const [isFilterExpanded, setIsFilterExpanded] = useState(false)
+
+  const { t } = useTranslation()
 
   // 사용자별 태스크 필터링
   const userTasks = user ? tasks.filter(task => task.userId === user.id) : []
@@ -212,13 +215,13 @@ export function TasksPage() {
       <div className="card p-4 space-y-3">
         {/* 검색 */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+          <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
           <input
             type="text"
-            placeholder="태스크 검색..."
+            placeholder={t('Task Search...')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="input pl-10"
+            className="input pl-12"
           />
         </div>
 
