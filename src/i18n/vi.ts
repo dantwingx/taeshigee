@@ -31,7 +31,11 @@ export default {
     saving: 'Đang lưu...',
     count: 'mục',
     appName: 'Taeshigee',
-    appDescription: 'Trải nghiệm mới trong quản lý nhiệm vụ'
+    appDescription: 'Trải nghiệm mới trong quản lý nhiệm vụ',
+    justNow: "Vừa xong",
+    minutesAgo: "{{count}} phút trước",
+    hoursAgo: "{{count}} giờ trước",
+    daysAgo: "{{count}} ngày trước"
   },
 
   // Điều hướng
@@ -169,7 +173,7 @@ export default {
     noPublicTasks: 'Không có nhiệm vụ công khai',
     viewTaskDetails: 'Xem chi tiết nhiệm vụ',
     createdBy: 'Tạo bởi',
-    createdAt: 'Tạo lúc',
+    createdAt: 'Ngày tạo',
     completedAt: 'Hoàn thành lúc'
   },
 
@@ -195,7 +199,38 @@ export default {
     logout: 'Đăng xuất',
     confirmLogout: 'Bạn có chắc chắn muốn đăng xuất?',
     languageChanged: 'Đã thay đổi ngôn ngữ thành công',
-    themeChanged: 'Đã thay đổi giao diện thành công'
+    themeChanged: 'Đã thay đổi giao diện thành công',
+    showMore: 'Hiển thị thêm',
+    showLess: 'Hiển thị ít hơn',
+    changeUserId: 'Thay đổi ID người dùng',
+    userIdChanged: 'Đã thay đổi ID người dùng thành công',
+    userIdChangeFailed: 'Thay đổi ID người dùng thất bại',
+    userIdAlreadyExists: 'ID người dùng đã tồn tại',
+    invalidUserIdFormat: 'ID người dùng phải là chữ và số, 6 ký tự trở lên và ít hơn 30 ký tự',
+    enterUserId: 'Vui lòng nhập ID người dùng',
+    userIdPlaceholder: 'nguoi_dung_000001',
+    name: 'Tên',
+    nameChangeFailed: 'Thay đổi tên thất bại',
+    enterName: 'Vui lòng nhập tên của bạn',
+    darkModeEnabled: 'Đã bật chế độ tối',
+    darkModeDisabled: 'Đã tắt chế độ tối',
+    darkModeChangeFailed: 'Thay đổi chế độ tối thất bại',
+    languageChangeFailed: 'Thay đổi ngôn ngữ thất bại',
+    myAccount: 'Tài khoản của tôi',
+    appSettings: 'Cài đặt ứng dụng',
+    accountManagement: 'Quản lý tài khoản',
+    development: 'Phát triển',
+    email: 'Email',
+    joinDate: 'Ngày tham gia',
+    lastUpdated: 'Cập nhật cuối',
+    language: 'Ngôn ngữ',
+    nameChanged: 'Đã thay đổi tên thành công',
+    loggedOut: 'Đăng xuất thành công',
+    allDataCleared: 'Đã xóa tất cả dữ liệu thành công',
+    testAccountCreated: 'Đã tạo tài khoản thử nghiệm thành công',
+    pleaseLogin: 'Vui lòng đăng nhập trước',
+    createTestAccount: 'Tạo tài khoản thử nghiệm',
+    clearAllData: 'Xóa tất cả dữ liệu'
   },
 
   // Thông báo toast

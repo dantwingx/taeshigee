@@ -2,6 +2,8 @@
  * 날짜 및 시간 포맷팅 유틸리티 함수들
  */
 
+import { TFunction } from 'i18next'
+
 // 현재 사용자의 타임존 가져오기
 export const getUserTimezone = () => {
   return Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -39,7 +41,7 @@ export const formatLocalTime = (dateString: string, locale: string = 'ko-KR') =>
 }
 
 // 로컬 날짜+시간 포맷팅
-export const formatLocalDateTime = (dateString: string, locale: string = 'ko-KR') => {
+export const formatLocalDateTime = (dateString: string, locale: string = 'ko-KR', showSeconds: boolean = false) => {
   try {
     const date = new Date(dateString)
     return date.toLocaleString(locale, {
@@ -48,6 +50,7 @@ export const formatLocalDateTime = (dateString: string, locale: string = 'ko-KR'
       day: '2-digit',
       hour: '2-digit',
       minute: '2-digit',
+      second: showSeconds ? '2-digit' : undefined,
       timeZone: getUserTimezone()
     })
   } catch (error) {
@@ -57,7 +60,7 @@ export const formatLocalDateTime = (dateString: string, locale: string = 'ko-KR'
 }
 
 // 상대적 시간 표시 (예: "3분 전", "2시간 전")
-export const formatRelativeTime = (dateString: string, locale: string = 'ko-KR') => {
+export const formatRelativeTime = (dateString: string, t: TFunction, locale: string = 'ko-KR') => {
   try {
     const date = new Date(dateString)
     const now = new Date()
@@ -67,13 +70,13 @@ export const formatRelativeTime = (dateString: string, locale: string = 'ko-KR')
     const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24))
 
     if (diffInMinutes < 1) {
-      return '방금 전'
+      return t('common.justNow')
     } else if (diffInMinutes < 60) {
-      return `${diffInMinutes}분 전`
+      return t('common.minutesAgo', { count: diffInMinutes })
     } else if (diffInHours < 24) {
-      return `${diffInHours}시간 전`
+      return t('common.hoursAgo', { count: diffInHours })
     } else if (diffInDays < 7) {
-      return `${diffInDays}일 전`
+      return t('common.daysAgo', { count: diffInDays })
     } else {
       return formatLocalDate(dateString, locale)
     }

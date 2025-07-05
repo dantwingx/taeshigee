@@ -30,7 +30,11 @@ export default {
     saving: "Guardando...",
     count: "elementos",
     appName: "Taeshigee",
-    appDescription: "Una nueva experiencia en la gestión de tareas"
+    appDescription: "Una nueva experiencia en la gestión de tareas",
+    justNow: "Justo ahora",
+    minutesAgo: "hace {{count}} minuto(s)",
+    hoursAgo: "hace {{count}} hora(s)",
+    daysAgo: "hace {{count}} día(s)"
   },
 
   navigation: {
@@ -163,9 +167,9 @@ export default {
     weeklyProgress: 'Progreso Semanal',
     monthlyProgress: 'Progreso Mensual',
     noPublicTasks: 'No hay tareas públicas disponibles',
-    viewTaskDetails: 'Ver Detalles de la Tarea',
-    createdBy: 'Creado por',
-    createdAt: 'Creado el',
+    viewTaskDetails: "Ver detalles de la tarea",
+    createdBy: "Creado por",
+    createdAt: "Fecha de creación",
     completedAt: 'Completado el'
   },
 
@@ -192,7 +196,36 @@ export default {
     languageChanged: "Idioma cambiado",
     themeChanged: "Tema cambiado",
     showMore: "Mostrar más",
-    showLess: "Mostrar menos"
+    showLess: "Mostrar menos",
+    changeUserId: "Cambiar ID de usuario",
+    userIdChanged: "ID de usuario cambiado exitosamente",
+    userIdChangeFailed: "Error al cambiar ID de usuario",
+    userIdAlreadyExists: "El ID de usuario ya existe",
+    invalidUserIdFormat: "El ID de usuario debe ser alfanumérico, 6 o más y menos de 30 caracteres",
+    enterUserId: "Por favor ingresa un ID de usuario",
+    userIdPlaceholder: "usuario_000001",
+    name: "Nombre",
+    nameChangeFailed: "Error al cambiar nombre",
+    enterName: "Por favor ingresa tu nombre",
+    darkModeEnabled: "Modo oscuro habilitado",
+    darkModeDisabled: "Modo oscuro deshabilitado",
+    darkModeChangeFailed: "Error al cambiar modo oscuro",
+    languageChangeFailed: "Error al cambiar idioma",
+    myAccount: "Mi cuenta",
+    appSettings: "Configuración de la aplicación",
+    accountManagement: "Gestión de cuenta",
+    development: "Desarrollo",
+    email: "Correo electrónico",
+    joinDate: "Fecha de registro",
+    lastUpdated: "Última actualización",
+    language: "Idioma",
+    nameChanged: "Nombre cambiado exitosamente",
+    loggedOut: "Sesión cerrada exitosamente",
+    allDataCleared: "Todos los datos eliminados exitosamente",
+    testAccountCreated: "Cuenta de prueba creada exitosamente",
+    pleaseLogin: "Por favor inicia sesión primero",
+    createTestAccount: "Crear cuenta de prueba",
+    clearAllData: "Eliminar todos los datos"
   },
 
   toast: {

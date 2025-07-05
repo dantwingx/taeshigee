@@ -31,7 +31,11 @@ export default {
     saving: 'กำลังบันทึก...',
     count: 'รายการ',
     appName: 'Taeshigee',
-    appDescription: 'ประสบการณ์ใหม่ในการจัดการงาน'
+    appDescription: 'ประสบการณ์ใหม่ในการจัดการงาน',
+    justNow: "เมื่อสักครู่",
+    minutesAgo: "{{count}} นาทีที่แล้ว",
+    hoursAgo: "{{count}} ชั่วโมงที่แล้ว",
+    daysAgo: "{{count}} วันที่แล้ว"
   },
 
   // การนำทาง
@@ -174,7 +178,7 @@ export default {
     noPublicTasks: 'ไม่มีงานสาธารณะ',
     viewTaskDetails: 'ดูรายละเอียดงาน',
     createdBy: 'สร้างโดย',
-    createdAt: 'สร้างเมื่อ',
+    createdAt: 'วันที่สร้าง',
     completedAt: 'เสร็จสิ้นเมื่อ'
   },
 
@@ -200,7 +204,38 @@ export default {
     logout: 'ออกจากระบบ',
     confirmLogout: 'คุณแน่ใจหรือไม่ที่จะออกจากระบบ?',
     languageChanged: 'เปลี่ยนภาษาสำเร็จ',
-    themeChanged: 'เปลี่ยนธีมสำเร็จ'
+    themeChanged: 'เปลี่ยนธีมสำเร็จ',
+    showMore: 'แสดงเพิ่มเติม',
+    showLess: 'แสดงน้อยลง',
+    changeUserId: 'เปลี่ยนรหัสผู้ใช้',
+    userIdChanged: 'เปลี่ยนรหัสผู้ใช้สำเร็จ',
+    userIdChangeFailed: 'เปลี่ยนรหัสผู้ใช้ไม่สำเร็จ',
+    userIdAlreadyExists: 'รหัสผู้ใช้มีอยู่แล้ว',
+    invalidUserIdFormat: 'รหัสผู้ใช้ต้องเป็นตัวอักษรและตัวเลข 6 ตัวขึ้นไปและน้อยกว่า 30 ตัว',
+    enterUserId: 'กรุณาใส่รหัสผู้ใช้',
+    userIdPlaceholder: 'user_000001',
+    name: 'ชื่อ',
+    nameChangeFailed: 'เปลี่ยนชื่อไม่สำเร็จ',
+    enterName: 'กรุณาใส่ชื่อของคุณ',
+    darkModeEnabled: 'เปิดใช้งานโหมดมืด',
+    darkModeDisabled: 'ปิดใช้งานโหมดมืด',
+    darkModeChangeFailed: 'เปลี่ยนโหมดมืดไม่สำเร็จ',
+    languageChangeFailed: 'เปลี่ยนภาษไม่สำเร็จ',
+    myAccount: 'บัญชีของฉัน',
+    appSettings: 'การตั้งค่าแอป',
+    accountManagement: 'การจัดการบัญชี',
+    development: 'การพัฒนา',
+    email: 'อีเมล',
+    joinDate: 'วันที่เข้าร่วม',
+    lastUpdated: 'อัปเดตล่าสุด',
+    language: 'ภาษา',
+    nameChanged: 'เปลี่ยนชื่อสำเร็จ',
+    loggedOut: 'ออกจากระบบสำเร็จ',
+    allDataCleared: 'ลบข้อมูลทั้งหมดสำเร็จ',
+    testAccountCreated: 'สร้างบัญชีทดสอบสำเร็จ',
+    pleaseLogin: 'กรุณาเข้าสู่ระบบก่อน',
+    createTestAccount: 'สร้างบัญชีทดสอบ',
+    clearAllData: 'ลบข้อมูลทั้งหมด'
   },
 
   // ข้อความ toast

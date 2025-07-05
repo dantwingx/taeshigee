@@ -38,13 +38,18 @@ export function RegisterPage() {
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true)
     try {
-      await registerUser({
-        email: data.email,
-        password: data.password,
-        confirmPassword: data.confirmPassword,
-      })
-      navigate('/')
+      const generatedName = 'User' + new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 14)
+      console.log('RegisterPage onSubmit called', data.email, generatedName)
+      const result = await registerUser(data.email, data.password, generatedName)
+      console.log('registerUser result:', result)
+      if (result && result.success) {
+        navigate('/')
+      } else {
+        console.error('Registration failed:', result?.error)
+        setError('root', { type: 'manual', message: result?.error || t('toast.error') })
+      }
     } catch (error) {
+      console.error('RegisterPage onSubmit error:', error)
       setError('root', {
         type: 'manual',
         message: t('toast.error'),
@@ -74,6 +79,7 @@ export function RegisterPage() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* 이름 */}
             {/* 에러 메시지 */}
             {errors.root && (
               <div className="p-3 rounded-lg bg-error-50 border border-error-200">

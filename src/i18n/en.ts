@@ -32,10 +32,10 @@ export default {
     count: 'items',
     appName: 'Taeshigee',
     appDescription: 'A new experience in task management',
-    justNow: 'Just now',
-    minutesAgo: '{{count}} minutes ago',
-    hoursAgo: '{{count}} hours ago',
-    daysAgo: '{{count}} days ago'
+    justNow: "Just now",
+    minutesAgo: "{{count}} minute(s) ago",
+    hoursAgo: "{{count}} hour(s) ago",
+    daysAgo: "{{count}} day(s) ago"
   },
 
   // Navigation

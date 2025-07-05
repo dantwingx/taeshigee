@@ -30,7 +30,11 @@ export default {
     saving: "保存中...",
     count: "个",
     appName: "Taeshigee",
-    appDescription: "任务管理的新体验"
+    appDescription: "任务管理的新体验",
+    justNow: "刚刚",
+    minutesAgo: "{{count}}分钟前",
+    hoursAgo: "{{count}}小时前",
+    daysAgo: "{{count}}天前"
   },
 
   navigation: {
@@ -165,9 +169,9 @@ export default {
     weeklyProgress: '周进度',
     monthlyProgress: '月进度',
     noPublicTasks: '暂无公开任务',
-    viewTaskDetails: '查看任务详情',
-    createdBy: '创建者',
-    createdAt: '创建时间',
+    viewTaskDetails: "查看任务详情",
+    createdBy: "创建者",
+    createdAt: "创建日期",
     completedAt: '完成时间'
   },
 
@@ -194,7 +198,36 @@ export default {
     languageChanged: "语言已更改",
     themeChanged: "主题已更改",
     showMore: "显示更多",
-    showLess: "收起"
+    showLess: "收起",
+    changeUserId: "更改用户ID",
+    userIdChanged: "用户ID更改成功",
+    userIdChangeFailed: "用户ID更改失败",
+    userIdAlreadyExists: "用户ID已存在",
+    invalidUserIdFormat: "用户ID必须是字母数字，6个或更多且少于30个字符",
+    enterUserId: "请输入用户ID",
+    userIdPlaceholder: "user_000001",
+    name: "姓名",
+    nameChangeFailed: "姓名更改失败",
+    enterName: "请输入您的姓名",
+    darkModeEnabled: "深色模式已启用",
+    darkModeDisabled: "深色模式已禁用",
+    darkModeChangeFailed: "深色模式更改失败",
+    languageChangeFailed: "语言更改失败",
+    myAccount: "我的账户",
+    appSettings: "应用设置",
+    accountManagement: "账户管理",
+    development: "开发",
+    email: "邮箱",
+    joinDate: "注册日期",
+    lastUpdated: "最后更新",
+    language: "语言",
+    nameChanged: "姓名更改成功",
+    loggedOut: "登出成功",
+    allDataCleared: "所有数据清除成功",
+    testAccountCreated: "测试账户创建成功",
+    pleaseLogin: "请先登录",
+    createTestAccount: "创建测试账户",
+    clearAllData: "清除所有数据"
   },
 
   toast: {

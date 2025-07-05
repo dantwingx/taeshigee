@@ -31,7 +31,11 @@ export default {
     saving: 'Zapisywanie...',
     count: 'elementów',
     appName: 'Taeshigee',
-    appDescription: 'Nowe doświadczenie w zarządzaniu zadaniami'
+    appDescription: 'Nowe doświadczenie w zarządzaniu zadaniami',
+    justNow: "Przed chwilą",
+    minutesAgo: "{{count}} minut temu",
+    hoursAgo: "{{count}} godzin temu",
+    daysAgo: "{{count}} dni temu"
   },
 
   // Nawigacja
@@ -170,7 +174,7 @@ export default {
     noPublicTasks: 'Brak dostępnych zadań publicznych',
     viewTaskDetails: 'Zobacz szczegóły zadania',
     createdBy: 'Utworzone przez',
-    createdAt: 'Utworzone',
+    createdAt: 'Data utworzenia',
     completedAt: 'Ukończone'
   },
 
@@ -196,7 +200,38 @@ export default {
     logout: 'Wyloguj',
     confirmLogout: 'Czy na pewno chcesz się wylogować?',
     languageChanged: 'Język zmieniony pomyślnie',
-    themeChanged: 'Motyw zmieniony pomyślnie'
+    themeChanged: 'Motyw zmieniony pomyślnie',
+    showMore: "Pokaż więcej",
+    showLess: "Pokaż mniej",
+    changeUserId: 'Zmień ID użytkownika',
+    userIdChanged: 'ID użytkownika zmieniony pomyślnie',
+    userIdChangeFailed: 'Nie udało się zmienić ID użytkownika',
+    userIdAlreadyExists: 'ID użytkownika już istnieje',
+    invalidUserIdFormat: 'ID użytkownika musi być alfanumeryczne, 6 lub więcej i mniej niż 30 znaków',
+    enterUserId: 'Wprowadź ID użytkownika',
+    userIdPlaceholder: 'uzytkownik_000001',
+    name: 'Nazwa',
+    nameChangeFailed: 'Nie udało się zmienić nazwy',
+    enterName: 'Wprowadź swoją nazwę',
+    darkModeEnabled: 'Tryb ciemny włączony',
+    darkModeDisabled: 'Tryb ciemny wyłączony',
+    darkModeChangeFailed: 'Nie udało się zmienić trybu ciemnego',
+    languageChangeFailed: 'Nie udało się zmienić języka',
+    myAccount: 'Moje konto',
+    appSettings: 'Ustawienia aplikacji',
+    accountManagement: 'Zarządzanie kontem',
+    development: 'Rozwój',
+    email: 'E-mail',
+    joinDate: 'Data dołączenia',
+    lastUpdated: 'Ostatnio zaktualizowane',
+    language: 'Język',
+    nameChanged: 'Nazwa zmieniona pomyślnie',
+    loggedOut: 'Pomyślnie wylogowano',
+    allDataCleared: 'Wszystkie dane pomyślnie wyczyszczone',
+    testAccountCreated: 'Konto testowe utworzone pomyślnie',
+    pleaseLogin: 'Najpierw się zaloguj',
+    createTestAccount: 'Utwórz konto testowe',
+    clearAllData: 'Wyczyść wszystkie dane'
   },
 
   // Komunikaty toast

@@ -30,7 +30,11 @@ export default {
     saving: "सहेज रहा है...",
     count: "आइटम",
     appName: "Taeshigee",
-    appDescription: "कार्य प्रबंधन में एक नया अनुभव"
+    appDescription: "कार्य प्रबंधन में एक नया अनुभव",
+    justNow: "अभी अभी",
+    minutesAgo: "{{count}} मिनट पहले",
+    hoursAgo: "{{count}} घंटे पहले",
+    daysAgo: "{{count}} दिन पहले"
   },
 
   navigation: {
@@ -167,9 +171,9 @@ export default {
     weeklyProgress: 'साप्ताहिक प्रगति',
     monthlyProgress: 'मासिक प्रगति',
     noPublicTasks: 'कोई सार्वजनिक कार्य नहीं',
-    viewTaskDetails: 'कार्य विवरण देखें',
-    createdBy: 'द्वारा बनाया गया',
-    createdAt: 'बनाने की तारीख',
+    viewTaskDetails: "कार्य विवरण देखें",
+    createdBy: "द्वारा बनाया गया",
+    createdAt: "निर्माण तिथि",
     completedAt: 'पूर्णता की तारीख'
   },
 
@@ -194,7 +198,38 @@ export default {
     logout: "लॉगआउट",
     confirmLogout: "क्या आप लॉगआउट करना चाहते हैं?",
     languageChanged: "भाषा बदली गई",
-    themeChanged: "थीम बदली गई"
+    themeChanged: "थीम बदली गई",
+    showMore: "और दिखाएं",
+    showLess: "कम दिखाएं",
+    changeUserId: "उपयोगकर्ता ID बदलें",
+    userIdChanged: "उपयोगकर्ता ID सफलतापूर्वक बदला गया",
+    userIdChangeFailed: "उपयोगकर्ता ID बदलने में विफल",
+    userIdAlreadyExists: "उपयोगकर्ता ID पहले से मौजूद है",
+    invalidUserIdFormat: "उपयोगकर्ता ID अल्फ़ान्यूमेरिक होना चाहिए, 6 या अधिक और 30 से कम अक्षर",
+    enterUserId: "कृपया उपयोगकर्ता ID दर्ज करें",
+    userIdPlaceholder: "उपयोगकर्ता_000001",
+    name: "नाम",
+    nameChangeFailed: "नाम बदलने में विफल",
+    enterName: "कृपया अपना नाम दर्ज करें",
+    darkModeEnabled: "डार्क मोड सक्षम",
+    darkModeDisabled: "डार्क मोड अक्षम",
+    darkModeChangeFailed: "डार्क मोड बदलने में विफल",
+    languageChangeFailed: "भाषा बदलने में विफल",
+    myAccount: "मेरा खाता",
+    appSettings: "ऐप सेटिंग्स",
+    accountManagement: "खाता प्रबंधन",
+    development: "विकास",
+    email: "ईमेल",
+    joinDate: "शामिल होने की तारीख",
+    lastUpdated: "अंतिम अपडेट",
+    language: "भाषा",
+    nameChanged: "नाम सफलतापूर्वक बदला गया",
+    loggedOut: "सफलतापूर्वक लॉगआउट हुआ",
+    allDataCleared: "सभी डेटा सफलतापूर्वक साफ़ किया गया",
+    testAccountCreated: "टेस्ट खाता सफलतापूर्वक बनाया गया",
+    pleaseLogin: "कृपया पहले लॉगिन करें",
+    createTestAccount: "टेस्ट खाता बनाएं",
+    clearAllData: "सभी डेटा साफ़ करें"
   },
 
   toast: {

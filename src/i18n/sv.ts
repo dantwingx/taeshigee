@@ -31,7 +31,11 @@ export default {
     saving: 'Sparar...',
     count: 'objekt',
     appName: 'Taeshigee',
-    appDescription: 'En ny upplevelse i uppgiftshantering'
+    appDescription: 'En ny upplevelse i uppgiftshantering',
+    justNow: "Precis nu",
+    minutesAgo: "för {{count}} minut(er) sedan",
+    hoursAgo: "för {{count}} timme(r) sedan",
+    daysAgo: "för {{count}} dag(ar) sedan"
   },
 
   // Navigation
@@ -170,7 +174,7 @@ export default {
     noPublicTasks: 'Inga offentliga uppgifter tillgängliga',
     viewTaskDetails: 'Visa uppgiftsdetaljer',
     createdBy: 'Skapad av',
-    createdAt: 'Skapad',
+    createdAt: 'Skapad datum',
     completedAt: 'Slutförd'
   },
 
@@ -196,7 +200,38 @@ export default {
     logout: 'Logga ut',
     confirmLogout: 'Är du säker på att du vill logga ut?',
     languageChanged: 'Språk ändrat',
-    themeChanged: 'Tema ändrat'
+    themeChanged: 'Tema ändrat',
+    showMore: 'Visa mer',
+    showLess: 'Visa mindre',
+    changeUserId: 'Ändra användar-ID',
+    userIdChanged: 'Användar-ID ändrat framgångsrikt',
+    userIdChangeFailed: 'Misslyckades att ändra användar-ID',
+    userIdAlreadyExists: 'Användar-ID finns redan',
+    invalidUserIdFormat: 'Användar-ID måste vara alfanumeriskt, 6 eller fler och mindre än 30 tecken',
+    enterUserId: 'Ange ett användar-ID',
+    userIdPlaceholder: 'anvandare_000001',
+    name: 'Namn',
+    nameChangeFailed: 'Misslyckades att ändra namn',
+    enterName: 'Ange ditt namn',
+    darkModeEnabled: 'Mörkt läge aktiverat',
+    darkModeDisabled: 'Mörkt läge inaktiverat',
+    darkModeChangeFailed: 'Misslyckades att ändra mörkt läge',
+    languageChangeFailed: 'Misslyckades att ändra språk',
+    myAccount: 'Mitt konto',
+    appSettings: 'App-inställningar',
+    accountManagement: 'Kontohantering',
+    development: 'Utveckling',
+    email: 'E-post',
+    joinDate: 'Registreringsdatum',
+    lastUpdated: 'Senast uppdaterad',
+    language: 'Språk',
+    nameChanged: 'Namn ändrat framgångsrikt',
+    loggedOut: 'Utloggning lyckades',
+    allDataCleared: 'Alla data rensade framgångsrikt',
+    testAccountCreated: 'Testkonto skapat framgångsrikt',
+    pleaseLogin: 'Logga in först',
+    createTestAccount: 'Skapa testkonto',
+    clearAllData: 'Rensa all data'
   },
 
   // Toast-meddelanden

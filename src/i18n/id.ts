@@ -31,7 +31,11 @@ export default {
     saving: 'Menyimpan...',
     count: 'item',
     appName: 'Taeshigee',
-    appDescription: 'Pengalaman baru dalam manajemen tugas'
+    appDescription: 'Pengalaman baru dalam manajemen tugas',
+    justNow: "Baru saja",
+    minutesAgo: "{{count}} menit yang lalu",
+    hoursAgo: "{{count}} jam yang lalu",
+    daysAgo: "{{count}} hari yang lalu"
   },
 
   // Navigasi
@@ -168,9 +172,9 @@ export default {
     weeklyProgress: 'Kemajuan Mingguan',
     monthlyProgress: 'Kemajuan Bulanan',
     noPublicTasks: 'Tidak ada tugas publik',
-    viewTaskDetails: 'Lihat Detail Tugas',
-    createdBy: 'Dibuat oleh',
-    createdAt: 'Dibuat pada',
+    viewTaskDetails: "Lihat detail tugas",
+    createdBy: "Dibuat oleh",
+    createdAt: "Tanggal dibuat",
     completedAt: 'Selesai pada'
   },
 
@@ -196,7 +200,38 @@ export default {
     logout: 'Keluar',
     confirmLogout: 'Apakah Anda yakin ingin keluar?',
     languageChanged: 'Bahasa berhasil diubah',
-    themeChanged: 'Tema berhasil diubah'
+    themeChanged: 'Tema berhasil diubah',
+    showMore: 'Tampilkan lebih banyak',
+    showLess: 'Tampilkan lebih sedikit',
+    changeUserId: 'Ubah ID Pengguna',
+    userIdChanged: 'ID Pengguna berhasil diubah',
+    userIdChangeFailed: 'Gagal mengubah ID Pengguna',
+    userIdAlreadyExists: 'ID Pengguna sudah ada',
+    invalidUserIdFormat: 'ID Pengguna harus alfanumerik, 6 atau lebih dan kurang dari 30 karakter',
+    enterUserId: 'Silakan masukkan ID Pengguna',
+    userIdPlaceholder: 'pengguna_000001',
+    name: 'Nama',
+    nameChangeFailed: 'Gagal mengubah nama',
+    enterName: 'Silakan masukkan nama Anda',
+    darkModeEnabled: 'Mode gelap diaktifkan',
+    darkModeDisabled: 'Mode gelap dinonaktifkan',
+    darkModeChangeFailed: 'Gagal mengubah mode gelap',
+    languageChangeFailed: 'Gagal mengubah bahasa',
+    myAccount: 'Akun Saya',
+    appSettings: 'Pengaturan Aplikasi',
+    accountManagement: 'Manajemen Akun',
+    development: 'Pengembangan',
+    email: 'Email',
+    joinDate: 'Tanggal Bergabung',
+    lastUpdated: 'Terakhir Diperbarui',
+    language: 'Bahasa',
+    nameChanged: 'Nama berhasil diubah',
+    loggedOut: 'Keluar berhasil',
+    allDataCleared: 'Semua data berhasil dibersihkan',
+    testAccountCreated: 'Akun tes berhasil dibuat',
+    pleaseLogin: 'Silakan masuk terlebih dahulu',
+    createTestAccount: 'Buat Akun Tes',
+    clearAllData: 'Bersihkan Semua Data'
   },
 
   // Pesan toast

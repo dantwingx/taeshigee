@@ -30,7 +30,11 @@ export default {
     saving: "保存中...",
     count: "個",
     appName: "Taeshigee",
-    appDescription: "タスク管理の新しい体験"
+    appDescription: "タスク管理の新しい体験",
+    justNow: "たった今",
+    minutesAgo: "{{count}}分前",
+    hoursAgo: "{{count}}時間前",
+    daysAgo: "{{count}}日前"
   },
 
   navigation: {
@@ -173,7 +177,36 @@ export default {
     languageChanged: "言語が変更されました",
     themeChanged: "テーマが変更されました",
     showMore: "もっと見る",
-    showLess: "閉じる"
+    showLess: "閉じる",
+    changeUserId: "ユーザーIDを変更",
+    userIdChanged: "ユーザーIDが正常に変更されました",
+    userIdChangeFailed: "ユーザーIDの変更に失敗しました",
+    userIdAlreadyExists: "ユーザーIDは既に存在します",
+    invalidUserIdFormat: "ユーザーIDは英数字で6文字以上30文字未満である必要があります",
+    enterUserId: "ユーザーIDを入力してください",
+    userIdPlaceholder: "user_000001",
+    name: "名前",
+    nameChangeFailed: "名前の変更に失敗しました",
+    enterName: "名前を入力してください",
+    darkModeEnabled: "ダークモードが有効になりました",
+    darkModeDisabled: "ダークモードが無効になりました",
+    darkModeChangeFailed: "ダークモードの変更に失敗しました",
+    languageChangeFailed: "言語の変更に失敗しました",
+    myAccount: "マイアカウント",
+    appSettings: "アプリ設定",
+    accountManagement: "アカウント管理",
+    development: "開発",
+    email: "メールアドレス",
+    joinDate: "登録日",
+    lastUpdated: "最終更新",
+    language: "言語",
+    nameChanged: "名前が正常に変更されました",
+    loggedOut: "正常にログアウトしました",
+    allDataCleared: "すべてのデータが正常に消去されました",
+    testAccountCreated: "テストアカウントが正常に作成されました",
+    pleaseLogin: "まずログインしてください",
+    createTestAccount: "テストアカウントを作成",
+    clearAllData: "すべてのデータを消去"
   },
 
   toast: {
@@ -192,5 +225,16 @@ export default {
     success: "成功",
     warning: "警告",
     info: "情報"
+  },
+
+  shared: {
+    title: "公開",
+    publicTasks: "公開タスク",
+    noPublicTasks: "公開タスクがありません",
+    completedTasks: "完了タスク",
+    noCompletedTasks: "完了タスクがありません",
+    viewTaskDetails: "タスク詳細を見る",
+    createdBy: "作成者",
+    createdAt: "作成日",
   }
 }; 

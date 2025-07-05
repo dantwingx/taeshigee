@@ -30,7 +30,11 @@ export default {
     saving: "جاري الحفظ...",
     count: "عناصر",
     appName: "Taeshigee",
-    appDescription: "تجربة جديدة في إدارة المهام"
+    appDescription: "تجربة جديدة في إدارة المهام",
+    justNow: "الآن",
+    minutesAgo: "منذ {{count}} دقيقة",
+    hoursAgo: "منذ {{count}} ساعة",
+    daysAgo: "منذ {{count}} يوم"
   },
 
   navigation: {
@@ -164,9 +168,9 @@ export default {
     weeklyProgress: 'التقدم الأسبوعي',
     monthlyProgress: 'التقدم الشهري',
     noPublicTasks: 'لا توجد مهام عامة متاحة',
-    viewTaskDetails: 'عرض تفاصيل المهمة',
-    createdBy: 'أنشئ بواسطة',
-    createdAt: 'أنشئ في',
+    viewTaskDetails: "عرض تفاصيل المهمة",
+    createdBy: "أنشئ بواسطة",
+    createdAt: "تاريخ الإنشاء",
     completedAt: 'أكمل في'
   },
 
@@ -191,7 +195,38 @@ export default {
     logout: "تسجيل الخروج",
     confirmLogout: "هل تريد تسجيل الخروج؟",
     languageChanged: "تم تغيير اللغة",
-    themeChanged: "تم تغيير السمة"
+    themeChanged: "تم تغيير السمة",
+    showMore: "عرض المزيد",
+    showLess: "عرض أقل",
+    changeUserId: "تغيير معرف المستخدم",
+    userIdChanged: "تم تغيير معرف المستخدم بنجاح",
+    userIdChangeFailed: "فشل في تغيير معرف المستخدم",
+    userIdAlreadyExists: "معرف المستخدم موجود بالفعل",
+    invalidUserIdFormat: "معرف المستخدم يجب أن يكون أبجدي رقمي، 6 أو أكثر وأقل من 30 حرف",
+    enterUserId: "يرجى إدخال معرف المستخدم",
+    userIdPlaceholder: "مستخدم_000001",
+    name: "الاسم",
+    nameChangeFailed: "فشل في تغيير الاسم",
+    enterName: "يرجى إدخال اسمك",
+    darkModeEnabled: "تم تفعيل الوضع المظلم",
+    darkModeDisabled: "تم إلغاء تفعيل الوضع المظلم",
+    darkModeChangeFailed: "فشل في تغيير الوضع المظلم",
+    languageChangeFailed: "فشل في تغيير اللغة",
+    myAccount: "حسابي",
+    appSettings: "إعدادات التطبيق",
+    accountManagement: "إدارة الحساب",
+    development: "التطوير",
+    email: "البريد الإلكتروني",
+    joinDate: "تاريخ الانضمام",
+    lastUpdated: "آخر تحديث",
+    language: "اللغة",
+    nameChanged: "تم تغيير الاسم بنجاح",
+    loggedOut: "تم تسجيل الخروج بنجاح",
+    allDataCleared: "تم مسح جميع البيانات بنجاح",
+    testAccountCreated: "تم إنشاء حساب الاختبار بنجاح",
+    pleaseLogin: "يرجى تسجيل الدخول أولاً",
+    createTestAccount: "إنشاء حساب اختبار",
+    clearAllData: "مسح جميع البيانات"
   },
 
   toast: {

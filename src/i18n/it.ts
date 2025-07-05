@@ -30,7 +30,11 @@ export default {
     saving: "Salvataggio...",
     count: "elementi",
     appName: "Taeshigee",
-    appDescription: "Una nuova esperienza nella gestione dei compiti"
+    appDescription: "Una nuova esperienza nella gestione dei compiti",
+    justNow: "Proprio adesso",
+    minutesAgo: "{{count}} minuto/i fa",
+    hoursAgo: "{{count}} ora/e fa",
+    daysAgo: "{{count}} giorno/i fa"
   },
 
   navigation: {
@@ -167,9 +171,9 @@ export default {
     weeklyProgress: 'Progresso Settimanale',
     monthlyProgress: 'Progresso Mensile',
     noPublicTasks: 'Nessuna attività pubblica disponibile',
-    viewTaskDetails: 'Visualizza Dettagli Attività',
-    createdBy: 'Creato da',
-    createdAt: 'Creato il',
+    viewTaskDetails: "Visualizza dettagli attività",
+    createdBy: "Creato da",
+    createdAt: "Data di creazione",
     completedAt: 'Completato il'
   },
 
@@ -196,7 +200,36 @@ export default {
     languageChanged: "Lingua modificata",
     themeChanged: "Tema modificato",
     showMore: "Mostra di più",
-    showLess: "Mostra di meno"
+    showLess: "Mostra di meno",
+    changeUserId: "Cambia ID utente",
+    userIdChanged: "ID utente modificato con successo",
+    userIdChangeFailed: "Impossibile modificare l'ID utente",
+    userIdAlreadyExists: "L'ID utente esiste già",
+    invalidUserIdFormat: "L'ID utente deve essere alfanumerico, 6 o più e meno di 30 caratteri",
+    enterUserId: "Inserisci un ID utente",
+    userIdPlaceholder: "utente_000001",
+    name: "Nome",
+    nameChangeFailed: "Impossibile modificare il nome",
+    enterName: "Inserisci il tuo nome",
+    darkModeEnabled: "Modalità scura abilitata",
+    darkModeDisabled: "Modalità scura disabilitata",
+    darkModeChangeFailed: "Impossibile modificare la modalità scura",
+    languageChangeFailed: "Impossibile modificare la lingua",
+    myAccount: "Il mio account",
+    appSettings: "Impostazioni app",
+    accountManagement: "Gestione account",
+    development: "Sviluppo",
+    email: "Email",
+    joinDate: "Data di iscrizione",
+    lastUpdated: "Ultimo aggiornamento",
+    language: "Lingua",
+    nameChanged: "Nome modificato con successo",
+    loggedOut: "Disconnessione effettuata con successo",
+    allDataCleared: "Tutti i dati eliminati con successo",
+    testAccountCreated: "Account di test creato con successo",
+    pleaseLogin: "Effettua prima l'accesso",
+    createTestAccount: "Crea account di test",
+    clearAllData: "Elimina tutti i dati"
   },
 
   toast: {

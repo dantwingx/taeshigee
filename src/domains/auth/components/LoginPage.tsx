@@ -17,8 +17,10 @@ type LoginFormData = z.infer<typeof loginSchema>
 export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setLoginError] = useState<string | null>(null)
+  const clearLoginError = () => setLoginError(null)
   const navigate = useNavigate()
-  const { login, error, clearError } = useAuthStore()
+  const { login } = useAuthStore()
   const { t } = useTranslation()
 
   const {
@@ -32,10 +34,14 @@ export function LoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true)
-    clearError() // 이전 에러 초기화
+    clearLoginError() // 이전 에러 초기화
     try {
-      await login({ email: data.email, password: data.password })
-      navigate('/')
+      const result = await login(data.email, data.password)
+      if (result.success) {
+        navigate('/')
+      } else {
+        setLoginError(result.error || t('auth.invalidCredentials'))
+      }
     } catch (error) {
       // authStore에서 이미 에러를 설정했으므로 추가 처리 불필요
       console.error('로그인 실패:', error)
@@ -66,8 +72,12 @@ export function LoginPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* 에러 메시지 */}
             {(errors.root || error) && (
-              <div className="p-3 rounded-lg bg-error-50 border border-error-200">
-                <p className="text-sm text-error-700">
+              <div className="p-3 rounded-lg bg-red-200 border border-red-400 flex items-center gap-2">
+                {/* 에러 아이콘 */}
+                <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0Z" />
+                </svg>
+                <p className="text-sm text-red-800 font-bold">
                   {errors.root?.message || error || t('auth.invalidCredentials')}
                 </p>
               </div>

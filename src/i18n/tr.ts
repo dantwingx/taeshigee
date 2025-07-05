@@ -31,7 +31,11 @@ export default {
     saving: 'Kaydediliyor...',
     count: 'öğe',
     appName: 'Taeshigee',
-    appDescription: 'Görev yönetiminde yeni bir deneyim'
+    appDescription: 'Görev yönetiminde yeni bir deneyim',
+    justNow: "Az önce",
+    minutesAgo: "{{count}} dakika önce",
+    hoursAgo: "{{count}} saat önce",
+    daysAgo: "{{count}} gün önce"
   },
 
   // Navigasyon
@@ -177,7 +181,38 @@ export default {
     logout: 'Çıkış Yap',
     confirmLogout: 'Çıkış yapmak istediğinizden emin misiniz?',
     languageChanged: 'Dil başarıyla değiştirildi',
-    themeChanged: 'Tema başarıyla değiştirildi'
+    themeChanged: 'Tema başarıyla değiştirildi',
+    showMore: 'Daha fazla göster',
+    showLess: 'Daha az göster',
+    changeUserId: 'Kullanıcı ID\'sini değiştir',
+    userIdChanged: 'Kullanıcı ID başarıyla değiştirildi',
+    userIdChangeFailed: 'Kullanıcı ID değiştirme başarısız',
+    userIdAlreadyExists: 'Kullanıcı ID zaten mevcut',
+    invalidUserIdFormat: 'Kullanıcı ID alfanumerik olmalı, 6 veya daha fazla ve 30\'dan az karakter',
+    enterUserId: 'Lütfen bir kullanıcı ID girin',
+    userIdPlaceholder: 'kullanici_000001',
+    name: 'Ad',
+    nameChangeFailed: 'Ad değiştirme başarısız',
+    enterName: 'Lütfen adınızı girin',
+    darkModeEnabled: 'Karanlık mod etkinleştirildi',
+    darkModeDisabled: 'Karanlık mod devre dışı bırakıldı',
+    darkModeChangeFailed: 'Karanlık mod değiştirme başarısız',
+    languageChangeFailed: 'Dil değiştirme başarısız',
+    myAccount: 'Hesabım',
+    appSettings: 'Uygulama ayarları',
+    accountManagement: 'Hesap yönetimi',
+    development: 'Geliştirme',
+    email: 'E-posta',
+    joinDate: 'Katılım tarihi',
+    lastUpdated: 'Son güncelleme',
+    language: 'Dil',
+    nameChanged: 'Ad başarıyla değiştirildi',
+    loggedOut: 'Başarıyla çıkış yapıldı',
+    allDataCleared: 'Tüm veriler başarıyla temizlendi',
+    testAccountCreated: 'Test hesabı başarıyla oluşturuldu',
+    pleaseLogin: 'Lütfen önce giriş yapın',
+    createTestAccount: 'Test hesabı oluştur',
+    clearAllData: 'Tüm verileri temizle'
   },
 
   // Toast mesajları
@@ -197,5 +232,11 @@ export default {
     success: 'Başarılı',
     warning: 'Uyarı',
     info: 'Bilgi'
+  },
+
+  shared: {
+    viewTaskDetails: "Görev detaylarını görüntüle",
+    createdBy: "Oluşturan",
+    createdAt: "Oluşturulma tarihi",
   }
 }; 

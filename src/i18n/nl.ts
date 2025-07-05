@@ -31,7 +31,11 @@ export default {
     saving: 'Opslaan...',
     count: 'items',
     appName: 'Taeshigee',
-    appDescription: 'Een nieuwe ervaring in taakbeheer'
+    appDescription: 'Een nieuwe ervaring in taakbeheer',
+    justNow: "Zojuist",
+    minutesAgo: "{{count}} minuut geleden",
+    hoursAgo: "{{count}} uur geleden",
+    daysAgo: "{{count}} dag geleden"
   },
 
   // Navigatie
@@ -172,7 +176,7 @@ export default {
     noPublicTasks: 'Geen openbare taken beschikbaar',
     viewTaskDetails: 'Taakdetails bekijken',
     createdBy: 'Gemaakt door',
-    createdAt: 'Gemaakt op',
+    createdAt: 'Aanmaakdatum',
     completedAt: 'Voltooid op'
   },
 
@@ -198,7 +202,38 @@ export default {
     logout: 'Uitloggen',
     confirmLogout: 'Weet je zeker dat je wilt uitloggen?',
     languageChanged: 'Taal succesvol gewijzigd',
-    themeChanged: 'Thema succesvol gewijzigd'
+    themeChanged: 'Thema succesvol gewijzigd',
+    showMore: "Meer weergeven",
+    showLess: "Minder weergeven",
+    changeUserId: 'Gebruikers-ID wijzigen',
+    userIdChanged: 'Gebruikers-ID succesvol gewijzigd',
+    userIdChangeFailed: 'Gebruikers-ID wijzigen mislukt',
+    userIdAlreadyExists: 'Gebruikers-ID bestaat al',
+    invalidUserIdFormat: 'Gebruikers-ID moet alfanumeriek zijn, 6 of meer en minder dan 30 tekens',
+    enterUserId: 'Voer een gebruikers-ID in',
+    userIdPlaceholder: 'gebruiker_000001',
+    name: 'Naam',
+    nameChangeFailed: 'Naam wijzigen mislukt',
+    enterName: 'Voer je naam in',
+    darkModeEnabled: 'Donkere modus ingeschakeld',
+    darkModeDisabled: 'Donkere modus uitgeschakeld',
+    darkModeChangeFailed: 'Donkere modus wijzigen mislukt',
+    languageChangeFailed: 'Taal wijzigen mislukt',
+    myAccount: 'Mijn account',
+    appSettings: 'App-instellingen',
+    accountManagement: 'Accountbeheer',
+    development: 'Ontwikkeling',
+    email: 'E-mail',
+    joinDate: 'Lidmaatschapsdatum',
+    lastUpdated: 'Laatst bijgewerkt',
+    language: 'Taal',
+    nameChanged: 'Naam succesvol gewijzigd',
+    loggedOut: 'Succesvol uitgelogd',
+    allDataCleared: 'Alle gegevens succesvol gewist',
+    testAccountCreated: 'Testaccount succesvol aangemaakt',
+    pleaseLogin: 'Log eerst in',
+    createTestAccount: 'Testaccount aanmaken',
+    clearAllData: 'Alle gegevens wissen'
   },
 
   // Toast-berichten

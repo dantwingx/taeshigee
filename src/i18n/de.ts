@@ -30,7 +30,11 @@ export default {
     saving: "Speichern...",
     count: "Elemente",
     appName: "Taeshigee",
-    appDescription: "Eine neue Erfahrung im Aufgabenmanagement"
+    appDescription: "Eine neue Erfahrung im Aufgabenmanagement",
+    justNow: "Gerade eben",
+    minutesAgo: "vor {{count}} Minute(n)",
+    hoursAgo: "vor {{count}} Stunde(n)",
+    daysAgo: "vor {{count}} Tag(en)"
   },
 
   navigation: {
@@ -193,7 +197,36 @@ export default {
     languageChanged: "Sprache geändert",
     themeChanged: "Thema geändert",
     showMore: "Mehr anzeigen",
-    showLess: "Weniger anzeigen"
+    showLess: "Weniger anzeigen",
+    changeUserId: "Benutzer-ID ändern",
+    userIdChanged: "Benutzer-ID erfolgreich geändert",
+    userIdChangeFailed: "Benutzer-ID-Änderung fehlgeschlagen",
+    userIdAlreadyExists: "Benutzer-ID existiert bereits",
+    invalidUserIdFormat: "Benutzer-ID muss alphanumerisch sein, 6 oder mehr und weniger als 30 Zeichen",
+    enterUserId: "Bitte geben Sie eine Benutzer-ID ein",
+    userIdPlaceholder: "benutzer_000001",
+    name: "Name",
+    nameChangeFailed: "Namensänderung fehlgeschlagen",
+    enterName: "Bitte geben Sie Ihren Namen ein",
+    darkModeEnabled: "Dunkler Modus aktiviert",
+    darkModeDisabled: "Dunkler Modus deaktiviert",
+    darkModeChangeFailed: "Dunkler Modus-Änderung fehlgeschlagen",
+    languageChangeFailed: "Sprachänderung fehlgeschlagen",
+    myAccount: "Mein Konto",
+    appSettings: "App-Einstellungen",
+    accountManagement: "Kontoverwaltung",
+    development: "Entwicklung",
+    email: "E-Mail",
+    joinDate: "Beitrittsdatum",
+    lastUpdated: "Zuletzt aktualisiert",
+    language: "Sprache",
+    nameChanged: "Name erfolgreich geändert",
+    loggedOut: "Erfolgreich abgemeldet",
+    allDataCleared: "Alle Daten erfolgreich gelöscht",
+    testAccountCreated: "Testkonto erfolgreich erstellt",
+    pleaseLogin: "Bitte melden Sie sich zuerst an",
+    createTestAccount: "Testkonto erstellen",
+    clearAllData: "Alle Daten löschen"
   },
 
   toast: {

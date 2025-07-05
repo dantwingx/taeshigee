@@ -30,7 +30,11 @@ export default {
     saving: "Enregistrement...",
     count: "éléments",
     appName: "Taeshigee",
-    appDescription: "Une nouvelle expérience dans la gestion des tâches"
+    appDescription: "Une nouvelle expérience dans la gestion des tâches",
+    justNow: "À l'instant",
+    minutesAgo: "il y a {{count}} minute(s)",
+    hoursAgo: "il y a {{count}} heure(s)",
+    daysAgo: "il y a {{count}} jour(s)"
   },
 
   navigation: {
@@ -164,9 +168,9 @@ export default {
     weeklyProgress: 'Progrès Hebdomadaire',
     monthlyProgress: 'Progrès Mensuel',
     noPublicTasks: 'Aucune tâche publique disponible',
-    viewTaskDetails: 'Voir les Détails de la Tâche',
-    createdBy: 'Créé par',
-    createdAt: 'Créé le',
+    viewTaskDetails: "Voir les détails de la tâche",
+    createdBy: "Créé par",
+    createdAt: "Date de création",
     completedAt: 'Terminé le'
   },
 
@@ -193,7 +197,36 @@ export default {
     languageChanged: "Langue modifiée",
     themeChanged: "Thème modifié",
     showMore: "Afficher plus",
-    showLess: "Afficher moins"
+    showLess: "Afficher moins",
+    changeUserId: "Changer l'ID utilisateur",
+    userIdChanged: "ID utilisateur modifié avec succès",
+    userIdChangeFailed: "Échec de la modification de l'ID utilisateur",
+    userIdAlreadyExists: "L'ID utilisateur existe déjà",
+    invalidUserIdFormat: "L'ID utilisateur doit être alphanumérique, 6 caractères ou plus et moins de 30 caractères",
+    enterUserId: "Veuillez saisir un ID utilisateur",
+    userIdPlaceholder: "utilisateur_000001",
+    name: "Nom",
+    nameChangeFailed: "Échec de la modification du nom",
+    enterName: "Veuillez saisir votre nom",
+    darkModeEnabled: "Mode sombre activé",
+    darkModeDisabled: "Mode sombre désactivé",
+    darkModeChangeFailed: "Échec du changement de mode sombre",
+    languageChangeFailed: "Échec du changement de langue",
+    myAccount: "Mon compte",
+    appSettings: "Paramètres de l'application",
+    accountManagement: "Gestion du compte",
+    development: "Développement",
+    email: "E-mail",
+    joinDate: "Date d'inscription",
+    lastUpdated: "Dernière mise à jour",
+    language: "Langue",
+    nameChanged: "Nom modifié avec succès",
+    loggedOut: "Déconnecté avec succès",
+    allDataCleared: "Toutes les données ont été effacées avec succès",
+    testAccountCreated: "Compte de test créé avec succès",
+    pleaseLogin: "Veuillez d'abord vous connecter",
+    createTestAccount: "Créer un compte de test",
+    clearAllData: "Effacer toutes les données"
   },
 
   toast: {

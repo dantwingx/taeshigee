@@ -30,7 +30,11 @@ export default {
     saving: "Сохранение...",
     count: "элементов",
     appName: "Taeshigee",
-    appDescription: "Новый опыт в управлении задачами"
+    appDescription: "Новый опыт в управлении задачами",
+    justNow: "Только что",
+    minutesAgo: "{{count}} минут(ы) назад",
+    hoursAgo: "{{count}} час(ов) назад",
+    daysAgo: "{{count}} дней назад"
   },
 
   navigation: {
@@ -164,9 +168,9 @@ export default {
     weeklyProgress: 'Недельный прогресс',
     monthlyProgress: 'Месячный прогресс',
     noPublicTasks: 'Нет доступных публичных задач',
-    viewTaskDetails: 'Просмотр деталей задачи',
-    createdBy: 'Создано',
-    createdAt: 'Создано',
+    viewTaskDetails: "Просмотр деталей задачи",
+    createdBy: "Создано",
+    createdAt: "Дата создания",
     completedAt: 'Завершено'
   },
 
@@ -191,7 +195,38 @@ export default {
     logout: "Выйти",
     confirmLogout: "Хотите выйти?",
     languageChanged: "Язык изменен",
-    themeChanged: "Тема изменена"
+    themeChanged: "Тема изменена",
+    showMore: "Показать больше",
+    showLess: "Показать меньше",
+    changeUserId: "Изменить ID пользователя",
+    userIdChanged: "ID пользователя успешно изменен",
+    userIdChangeFailed: "Не удалось изменить ID пользователя",
+    userIdAlreadyExists: "ID пользователя уже существует",
+    invalidUserIdFormat: "ID пользователя должен быть буквенно-цифровым, 6 или более и менее 30 символов",
+    enterUserId: "Пожалуйста, введите ID пользователя",
+    userIdPlaceholder: "пользователь_000001",
+    name: "Имя",
+    nameChangeFailed: "Не удалось изменить имя",
+    enterName: "Пожалуйста, введите ваше имя",
+    darkModeEnabled: "Темный режим включен",
+    darkModeDisabled: "Темный режим отключен",
+    darkModeChangeFailed: "Не удалось изменить темный режим",
+    languageChangeFailed: "Не удалось изменить язык",
+    myAccount: "Мой аккаунт",
+    appSettings: "Настройки приложения",
+    accountManagement: "Управление аккаунтом",
+    development: "Разработка",
+    email: "Электронная почта",
+    joinDate: "Дата регистрации",
+    lastUpdated: "Последнее обновление",
+    language: "Язык",
+    nameChanged: "Имя успешно изменено",
+    loggedOut: "Успешный выход",
+    allDataCleared: "Все данные успешно очищены",
+    testAccountCreated: "Тестовый аккаунт успешно создан",
+    pleaseLogin: "Пожалуйста, сначала войдите в систему",
+    createTestAccount: "Создать тестовый аккаунт",
+    clearAllData: "Очистить все данные"
   },
 
   toast: {
