@@ -73,7 +73,11 @@ export default {
     taskManager: 'Menedżer zadań',
     passwordPlaceholder: 'Wprowadź hasło',
     confirmPasswordPlaceholder: 'Potwierdź hasło',
-    emailPlaceholder: 'twoj@email.com'
+    emailPlaceholder: 'twoj@email.com',
+    emailInvalid: "Wprowadź poprawny adres e-mail.",
+    passwordMin: "Hasło musi mieć co najmniej 6 znaków.",
+    confirmPasswordRequired: "Potwierdź swoje hasło.",
+    passwordsDontMatch: "Hasła nie są zgodne."
   },
 
   // Zadanie

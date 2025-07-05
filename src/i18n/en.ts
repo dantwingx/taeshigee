@@ -73,7 +73,11 @@ export default {
     taskManager: 'Task Manager',
     passwordPlaceholder: 'Enter your password',
     confirmPasswordPlaceholder: 'Confirm your password',
-    emailPlaceholder: 'your@email.com'
+    emailPlaceholder: 'your@email.com',
+    emailInvalid: "Please enter a valid email address.",
+    passwordMin: "Password must be at least 6 characters.",
+    confirmPasswordRequired: "Please confirm your password.",
+    passwordsDontMatch: "Passwords do not match."
   },
 
   // Task

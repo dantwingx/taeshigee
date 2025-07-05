@@ -69,7 +69,11 @@ export default {
     taskManager: "कार्य प्रबंधक",
     passwordPlaceholder: "अपना पासवर्ड दर्ज करें",
     confirmPasswordPlaceholder: "अपना पासवर्ड पुष्टि करें",
-    emailPlaceholder: "your@email.com"
+    emailPlaceholder: "your@email.com",
+    emailInvalid: "कृपया एक मान्य ईमेल पता दर्ज करें।",
+    passwordMin: "पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।",
+    confirmPasswordRequired: "कृपया अपना पासवर्ड पुष्टि करें।",
+    passwordsDontMatch: "पासवर्ड मेल नहीं खाते।"
   },
 
   task: {

@@ -72,7 +72,11 @@ export default {
     taskManager: 'Task Manager',
     passwordPlaceholder: '비밀번호를 입력하세요',
     confirmPasswordPlaceholder: '비밀번호를 다시 입력하세요',
-    emailPlaceholder: 'your@email.com'
+    emailPlaceholder: 'your@email.com',
+    emailInvalid: "올바른 이메일 주소를 입력해주세요",
+    passwordMin: "비밀번호는 최소 6자 이상이어야 합니다",
+    confirmPasswordRequired: "비밀번호 확인을 입력해주세요",
+    passwordsDontMatch: "비밀번호가 일치하지 않습니다"
   },
 
   // 태스크

@@ -73,7 +73,11 @@ export default {
     taskManager: 'Görev yöneticisi',
     passwordPlaceholder: 'Şifrenizi girin',
     confirmPasswordPlaceholder: 'Şifrenizi onaylayın',
-    emailPlaceholder: 'sizin@email.com'
+    emailPlaceholder: 'sizin@email.com',
+    emailInvalid: "Lütfen geçerli bir e-posta adresi girin.",
+    passwordMin: "Şifre en az 6 karakter olmalıdır.",
+    confirmPasswordRequired: "Lütfen şifrenizi onaylayın.",
+    passwordsDontMatch: "Şifreler eşleşmiyor.",
   },
 
   // Görev

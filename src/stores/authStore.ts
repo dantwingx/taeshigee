@@ -2,6 +2,8 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { User, UserSettings } from '@/types/auth'
 import { useTaskStore } from '@/stores/taskStore'
+import { changeLanguage } from '@/i18n'
+import { applyDarkMode } from '@/utils/darkMode'
 
 interface AuthState {
   currentUser: User | null
@@ -70,6 +72,15 @@ export const useAuthStore = create<AuthState>()(
         })
         // taskStore 동기화
         useTaskStore.getState().setCurrentUser(user.id, user.userNumber)
+        // 로그인 시 사용자 설정 적용
+        if (user.userSettings) {
+          if (user.userSettings.language) {
+            changeLanguage(user.userSettings.language)
+          }
+          if (user.userSettings.darkMode !== undefined) {
+            applyDarkMode(user.userSettings.darkMode)
+          }
+        }
         
         console.log('authStore login success', user)
         return { success: true }
@@ -111,6 +122,15 @@ export const useAuthStore = create<AuthState>()(
         })
         // taskStore 동기화
         useTaskStore.getState().setCurrentUser(newUser.id, newUser.userNumber)
+        // 회원가입 시 사용자 설정 적용
+        if (newUser.userSettings) {
+          if (newUser.userSettings.language) {
+            changeLanguage(newUser.userSettings.language)
+          }
+          if (newUser.userSettings.darkMode !== undefined) {
+            applyDarkMode(newUser.userSettings.darkMode)
+          }
+        }
 
         console.log('authStore register success', newUser)
         return { success: true }

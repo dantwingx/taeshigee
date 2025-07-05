@@ -69,7 +69,11 @@ export default {
     taskManager: "Gestore attività",
     passwordPlaceholder: "Inserisci la tua password",
     confirmPasswordPlaceholder: "Conferma la tua password",
-    emailPlaceholder: "tuo@email.com"
+    emailPlaceholder: "tuo@email.com",
+    emailInvalid: "Inserisci un indirizzo email valido.",
+    passwordMin: "La password deve contenere almeno 6 caratteri.",
+    confirmPasswordRequired: "Conferma la tua password.",
+    passwordsDontMatch: "Le password non corrispondono."
   },
 
   task: {

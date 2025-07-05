@@ -69,7 +69,11 @@ export default {
     taskManager: "Aufgabenmanager",
     passwordPlaceholder: "Passwort eingeben",
     confirmPasswordPlaceholder: "Passwort bestätigen",
-    emailPlaceholder: "ihre@email.com"
+    emailPlaceholder: "ihre@email.com",
+    emailInvalid: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+    passwordMin: "Das Passwort muss mindestens 6 Zeichen lang sein.",
+    confirmPasswordRequired: "Bitte bestätigen Sie Ihr Passwort.",
+    passwordsDontMatch: "Die Passwörter stimmen nicht überein."
   },
 
   task: {

@@ -73,7 +73,11 @@ export default {
     taskManager: 'Taakbeheerder',
     passwordPlaceholder: 'Voer je wachtwoord in',
     confirmPasswordPlaceholder: 'Bevestig je wachtwoord',
-    emailPlaceholder: 'jouw@email.com'
+    emailPlaceholder: 'jouw@email.com',
+    emailInvalid: "Voer een geldig e-mailadres in.",
+    passwordMin: "Wachtwoord moet minimaal 6 tekens bevatten.",
+    confirmPasswordRequired: "Bevestig uw wachtwoord.",
+    passwordsDontMatch: "Wachtwoorden komen niet overeen."
   },
 
   // Taak

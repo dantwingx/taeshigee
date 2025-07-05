@@ -7,13 +7,6 @@ import { Eye, EyeOff, CheckCircle, ArrowRight } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useTranslation } from 'react-i18next'
 
-const loginSchema = z.object({
-  email: z.string().email('올바른 이메일 주소를 입력해주세요'),
-  password: z.string().min(6, '비밀번호는 최소 6자 이상이어야 합니다'),
-})
-
-type LoginFormData = z.infer<typeof loginSchema>
-
 export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -22,6 +15,13 @@ export function LoginPage() {
   const navigate = useNavigate()
   const { login } = useAuthStore()
   const { t } = useTranslation()
+
+  const loginSchema = z.object({
+    email: z.string().email(t('auth.emailInvalid')),
+    password: z.string().min(6, t('auth.passwordMin')),
+  })
+
+  type LoginFormData = z.infer<typeof loginSchema>
 
   const {
     register,

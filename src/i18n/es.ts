@@ -69,7 +69,11 @@ export default {
     taskManager: "Gestor de tareas",
     passwordPlaceholder: "Ingresa tu contraseña",
     confirmPasswordPlaceholder: "Confirma tu contraseña",
-    emailPlaceholder: "tu@email.com"
+    emailPlaceholder: "tu@email.com",
+    emailInvalid: "Por favor, introduce una dirección de correo electrónico válida.",
+    passwordMin: "La contraseña debe tener al menos 6 caracteres.",
+    confirmPasswordRequired: "Por favor, confirma tu contraseña.",
+    passwordsDontMatch: "Las contraseñas no coinciden."
   },
 
   task: {

@@ -69,7 +69,11 @@ export default {
     taskManager: "任务管理器",
     passwordPlaceholder: "请输入密码",
     confirmPasswordPlaceholder: "请确认密码",
-    emailPlaceholder: "your@email.com"
+    emailPlaceholder: "your@email.com",
+    emailInvalid: "请输入有效的电子邮件地址。",
+    passwordMin: "密码至少需要6个字符。",
+    confirmPasswordRequired: "请确认您的密码。",
+    passwordsDontMatch: "两次输入的密码不一致。"
   },
 
   task: {

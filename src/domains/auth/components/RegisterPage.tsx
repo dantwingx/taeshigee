@@ -7,17 +7,6 @@ import { Eye, EyeOff, UserPlus, ArrowRight } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useTranslation } from 'react-i18next'
 
-const registerSchema = z.object({
-  email: z.string().email('올바른 이메일 주소를 입력해주세요'),
-  password: z.string().min(6, '비밀번호는 최소 6자 이상이어야 합니다'),
-  confirmPassword: z.string().min(1, '비밀번호 확인을 입력해주세요'),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: '비밀번호가 일치하지 않습니다',
-  path: ['confirmPassword'],
-})
-
-type RegisterFormData = z.infer<typeof registerSchema>
-
 export function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -25,6 +14,17 @@ export function RegisterPage() {
   const navigate = useNavigate()
   const { register: registerUser } = useAuthStore()
   const { t } = useTranslation()
+
+  const registerSchema = z.object({
+    email: z.string().email(t('auth.emailInvalid')),
+    password: z.string().min(6, t('auth.passwordMin')),
+    confirmPassword: z.string().min(1, t('auth.confirmPasswordRequired')),
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: t('auth.passwordsDontMatch'),
+    path: ['confirmPassword'],
+  })
+
+  type RegisterFormData = z.infer<typeof registerSchema>
 
   const {
     register,

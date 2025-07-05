@@ -73,7 +73,11 @@ export default {
     taskManager: 'Uppgiftshanterare',
     passwordPlaceholder: 'Ange ditt lösenord',
     confirmPasswordPlaceholder: 'Bekräfta ditt lösenord',
-    emailPlaceholder: 'din@email.com'
+    emailPlaceholder: 'din@email.com',
+    emailInvalid: "Ange en giltig e-postadress.",
+    passwordMin: "Lösenordet måste vara minst 6 tecken.",
+    confirmPasswordRequired: "Bekräfta ditt lösenord.",
+    passwordsDontMatch: "Lösenorden matchar inte."
   },
 
   // Uppgift

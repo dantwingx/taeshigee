@@ -72,7 +72,11 @@ export default {
     taskManager: 'Trình quản lý nhiệm vụ',
     passwordPlaceholder: 'Nhập mật khẩu của bạn',
     confirmPasswordPlaceholder: 'Xác nhận mật khẩu của bạn',
-    emailPlaceholder: 'your@email.com'
+    emailPlaceholder: 'your@email.com',
+    emailInvalid: "Vui lòng nhập địa chỉ email hợp lệ.",
+    passwordMin: "Mật khẩu phải có ít nhất 6 ký tự.",
+    confirmPasswordRequired: "Vui lòng xác nhận mật khẩu của bạn.",
+    passwordsDontMatch: "Mật khẩu không khớp."
   },
 
   // Nhiệm vụ

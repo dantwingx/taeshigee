@@ -73,7 +73,11 @@ export default {
     taskManager: 'ตัวจัดการงาน',
     passwordPlaceholder: 'ใส่รหัสผ่านของคุณ',
     confirmPasswordPlaceholder: 'ยืนยันรหัสผ่านของคุณ',
-    emailPlaceholder: 'your@email.com'
+    emailPlaceholder: 'your@email.com',
+    emailInvalid: "กรุณากรอกอีเมลที่ถูกต้อง",
+    passwordMin: "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร",
+    confirmPasswordRequired: "กรุณายืนยันรหัสผ่านของคุณ",
+    passwordsDontMatch: "รหัสผ่านไม่ตรงกัน"
   },
 
   // งาน

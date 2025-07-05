@@ -69,7 +69,11 @@ export default {
     taskManager: "مدير المهام",
     passwordPlaceholder: "أدخل كلمة المرور",
     confirmPasswordPlaceholder: "أكد كلمة المرور",
-    emailPlaceholder: "your@email.com"
+    emailPlaceholder: "your@email.com",
+    emailInvalid: "يرجى إدخال عنوان بريد إلكتروني صالح.",
+    passwordMin: "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.",
+    confirmPasswordRequired: "يرجى تأكيد كلمة المرور الخاصة بك.",
+    passwordsDontMatch: "كلمتا المرور غير متطابقتين."
   },
 
   task: {

@@ -69,7 +69,11 @@ export default {
     taskManager: "Менеджер задач",
     passwordPlaceholder: "Введите пароль",
     confirmPasswordPlaceholder: "Подтвердите пароль",
-    emailPlaceholder: "your@email.com"
+    emailPlaceholder: "your@email.com",
+    emailInvalid: "Пожалуйста, введите действительный адрес электронной почты.",
+    passwordMin: "Пароль должен содержать не менее 6 символов.",
+    confirmPasswordRequired: "Пожалуйста, подтвердите свой пароль.",
+    passwordsDontMatch: "Пароли не совпадают."
   },
 
   task: {

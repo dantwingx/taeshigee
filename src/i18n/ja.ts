@@ -69,7 +69,11 @@ export default {
     taskManager: "タスクマネージャー",
     passwordPlaceholder: "パスワードを入力してください",
     confirmPasswordPlaceholder: "パスワードを再入力してください",
-    emailPlaceholder: "your@email.com"
+    emailPlaceholder: "your@email.com",
+    emailInvalid: "有効なメールアドレスを入力してください。",
+    passwordMin: "パスワードは6文字以上で入力してください。",
+    confirmPasswordRequired: "パスワード確認を入力してください。",
+    passwordsDontMatch: "パスワードが一致しません。"
   },
 
   task: {

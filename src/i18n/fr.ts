@@ -69,7 +69,11 @@ export default {
     taskManager: "Gestionnaire de tâches",
     passwordPlaceholder: "Entrez votre mot de passe",
     confirmPasswordPlaceholder: "Confirmez votre mot de passe",
-    emailPlaceholder: "votre@email.com"
+    emailPlaceholder: "votre@email.com",
+    emailInvalid: "Veuillez saisir une adresse e-mail valide.",
+    passwordMin: "Le mot de passe doit comporter au moins 6 caractères.",
+    confirmPasswordRequired: "Veuillez confirmer votre mot de passe.",
+    passwordsDontMatch: "Les mots de passe ne correspondent pas."
   },
 
   task: {

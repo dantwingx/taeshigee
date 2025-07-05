@@ -73,7 +73,11 @@ export default {
     taskManager: 'Pengurus tugas',
     passwordPlaceholder: 'Masukkan kata laluan anda',
     confirmPasswordPlaceholder: 'Sahkan kata laluan anda',
-    emailPlaceholder: 'anda@email.com'
+    emailPlaceholder: 'anda@email.com',
+    emailInvalid: "Sila masukkan alamat e-mel yang sah.",
+    passwordMin: "Kata laluan mesti sekurang-kurangnya 6 aksara.",
+    confirmPasswordRequired: "Sila sahkan kata laluan anda.",
+    passwordsDontMatch: "Kata laluan tidak sepadan."
   },
 
   // Tugas

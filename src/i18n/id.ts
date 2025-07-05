@@ -73,7 +73,11 @@ export default {
     taskManager: 'Manajer tugas',
     passwordPlaceholder: 'Masukkan kata sandi Anda',
     confirmPasswordPlaceholder: 'Konfirmasi kata sandi Anda',
-    emailPlaceholder: 'your@email.com'
+    emailPlaceholder: 'your@email.com',
+    emailInvalid: "Silakan masukkan alamat email yang valid.",
+    passwordMin: "Kata sandi harus terdiri dari minimal 6 karakter.",
+    confirmPasswordRequired: "Silakan konfirmasi kata sandi Anda.",
+    passwordsDontMatch: "Kata sandi tidak cocok."
   },
 
   // Tugas
