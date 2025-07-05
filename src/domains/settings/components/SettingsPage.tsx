@@ -17,322 +17,261 @@ import {
   ChevronDown,
   Database
 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useToastStore } from '@/stores'
+import { applyDarkMode, syncDarkModeWithUserSettings } from '@/utils/darkMode'
+import { formatLocalDateTime } from '@/utils/dateUtils'
 
 export function SettingsPage() {
   const { t, i18n } = useTranslation()
-  const { user, logout, changeUserId, isUserIdAvailable, changeUserName } = useAuthStore()
+  const { 
+    currentUser, 
+    logout, 
+    changeUserName, 
+    createTestAccount,
+    updateUserSettings,
+    getUserSettings
+  } = useAuthStore()
   const { clearAllData } = useTaskStore()
-  const [isDarkMode, setIsDarkMode] = useState(false)
-  const [showDevSection, setShowDevSection] = useState(false)
-  
-  // 사용자 ID 변경 관련 상태
-  const [isEditingUserId, setIsEditingUserId] = useState(false)
-  const [newUserId, setNewUserId] = useState('')
-  const [userIdError, setUserIdError] = useState('')
-  const [isChangingUserId, setIsChangingUserId] = useState(false)
-
-  // 사용자 이름 변경 관련 상태
-  const [isEditingUserName, setIsEditingUserName] = useState(false)
-  const [newUserName, setNewUserName] = useState('')
-  const [userNameError, setUserNameError] = useState('')
-  const [isChangingUserName, setIsChangingUserName] = useState(false)
-
-  // 언어 설정 관련 상태
-  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false)
-
-  const currentLanguage = getLanguageByCode(i18n.language) || languages[0]
-
   const { showToast } = useToastStore()
+  
+  // 사용자 설정 상태
+  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [selectedLanguage, setSelectedLanguage] = useState('ko')
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false)
+  
+  // 편집 모드 상태
+  const [isEditingName, setIsEditingName] = useState(false)
+  const [editingName, setEditingName] = useState('')
+  const [nameError, setNameError] = useState('')
 
-  const handleLogout = () => {
-    // Show a toast instead of confirm
-    showToast('info', t('settings.confirmLogout'))
-    // For now, auto-logout for demo (replace with modal for real confirm)
-    logout()
-  }
+  // 컴포넌트 마운트 시 사용자 설정 로드
+  useEffect(() => {
+    if (currentUser) {
+      const settings = getUserSettings()
+      if (settings) {
+        setIsDarkMode(settings.darkMode)
+        setSelectedLanguage(settings.language)
+        // 다크모드 동기화
+        syncDarkModeWithUserSettings()
+      }
+    }
+  }, [currentUser, getUserSettings])
 
-  const handleClearAllData = () => {
-    // Show a warning toast instead of confirm
-    showToast('warning', '⚠️ 모든 태스크 데이터가 영구적으로 삭제됩니다. 계속하시겠습니까?')
-    clearAllData()
-    showToast('success', '모든 데이터가 초기화되었습니다.')
-  }
-
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode)
-    // TODO: 실제 다크모드 구현
-  }
-
-  const changeLanguage = (languageCode: string) => {
-    i18n.changeLanguage(languageCode)
-    setShowLanguageDropdown(false)
-    showToast('success', t('settings.languageChanged'))
-  }
-
-  // 사용자 ID 변경 시작
-  const startEditingUserId = () => {
-    setIsEditingUserId(true)
-    setNewUserId('')
-    setUserIdError('')
-  }
-
-  // 사용자 ID 변경 취소
-  const cancelEditingUserId = () => {
-    setIsEditingUserId(false)
-    setNewUserId('')
-    setUserIdError('')
-  }
-
-  // 사용자 ID 입력 검증
-  const handleUserIdInput = (value: string) => {
-    setNewUserId(value)
-    setUserIdError('')
+  // 언어 변경 처리
+  const handleLanguageChange = async (languageCode: string) => {
+    setSelectedLanguage(languageCode)
+    setIsLanguageDropdownOpen(false)
     
-    if (value && !/^[a-zA-Z0-9]{0,29}$/.test(value)) {
-      setUserIdError('사용자 ID는 영문+숫자만 사용할 수 있습니다.')
+    // i18n 언어 변경
+    await i18n.changeLanguage(languageCode)
+    
+    // 사용자 설정 업데이트
+    const result = await updateUserSettings({ language: languageCode })
+    if (result.success) {
+      showToast('success', t('settings.languageChanged'))
+    } else {
+      showToast('error', t('settings.languageChangeFailed'))
     }
   }
 
-  // 사용자 ID 변경 확인
-  const confirmChangeUserId = async () => {
-    if (!newUserId.trim()) {
-      setUserIdError('사용자 ID를 입력해주세요.')
-      return
-    }
-
-    // ID 형식 검사 (영문+숫자 8~29자)
-    if (!/^[a-zA-Z0-9]{8,29}$/.test(newUserId)) {
-      setUserIdError('사용자 ID는 영문+숫자 8자리 이상 30자리 미만이어야 합니다.')
-      return
-    }
-
-    // 사용 가능 여부 검사
-    if (!isUserIdAvailable(newUserId)) {
-      setUserIdError('이미 사용 중인 사용자 ID입니다.')
-      return
-    }
-
-    setIsChangingUserId(true)
-    setUserIdError('')
-
-    try {
-      const success = await changeUserId(newUserId)
-      if (success) {
-        setIsEditingUserId(false)
-        setNewUserId('')
-        showToast('success', t('settings.userIdChanged'))
-      } else {
-        setUserIdError(t('settings.userIdChangeFailed'))
-      }
-    } catch (error) {
-      setUserIdError(t('settings.userIdChangeFailed'))
-    } finally {
-      setIsChangingUserId(false)
+  // 다크모드 토글 처리
+  const toggleDarkMode = async () => {
+    const newDarkMode = !isDarkMode
+    setIsDarkMode(newDarkMode)
+    
+    // 다크모드 적용
+    applyDarkMode(newDarkMode)
+    
+    // 사용자 설정 업데이트
+    const result = await updateUserSettings({ darkMode: newDarkMode })
+    if (result.success) {
+      showToast(
+        newDarkMode ? t('settings.darkModeEnabled') : t('settings.darkModeDisabled'), 
+        'success'
+      )
+    } else {
+      showToast(t('settings.darkModeChangeFailed'), 'error')
     }
   }
 
-  // 사용자 이름 변경 시작
-  const startEditingUserName = () => {
-    setIsEditingUserName(true)
-    setNewUserName(user?.name || '')
-    setUserNameError('')
-  }
-  // 사용자 이름 변경 취소
-  const cancelEditingUserName = () => {
-    setIsEditingUserName(false)
-    setNewUserName('')
-    setUserNameError('')
-  }
-  // 사용자 이름 변경 확인
-  const confirmChangeUserName = async () => {
-    if (!newUserName.trim()) {
-      setUserNameError('이름을 입력해주세요.')
+  // 사용자 이름 변경 처리
+  const handleNameChange = async () => {
+    if (!editingName.trim()) {
+      setNameError(t('settings.enterName'))
       return
     }
-    setIsChangingUserName(true)
-    setUserNameError('')
-    try {
-      const success = await changeUserName(newUserName.trim())
-      if (success) {
-        setIsEditingUserName(false)
-        setNewUserName('')
-      } else {
-        setUserNameError('이름 변경에 실패했습니다.')
-      }
-    } catch {
-      setUserNameError('이름 변경 중 오류가 발생했습니다.')
-    } finally {
-      setIsChangingUserName(false)
+
+    const result = await changeUserName(editingName)
+    if (result.success) {
+      setIsEditingName(false)
+      setEditingName('')
+      setNameError('')
+      showToast(t('settings.nameChanged'), 'success')
+    } else {
+      setNameError(result.error || t('settings.nameChangeFailed'))
     }
+  }
+
+  // 로그아웃 처리
+  const handleLogout = () => {
+    logout()
+    showToast(t('settings.loggedOut'), 'success')
+  }
+
+  // 모든 데이터 삭제 처리
+  const handleClearAllData = () => {
+    clearAllData()
+    showToast(t('settings.allDataCleared'), 'success')
+  }
+
+  // 테스트 계정 생성
+  const handleCreateTestAccount = () => {
+    createTestAccount()
+    showToast(t('settings.testAccountCreated'), 'success')
+  }
+
+  if (!currentUser) {
+    return (
+      <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center">
+        <div className="text-center">
+          <Settings className="w-12 h-12 mx-auto mb-4 text-neutral-400" />
+          <p className="text-neutral-600 dark:text-neutral-400">{t('settings.pleaseLogin')}</p>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 p-4">
+      <div className="max-w-2xl mx-auto">
+        {/* 헤더 */}
         <div className="flex items-center gap-3 mb-6">
-          <Settings className="w-6 h-6 text-blue-600" />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <Settings className="w-6 h-6 text-primary-600" />
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
             {t('settings.title')}
           </h1>
         </div>
 
-        {/* 사용자 정보 */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <User className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              {t('settings.my')} {t('settings.accountSettings')}
-            </h2>
-          </div>
-          
-          <div className="space-y-3">
-            <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
-              <span className="text-gray-600 dark:text-gray-400">{t('auth.email')}</span>
-              <span className="font-medium text-gray-900 dark:text-white">{user?.email}</span>
-            </div>
-            
-            <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
-              <span className="text-gray-600 dark:text-gray-400">{t('settings.name') || '이름'}</span>
-              <div className="flex items-center gap-2">
-                {isEditingUserName ? (
-                  <>
-                    <input
-                      type="text"
-                      value={newUserName}
-                      onChange={e => setNewUserName(e.target.value)}
-                      placeholder="이름을 입력하세요"
-                      className="px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      disabled={isChangingUserName}
-                    />
-                    <button
-                      onClick={confirmChangeUserName}
-                      disabled={isChangingUserName || !!userNameError}
-                      className="p-1 text-green-600 hover:text-green-700 disabled:opacity-50"
-                    >
-                      <Check className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={cancelEditingUserName}
-                      disabled={isChangingUserName}
-                      className="p-1 text-red-600 hover:text-red-700 disabled:opacity-50"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <span className="font-medium text-gray-900 dark:text-white">{user?.name || '이름없음'}</span>
-                    <button
-                      onClick={startEditingUserName}
-                      className="p-1 text-blue-600 hover:text-blue-700"
-                      title="이름 변경"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
-                  </>
-                )}
+        {/* 내 계정 섹션 */}
+        <div className="bg-white dark:bg-neutral-800 rounded-lg p-6 mb-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
+            <User className="w-5 h-5" />
+            {t('settings.myAccount')}
+          </h2>
+
+          {/* 사용자 정보 */}
+          <div className="space-y-4">
+            {/* 이메일 */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('settings.email')}
+              </label>
+              <div className="text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-700 px-3 py-2 rounded-lg">
+                {currentUser.email}
               </div>
             </div>
-            
-            {userNameError && (
-              <div className="text-red-600 dark:text-red-400 text-sm py-1">
-                {userNameError}
-              </div>
-            )}
-            
-            <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
-              <span className="text-gray-600 dark:text-gray-400">{t('settings.userId')}</span>
-              <div className="flex items-center gap-2">
-                {isEditingUserId ? (
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={newUserId}
-                      onChange={(e) => handleUserIdInput(e.target.value)}
-                      placeholder="영문+숫자 8자리 이상 30자리 미만"
-                      className="px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      disabled={isChangingUserId}
-                      maxLength={29}
-                    />
+
+            {/* 사용자 이름 */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('settings.name')}
+              </label>
+              {isEditingName ? (
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    value={editingName}
+                    onChange={(e) => setEditingName(e.target.value)}
+                    className="input"
+                    placeholder={t('settings.enterName')}
+                  />
+                  {nameError && <p className="text-red-500 text-sm">{nameError}</p>}
+                  <div className="flex gap-2">
                     <button
-                      onClick={confirmChangeUserId}
-                      disabled={isChangingUserId || !!userIdError}
-                      className="p-1 text-green-600 hover:text-green-700 disabled:opacity-50"
+                      onClick={handleNameChange}
+                      className="flex items-center gap-1 px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600"
                     >
                       <Check className="w-4 h-4" />
+                      {t('common.save')}
                     </button>
                     <button
-                      onClick={cancelEditingUserId}
-                      disabled={isChangingUserId}
-                      className="p-1 text-red-600 hover:text-red-700 disabled:opacity-50"
+                      onClick={() => {
+                        setIsEditingName(false)
+                        setEditingName('')
+                        setNameError('')
+                      }}
+                      className="flex items-center gap-1 px-3 py-1 bg-neutral-500 text-white rounded text-sm hover:bg-neutral-600"
                     >
                       <X className="w-4 h-4" />
+                      {t('common.cancel')}
                     </button>
                   </div>
-                ) : (
-                  <>
-                    <span className="font-mono text-sm text-gray-900 dark:text-white">{user?.id}</span>
-                    <button
-                      onClick={startEditingUserId}
-                      className="p-1 text-blue-600 hover:text-blue-700"
-                      title="사용자 ID 변경"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
-                  </>
-                )}
+                </div>
+              ) : (
+                <div className="flex items-center justify-between">
+                  <div className="text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-700 px-3 py-2 rounded-lg flex-1">
+                    {currentUser.name}
+                  </div>
+                  <button
+                    onClick={() => {
+                      setIsEditingName(true)
+                      setEditingName(currentUser.name)
+                    }}
+                    className="ml-2 p-2 text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* 가입일시 */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('settings.joinDate')}
+              </label>
+              <div className="text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-700 px-3 py-2 rounded-lg">
+                                 {formatLocalDateTime(currentUser.createdAt)}
               </div>
             </div>
-            
-            {userIdError && (
-              <div className="text-red-600 dark:text-red-400 text-sm py-1">
-                {userIdError}
+
+            {/* 마지막 업데이트 */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('settings.lastUpdated')}
+              </label>
+              <div className="text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-700 px-3 py-2 rounded-lg">
+                {formatLocalDateTime(currentUser.lastUpdated)}
               </div>
-            )}
-            
-            <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
-              <span className="text-gray-600 dark:text-gray-400">사용자 번호</span>
-              <span className="font-mono text-sm text-gray-900 dark:text-white">
-                {user?.userNumber || 'N/A'}
-              </span>
-            </div>
-            
-            <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
-              <span className="text-gray-600 dark:text-gray-400">{t('settings.signUpDate')}</span>
-              <span className="text-gray-900 dark:text-white">
-                {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-'}
-              </span>
-            </div>
-            
-            <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
-              <span className="text-gray-600 dark:text-gray-400">{t('settings.lastUpdate')}</span>
-              <span className="text-gray-900 dark:text-white">
-                {user?.updatedAt ? new Date(user.updatedAt).toLocaleDateString() : '-'}
-              </span>
             </div>
           </div>
         </div>
 
-        {/* 앱 설정 */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              {t('settings.title')}
-            </h2>
-          </div>
-          
+        {/* 앱 설정 섹션 */}
+        <div className="bg-white dark:bg-neutral-800 rounded-lg p-6 mb-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-4">
+            {t('settings.appSettings')}
+          </h2>
+
           <div className="space-y-4">
-            <div className="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
+            {/* 다크모드 */}
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                {isDarkMode ? <Moon className="w-5 h-5 text-gray-600 dark:text-gray-400" /> : <Sun className="w-5 h-5 text-gray-600 dark:text-gray-400" />}
-                <span className="text-gray-900 dark:text-white">{t('settings.darkMode')}</span>
+                {isDarkMode ? (
+                  <Moon className="w-5 h-5 text-primary-600" />
+                ) : (
+                  <Sun className="w-5 h-5 text-primary-600" />
+                )}
+                <span className="text-neutral-900 dark:text-neutral-100">
+                  {t('settings.darkMode')}
+                </span>
               </div>
               <button
                 onClick={toggleDarkMode}
-                className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 dark:bg-gray-700 transition-colors"
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  isDarkMode ? 'bg-primary-600' : 'bg-neutral-300'
+                }`}
               >
                 <span
                   className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -341,39 +280,37 @@ export function SettingsPage() {
                 />
               </button>
             </div>
-            
-            <div className="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
+
+            {/* 언어 설정 */}
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Globe className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                <span className="text-gray-900 dark:text-white">{t('settings.languageSettings')}</span>
+                <Globe className="w-5 h-5 text-primary-600" />
+                <span className="text-neutral-900 dark:text-neutral-100">
+                  {t('settings.language')}
+                </span>
               </div>
               <div className="relative">
                 <button
-                  onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
-                  className="flex items-center gap-2 px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                  onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
+                  className="flex items-center gap-2 px-3 py-2 bg-neutral-100 dark:bg-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 hover:bg-neutral-200 dark:hover:bg-neutral-600"
                 >
-                  <span className="text-lg">{currentLanguage.flag}</span>
-                  <span>{currentLanguage.nativeName}</span>
-                  <ChevronDown className={`w-4 h-4 transition-transform ${showLanguageDropdown ? 'rotate-180' : ''}`} />
+                  <span className="text-lg">
+                    {getLanguageByCode(selectedLanguage)?.flag}
+                  </span>
+                  <span>{getLanguageByCode(selectedLanguage)?.name}</span>
+                  <ChevronDown className="w-4 h-4" />
                 </button>
-                
-                {showLanguageDropdown && (
-                  <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10 max-h-60 overflow-y-auto">
-                    {languages.map((language) => (
+
+                {isLanguageDropdownOpen && (
+                  <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-neutral-700 rounded-lg shadow-lg border border-neutral-200 dark:border-neutral-600 z-10">
+                    {languages.map((lang) => (
                       <button
-                        key={language.code}
-                        onClick={() => changeLanguage(language.code)}
-                        className={`flex items-center gap-3 w-full px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                          language.code === currentLanguage.code
-                            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
-                            : 'text-gray-700 dark:text-gray-300'
-                        }`}
+                        key={lang.code}
+                        onClick={() => handleLanguageChange(lang.code)}
+                        className="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-neutral-100 dark:hover:bg-neutral-600 text-neutral-900 dark:text-neutral-100"
                       >
-                        <span className="text-lg">{language.flag}</span>
-                        <span className="flex-1 text-left">{language.nativeName}</span>
-                        {language.code === currentLanguage.code && (
-                          <Check className="w-4 h-4" />
-                        )}
+                        <span className="text-lg">{lang.flag}</span>
+                        <span>{lang.name}</span>
                       </button>
                     ))}
                   </div>
@@ -383,62 +320,47 @@ export function SettingsPage() {
           </div>
         </div>
 
-        {/* 개발자 섹션 (숨겨진 기능) */}
-        <div className="mb-8">
-          <button
-            onClick={() => setShowDevSection(!showDevSection)}
-            className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-          >
-            {showDevSection ? '개발자 섹션 숨기기' : '개발자 섹션 보기'}
-          </button>
-          
-          {showDevSection && (
-            <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-              <div className="flex items-center gap-2 mb-3">
-                <AlertTriangle className="w-4 h-4 text-red-600" />
-                <h3 className="text-sm font-semibold text-red-800 dark:text-red-200">
-                  개발자 도구
-                </h3>
-              </div>
-              
-              <div className="space-y-2">
-                <button
-                  onClick={handleClearAllData}
-                  className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm flex items-center justify-center"
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  모든 태스크 데이터 삭제
-                </button>
-                
-                <button
-                  onClick={() => {
-                    const { migrateToUserNumber } = useTaskStore.getState()
-                    migrateToUserNumber()
-                    showToast('success', '데이터 마이그레이션이 완료되었습니다.')
-                  }}
-                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm flex items-center justify-center"
-                >
-                  <Database className="w-4 h-4 mr-2" />
-                  userId → userNumber 마이그레이션
-                </button>
-                
-                <p className="text-xs text-red-600 dark:text-red-400">
-                  ⚠️ 이 작업은 되돌릴 수 없습니다. 테스트 목적으로만 사용하세요.
-                </p>
-              </div>
-            </div>
-          )}
+        {/* 계정 관리 섹션 */}
+        <div className="bg-white dark:bg-neutral-800 rounded-lg p-6 mb-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-4">
+            {t('settings.accountManagement')}
+          </h2>
+
+          <div className="space-y-3">
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              {t('settings.logout')}
+            </button>
+          </div>
         </div>
 
-        {/* 로그아웃 */}
-        <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-          <button
-            onClick={handleLogout}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-center"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            {t('settings.logout')}
-          </button>
+        {/* 개발 도구 섹션 */}
+        <div className="bg-white dark:bg-neutral-800 rounded-lg p-6 mb-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
+            <Database className="w-5 h-5" />
+            {t('settings.development')}
+          </h2>
+
+          <div className="space-y-3">
+            <button
+              onClick={handleCreateTestAccount}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              <User className="w-4 h-4" />
+              {t('settings.createTestAccount')}
+            </button>
+
+            <button
+              onClick={handleClearAllData}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+              {t('settings.clearAllData')}
+            </button>
+          </div>
         </div>
       </div>
     </div>

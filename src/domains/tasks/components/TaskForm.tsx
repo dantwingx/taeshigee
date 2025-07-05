@@ -24,6 +24,7 @@ import { Modal } from '@/components/ui/Modal'
 import { Select } from '@/components/ui/Select'
 import { TagInput } from '@/components/ui/TagInput'
 import type { Task, CreateTaskData, UpdateTaskData } from '@/types/task'
+import { getTodayDate, getLastTimeOfDay } from '@/utils/dateUtils'
 
 const taskSchema = z.object({
   title: z.string().min(1, '제목을 입력해주세요').max(100, '제목은 100자 이하여야 합니다'),
@@ -47,16 +48,7 @@ interface TaskFormProps {
   isLoading?: boolean
 }
 
-// 오늘 날짜를 YYYY-MM-DD 형식으로 반환
-const getTodayDate = () => {
-  const today = new Date()
-  return today.toISOString().split('T')[0]
-}
-
-// 마지막 시간(23:59)을 HH:MM 형식으로 반환
-const getLastTimeOfDay = () => {
-  return '23:59'
-}
+// 오늘 날짜와 마지막 시간은 dateUtils에서 import
 
 export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFormProps) {
   const { t } = useTranslation()

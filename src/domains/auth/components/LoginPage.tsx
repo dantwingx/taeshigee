@@ -18,7 +18,7 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
-  const { login } = useAuthStore()
+  const { login, error, clearError } = useAuthStore()
   const { t } = useTranslation()
 
   const {
@@ -32,14 +32,13 @@ export function LoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true)
+    clearError() // 이전 에러 초기화
     try {
       await login({ email: data.email, password: data.password })
       navigate('/')
     } catch (error) {
-      setError('root', {
-        type: 'manual',
-        message: t('auth.invalidCredentials'),
-      })
+      // authStore에서 이미 에러를 설정했으므로 추가 처리 불필요
+      console.error('로그인 실패:', error)
     } finally {
       setIsLoading(false)
     }
@@ -66,9 +65,11 @@ export function LoginPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* 에러 메시지 */}
-            {errors.root && (
+            {(errors.root || error) && (
               <div className="p-3 rounded-lg bg-error-50 border border-error-200">
-                <p className="text-sm text-error-700">{errors.root.message}</p>
+                <p className="text-sm text-error-700">
+                  {errors.root?.message || error || t('auth.invalidCredentials')}
+                </p>
               </div>
             )}
 

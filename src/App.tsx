@@ -9,9 +9,16 @@ import { SettingsPage } from '@/domains/settings/components/SettingsPage'
 import { LoginPage } from '@/domains/auth/components/LoginPage'
 import { RegisterPage } from '@/domains/auth/components/RegisterPage'
 import { useToastStore } from '@/stores'
+import { useEffect } from 'react'
+import { initializeDarkMode } from '@/utils/darkMode'
 
 function App() {
   const { toasts, removeToast } = useToastStore()
+
+  // 앱 시작 시 다크모드 초기화
+  useEffect(() => {
+    initializeDarkMode()
+  }, [])
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-200">

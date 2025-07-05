@@ -218,7 +218,27 @@ export default {
     userIdPlaceholder: 'user_000001',
     name: '이름',
     nameChangeFailed: '이름 변경에 실패했습니다',
-    enterName: '이름을 입력해주세요'
+    enterName: '이름을 입력해주세요',
+    darkModeEnabled: '다크모드가 활성화되었습니다',
+    darkModeDisabled: '다크모드가 비활성화되었습니다',
+    darkModeChangeFailed: '다크모드 변경에 실패했습니다',
+    languageChangeFailed: '언어 변경에 실패했습니다',
+    myAccount: '내 계정',
+    appSettings: '앱 설정',
+    accountManagement: '계정 관리',
+    development: '개발 도구',
+    email: '이메일',
+    joinDate: '가입일시',
+    lastUpdated: '마지막 업데이트',
+    language: '언어',
+    nameChanged: '이름이 변경되었습니다',
+    userIdChanged: '사용자 ID가 변경되었습니다',
+    loggedOut: '로그아웃되었습니다',
+    allDataCleared: '모든 데이터가 삭제되었습니다',
+    testAccountCreated: '테스트 계정이 생성되었습니다',
+    pleaseLogin: '로그인이 필요합니다',
+    createTestAccount: '테스트 계정 생성',
+    clearAllData: '모든 데이터 삭제'
   },
 
   // 토스트 메시지

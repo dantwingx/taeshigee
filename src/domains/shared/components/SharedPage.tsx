@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react'
-import { Eye, Search, Calendar, User, Tag, AlertTriangle, Target, Copy, Heart } from 'lucide-react'
-import { useTaskStore } from '@/stores/taskStore'
-import { useToastStore } from '@/stores'
-import type { Task } from '@/types/task'
 import { useTranslation } from 'react-i18next'
+import { FaUser } from 'react-icons/fa'
+import { Calendar, Tag, MoreVertical, Copy, Heart, Eye, Clock, Search, AlertTriangle, Target } from 'lucide-react'
+import { useTaskStore } from '@/stores/taskStore'
+import { useAuthStore } from '@/stores/authStore'
+import { useToastStore } from '@/stores'
+import { Modal } from '@/components/ui/Modal'
+import { Select } from '@/components/ui/Select'
+import { formatDueDateTime, formatLocalDate } from '@/utils/dateUtils'
 import i18next from 'i18next'
+import { Task } from '@/types/task'
 
 interface PublicTask extends Task {
   authorName: string
@@ -21,21 +26,26 @@ export function SharedPage() {
   const [selectedTask, setSelectedTask] = useState<PublicTask | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
 
-  // currentUserId는 좋아요 기능에서만 사용하므로 그대로 유지
-  // 태스크 소유권은 userNumber로 관리되지만, 좋아요는 userId로 관리
+  // currentUserNumber는 좋아요 기능에서 사용, 태스크 소유권도 userNumber로 관리
+  const currentUserNumber = useTaskStore(state => state.currentUserNumber)
+  const users = useAuthStore(state => state.users) || []
 
   // 공개된 태스크만 필터링하고 최신순으로 정렬
   useEffect(() => {
     const publicTaskList = getAllPublicTasks()
-      .map(task => ({
-        ...task,
-        authorName: t('shared.createdBy'), // 실제로는 사용자 정보에서 가져와야 함
-        authorId: task.userId,
-      }))
+      .map(task => {
+        // 사용자 정보 찾기
+        const user = users.find((u: any) => u.userNumber === task.userNumber)
+        return {
+          ...task,
+          authorName: user ? (user.name && user.name !== 'No Name' ? user.name : user.id) : `User_${task.userNumber}`,
+          authorId: user ? user.id : `User_${task.userNumber}`,
+        }
+      })
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) // 최신순 정렬
     setPublicTasks(publicTaskList)
     setFilteredTasks(publicTaskList)
-  }, [getAllPublicTasks, t])
+  }, [getAllPublicTasks, users])
 
   // 검색 필터링
   useEffect(() => {
@@ -52,27 +62,7 @@ export function SharedPage() {
     setFilteredTasks(filtered)
   }, [searchTerm, publicTasks])
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString(i18next.language, {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
-  }
-
-  const formatDateTime = (dateString: string, timeString?: string) => {
-    const date = new Date(dateString)
-    const dateStr = date.toLocaleDateString(i18next.language, {
-      month: 'short',
-      day: 'numeric',
-    })
-    
-    if (timeString) {
-      return `${dateStr} ${timeString}`
-    }
-    return dateStr
-  }
+  // 날짜 포맷팅은 dateUtils 함수 사용
 
   const getImportanceIcon = (importance: string) => {
     switch (importance) {
@@ -108,14 +98,14 @@ export function SharedPage() {
 
   const handleLike = async (taskId: string, e: React.MouseEvent) => {
     e.stopPropagation()
-    if (!currentUserId) {
+    if (!currentUserNumber) {
       showToast('error', t('auth.invalidCredentials'))
       return
     }
     
     try {
       await toggleTaskLike(taskId)
-      const isLiked = isTaskLikedByUser(taskId, currentUserId)
+      const isLiked = isTaskLikedByUser(taskId, currentUserNumber)
       showToast('success', isLiked ? t('toast.taskLiked') : t('toast.taskUnliked'))
     } catch (error) {
       showToast('error', t('toast.likeError'))
@@ -183,11 +173,11 @@ export function SharedPage() {
                 <button
                   className="opacity-100 bg-neutral-100 dark:bg-neutral-700 rounded-full p-1 transition-opacity flex items-center text-xs text-neutral-700 dark:text-neutral-200 hover:bg-red-100 dark:hover:bg-red-700"
                   onClick={(e) => handleLike(task.id, e)}
-                  title={currentUserId && isTaskLikedByUser(task.id, currentUserId) ? t('task.unlike') : t('task.like')}
+                  title={currentUserNumber && isTaskLikedByUser(task.id, currentUserNumber) ? t('task.unlike') : t('task.like')}
                 >
                   <Heart 
                     className={`h-4 w-4 mr-1 ${
-                      currentUserId && isTaskLikedByUser(task.id, currentUserId) 
+                      currentUserNumber && isTaskLikedByUser(task.id, currentUserNumber) 
                         ? 'text-red-500 fill-current' 
                         : 'text-neutral-500'
                     }`} 
@@ -245,9 +235,9 @@ export function SharedPage() {
                   {/* 메타 정보 */}
                   <div className="flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-400">
                     <div className="flex items-center space-x-3">
-                      <div className="flex items-center space-x-1">
-                        <User className="h-3 w-3" />
-                        <span>{task.authorName} ({task.authorId})</span>
+                      <div className="flex items-center text-xs text-gray-500 gap-2">
+                        <FaUser className="inline-block mr-1" />
+                        <span>{task.authorName || task.authorId}</span>
                       </div>
                       
                       {task.dueDate && (
@@ -255,8 +245,8 @@ export function SharedPage() {
                           <Calendar className="h-3 w-3" />
                           <span>
                             {task.dueTime 
-                              ? formatDateTime(task.dueDate, task.dueTime)
-                              : formatDateTime(task.dueDate)
+                              ? formatDueDateTime(task.dueDate, task.dueTime)
+                              : formatLocalDate(task.dueDate)
                             }
                           </span>
                         </div>
@@ -328,8 +318,8 @@ export function SharedPage() {
                       <span className="text-neutral-600 dark:text-neutral-300">{t('task.dueDate')}:</span>
                       <span className="ml-2 text-neutral-900 dark:text-neutral-100">
                         {selectedTask.dueTime 
-                          ? formatDateTime(selectedTask.dueDate, selectedTask.dueTime)
-                          : formatDateTime(selectedTask.dueDate)
+                          ? formatDueDateTime(selectedTask.dueDate, selectedTask.dueTime)
+                          : formatLocalDate(selectedTask.dueDate)
                         }
                       </span>
                     </div>
@@ -374,7 +364,7 @@ export function SharedPage() {
                 </div>
 
                 <div className="text-xs text-neutral-500 dark:text-neutral-400 text-center pt-4 border-t border-neutral-200 dark:border-neutral-700">
-                  {t('shared.createdAt')}: {formatDate(selectedTask.createdAt)}
+                  {t('shared.createdAt')}: {formatLocalDate(selectedTask.createdAt)}
                 </div>
               </div>
             </div>

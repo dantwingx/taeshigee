@@ -1,8 +1,25 @@
 import { useState } from 'react'
-import { Calendar, Tag, MoreVertical, Edit, Trash2, Check, AlertTriangle, Target, Eye, Copy, Clock } from 'lucide-react'
-import { useTagStore, useToastStore } from '@/stores'
-import type { Task } from '@/types/task'
 import { useTranslation } from 'react-i18next'
+import { 
+  Calendar, 
+  Clock, 
+  Tag, 
+  MoreVertical, 
+  Edit, 
+  Trash2, 
+  Copy,
+  CheckCircle,
+  Circle,
+  Heart,
+  MessageCircle,
+  Eye,
+  EyeOff,
+  AlertTriangle,
+  Target
+} from 'lucide-react'
+import { Task } from '@/types/task'
+import { useToastStore, useTagStore } from '@/stores'
+import { formatRelativeTime, formatDueDateTime, formatLocalDate, formatLocalDateTime } from '@/utils/dateUtils'
 import i18next from 'i18next'
 
 interface TaskCardProps {
@@ -44,49 +61,6 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
   const { showToast } = useToastStore()
   const { t } = useTranslation()
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString(i18next.language, {
-      month: 'short',
-      day: 'numeric',
-    })
-  }
-
-  const formatDateTime = (dateString: string, timeString?: string) => {
-    const date = new Date(dateString)
-    const dateStr = date.toLocaleDateString(i18next.language, {
-      month: 'short',
-      day: 'numeric',
-    })
-    
-    if (timeString) {
-      return `${dateStr} ${timeString}`
-    }
-    return dateStr
-  }
-
-  const formatCreatedAt = (dateString: string) => {
-    const date = new Date(dateString)
-    const now = new Date()
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
-    
-    if (diffInHours < 24) {
-      if (diffInHours < 1) {
-        const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60))
-        return diffInMinutes < 1 ? t('common.justNow') : t('common.minutesAgo', { count: diffInMinutes })
-      }
-      return t('common.hoursAgo', { count: diffInHours })
-    } else if (diffInHours < 24 * 7) {
-      const diffInDays = Math.floor(diffInHours / 24)
-      return t('common.daysAgo', { count: diffInDays })
-    } else {
-      return date.toLocaleDateString(i18next.language, {
-        month: 'short',
-        day: 'numeric',
-      })
-    }
-  }
-
   const isOverdue = task.dueDate && new Date(task.dueDate) < new Date() && !task.isCompleted
 
   const handleDelete = async () => {
@@ -124,7 +98,7 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
               : 'border-neutral-300 dark:border-neutral-600 hover:border-primary-400 dark:hover:border-primary-400'
           }`}
         >
-          {task.isCompleted && <Check className="h-3 w-3 text-white" />}
+          {task.isCompleted && <CheckCircle className="h-3 w-3 text-white" />}
         </button>
 
         {/* 태스크 내용 */}
@@ -217,8 +191,8 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
               {/* 생성 일시 */}
               <div className="flex items-center space-x-1">
                 <Clock className="h-3 w-3" />
-                <span className="truncate max-w-[90px]" title={new Date(task.createdAt).toLocaleString(i18next.language)}>
-                  {formatCreatedAt(task.createdAt)}
+                <span className="truncate max-w-[90px]" title={formatLocalDateTime(task.createdAt, i18next.language)}>
+                  {formatRelativeTime(task.createdAt, i18next.language)}
                 </span>
               </div>
 
@@ -227,10 +201,10 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
                   isOverdue ? 'text-error-600 dark:text-error-400' : ''
                 }`}>
                   <Calendar className="h-3 w-3" />
-                  <span className="truncate max-w-[90px]" title={task.dueTime ? formatDateTime(task.dueDate, task.dueTime) : formatDate(task.dueDate)}>
+                  <span className="truncate max-w-[90px]" title={task.dueTime ? formatDueDateTime(task.dueDate, task.dueTime, i18next.language) : formatLocalDate(task.dueDate, i18next.language)}>
                     {task.dueTime 
-                      ? formatDateTime(task.dueDate, task.dueTime)
-                      : formatDate(task.dueDate)
+                      ? formatDueDateTime(task.dueDate, task.dueTime, i18next.language)
+                      : formatLocalDate(task.dueDate, i18next.language)
                     }
                   </span>
                 </div>

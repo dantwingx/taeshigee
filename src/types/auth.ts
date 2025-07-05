@@ -2,13 +2,21 @@ export interface User {
   id: string
   userNumber: number // 사용자 번호 (serial number)
   email: string
+  password: string
   name: string // 사용자 이름
   createdAt: string
-  updatedAt: string
+  lastUpdated: string
+  userSettings?: UserSettings
+}
+
+export interface UserSettings {
+  darkMode: boolean
+  language: string
 }
 
 export interface AuthState {
   user: User | null
+  users: User[] // 전체 사용자 목록 추가
   isAuthenticated: boolean
   isLoading: boolean
   error: string | null
@@ -43,4 +51,6 @@ export interface AuthActions {
   isUserIdAvailable: (userId: string) => boolean
   // 사용자 이름 변경 기능
   changeUserName: (newName: string) => Promise<boolean>
+  // 개발용: 테스트 계정 생성
+  createTestAccount: () => User
 } 

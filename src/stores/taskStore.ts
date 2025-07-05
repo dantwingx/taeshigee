@@ -25,7 +25,7 @@ interface TaskStore {
     overdue: number
     completionRate: number
   }
-  isTaskLikedByUser: (taskId: string, userId: string) => boolean
+  isTaskLikedByUser: (taskId: string, userNumber: number) => boolean
   getTaskLikeCount: (taskId: string) => number
   // 현재 사용자가 볼 수 있는 태스크만 반환하는 함수
   getVisibleTasks: (userNumber: number) => Task[]
@@ -373,10 +373,10 @@ export const useTaskStore = create<TaskStore>()(
 
           const taskOwnerNumber = taskToUpdate.userNumber
           const currentLikes = taskToUpdate.likes || []
-          const isLiked = currentLikes.includes(currentUserId)
+          const isLiked = currentLikes.includes(currentUserNumber)
           const updatedLikes = isLiked
-            ? currentLikes.filter((userId) => userId !== currentUserId)
-            : [...currentLikes, currentUserId]
+            ? currentLikes.filter((num) => num !== currentUserNumber)
+            : [...currentLikes, currentUserNumber]
 
           set((state) => ({
             userTasks: {
@@ -402,10 +402,10 @@ export const useTaskStore = create<TaskStore>()(
         }
       },
 
-      isTaskLikedByUser: (taskId: string, userId: string) => {
+      isTaskLikedByUser: (taskId: string, userNumber: number) => {
         const allTasks = Object.values(get().userTasks).flat()
         const task = allTasks.find((t) => t.id === taskId)
-        return task ? (task.likes || []).includes(userId) : false
+        return task ? (task.likes || []).includes(userNumber) : false
       },
 
       getTaskLikeCount: (taskId: string) => {

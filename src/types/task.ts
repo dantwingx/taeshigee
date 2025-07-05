@@ -14,7 +14,7 @@ export type Task = {
   updatedAt: string
   userId: string // 사용자 ID (변경 가능)
   userNumber: number // 사용자 번호 (변경 불가, 태스크 소유권 식별용)
-  likes: string[] // 좋아요한 사용자 ID 배열
+  likes: number[] // 좋아요한 사용자 번호 배열
 }
 
 export type CreateTaskData = Omit<Task, 'id' | 'isCompleted' | 'createdAt' | 'updatedAt' | 'userId' | 'likes'>

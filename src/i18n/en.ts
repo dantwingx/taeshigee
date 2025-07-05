@@ -219,7 +219,27 @@ export default {
     userIdPlaceholder: 'user_000001',
     name: 'Name',
     nameChangeFailed: 'Failed to change name',
-    enterName: 'Please enter your name'
+    enterName: 'Please enter your name',
+    darkModeEnabled: 'Dark mode enabled',
+    darkModeDisabled: 'Dark mode disabled',
+    darkModeChangeFailed: 'Failed to change dark mode',
+    languageChangeFailed: 'Failed to change language',
+    myAccount: 'My Account',
+    appSettings: 'App Settings',
+    accountManagement: 'Account Management',
+    development: 'Development',
+    email: 'Email',
+    joinDate: 'Join Date',
+    lastUpdated: 'Last Updated',
+    language: 'Language',
+    nameChanged: 'Name changed successfully',
+    userIdChanged: 'User ID changed successfully',
+    loggedOut: 'Logged out successfully',
+    allDataCleared: 'All data cleared successfully',
+    testAccountCreated: 'Test account created successfully',
+    pleaseLogin: 'Please login first',
+    createTestAccount: 'Create Test Account',
+    clearAllData: 'Clear All Data'
   },
 
   // Toast messages
