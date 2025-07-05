@@ -47,32 +47,46 @@ interface TaskFormProps {
   isLoading?: boolean
 }
 
-const importanceOptions = [
-  { value: 'low', label: '낮음', icon: '🟢' },
-  { value: 'medium', label: '보통', icon: '🟡' },
-  { value: 'high', label: '높음', icon: '🔴' },
-]
+// 오늘 날짜를 YYYY-MM-DD 형식으로 반환
+const getTodayDate = () => {
+  const today = new Date()
+  return today.toISOString().split('T')[0]
+}
 
-const priorityOptions = [
-  { value: 'low', label: '낮음', icon: '📌' },
-  { value: 'medium', label: '보통', icon: '📍' },
-  { value: 'high', label: '높음', icon: '🎯' },
-]
-
-const categoryOptions = [
-  { value: 'work', label: '업무' },
-  { value: 'personal', label: '개인' },
-  { value: 'study', label: '학습' },
-  { value: 'health', label: '건강' },
-]
-
-const visibilityOptions = [
-  { value: false, label: '비공개', icon: Lock },
-  { value: true, label: '공개', icon: Eye },
-]
+// 마지막 시간(23:59)을 HH:MM 형식으로 반환
+const getLastTimeOfDay = () => {
+  return '23:59'
+}
 
 export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFormProps) {
   const { t } = useTranslation()
+  
+  const importanceOptions = [
+    { value: 'low', label: t('task.importanceLow'), icon: '🟢' },
+    { value: 'medium', label: t('task.importanceMedium'), icon: '🟡' },
+    { value: 'high', label: t('task.importanceHigh'), icon: '🔴' },
+  ]
+
+  const priorityOptions = [
+    { value: 'low', label: t('task.priorityLow'), icon: '📌' },
+    { value: 'medium', label: t('task.priorityMedium'), icon: '📍' },
+    { value: 'high', label: t('task.priorityHigh'), icon: '🎯' },
+  ]
+
+  const categoryOptions = [
+    { value: 'work', label: t('task.categoryWork') },
+    { value: 'personal', label: t('task.categoryPersonal') },
+    { value: 'study', label: t('task.categoryStudy') },
+    { value: 'health', label: t('task.categoryHealth') },
+    { value: 'finance', label: t('task.categoryFinance') },
+    { value: 'other', label: t('task.categoryOther') },
+  ]
+
+  const visibilityOptions = [
+    { value: false, label: t('common.private'), icon: Lock },
+    { value: true, label: t('common.public'), icon: Eye },
+  ]
+
   const {
     register,
     handleSubmit,
@@ -98,6 +112,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
   // task prop이 변경될 때 form 값을 업데이트
   useEffect(() => {
     if (task) {
+      // 기존 태스크 편집 시
       reset({
         title: task.title,
         description: task.description || '',
@@ -110,11 +125,12 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
         isPublic: task.isPublic || false,
       })
     } else {
+      // 새 태스크 생성 시 - 기본값 설정
       reset({
         title: '',
         description: '',
-        dueDate: '',
-        dueTime: '',
+        dueDate: getTodayDate(), // 오늘 날짜로 기본 설정
+        dueTime: getLastTimeOfDay(), // 23:59로 기본 설정
         importance: 'medium',
         priority: 'medium',
         category: '',
@@ -126,10 +142,12 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
 
   const handleFormSubmit = async (data: TaskFormData) => {
     try {
-      await onSubmit({
+      const formData = {
         ...data,
         dueDate: data.dueDate ? new Date(data.dueDate).toISOString() : undefined,
-      })
+      }
+      
+      await onSubmit(formData)
       reset()
       onClose()
     } catch (error) {
@@ -172,11 +190,11 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
           <span>{task ? t('task.editTask') : t('task.createTask')}</span>
         </div>
       }
-      size="full"
+      size="xl"
     >
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="h-full flex flex-col">
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="max-h-[80vh] flex flex-col">
         {/* 스크롤 가능한 컨텐츠 영역 */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-20">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 max-h-[calc(80vh-140px)]">
           {/* 제목 */}
           <div>
             <label htmlFor="title" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
@@ -200,14 +218,14 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
           <div>
             <label htmlFor="description" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
               <FileText className="h-4 w-4" />
-              <span>설명</span>
+              <span>{t('task.description')}</span>
             </label>
             <textarea
               {...register('description')}
               id="description"
               rows={3}
-              className={`input resize-none ${errors.description ? 'border-error-500 dark:border-error-400' : ''}`}
-              placeholder="태스크에 대한 자세한 설명을 입력하세요"
+              className={`input resize-y min-h-[80px] max-h-[300px] ${errors.description ? 'border-error-500 dark:border-error-400' : ''}`}
+              placeholder={t('task.descriptionPlaceholder')}
               disabled={isLoading}
             />
             {errors.description && (
@@ -220,7 +238,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
             <div>
               <label htmlFor="dueDate" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                 <Calendar className="h-4 w-4" />
-                <span>마감일</span>
+                <span>{t('task.dueDate')}</span>
               </label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400 dark:text-neutral-500" />
@@ -237,7 +255,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
             <div>
               <label htmlFor="dueTime" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                 <Clock className="h-4 w-4" />
-                <span>마감시간</span>
+                <span>{t('task.dueTime')}</span>
               </label>
               <div className="relative">
                 <Clock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400 dark:text-neutral-500" />
@@ -256,12 +274,13 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
           <div>
             <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
               <Tag className="h-4 w-4" />
-              <span>태그</span>
+              <span>{t('task.tags')}</span>
             </label>
             <TagInput
-              value={watch('tags')}
-              onChange={handleTagsChange}
-              placeholder="태그를 입력하세요 (Enter 또는 쉼표로 구분)"
+              value={watch('tags') || []}
+              onChange={(tags) => setValue('tags', tags)}
+              placeholder={t('task.tagsInputPlaceholder')}
+              className="w-full"
               disabled={isLoading}
             />
           </div>
@@ -270,7 +289,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
           <div>
             <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
               <AlertTriangle className="h-4 w-4" />
-              <span>중요도</span>
+              <span>{t('task.importance')}</span>
             </label>
             <div className="grid grid-cols-3 gap-2">
               {importanceOptions.map((option) => (
@@ -298,7 +317,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
           <div>
             <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
               <Target className="h-4 w-4" />
-              <span>우선순위</span>
+              <span>{t('task.priority')}</span>
             </label>
             <div className="grid grid-cols-3 gap-2">
               {priorityOptions.map((option) => (
@@ -326,7 +345,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
           <div>
             <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
               <Folder className="h-4 w-4" />
-              <span>카테고리</span>
+              <span>{t('task.category')}</span>
             </label>
             <div className="grid grid-cols-2 gap-2">
               {categoryOptions.map((option) => (
@@ -354,7 +373,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
           <div>
             <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
               {watch('isPublic') ? <Eye className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
-              <span>공개 여부</span>
+              <span>{t('task.isPublic')}</span>
             </label>
             <div className="grid grid-cols-2 gap-2">
               {visibilityOptions.map((option) => {
@@ -383,14 +402,14 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
         </div>
 
         {/* 고정된 버튼 영역 */}
-        <div className="absolute bottom-0 left-0 right-0 flex justify-end space-x-3 p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800">
+        <div className="flex justify-end space-x-3 p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 flex-shrink-0">
           <button
             type="button"
             onClick={handleClose}
             className="btn-secondary px-6 py-3"
             disabled={isLoading}
           >
-            취소
+            {t('common.cancel')}
           </button>
           <button
             type="submit"
@@ -400,12 +419,12 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
             {isLoading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>저장 중...</span>
+                <span>{t('common.saving')}</span>
               </>
             ) : (
               <>
                 <Save className="h-4 w-4" />
-                <span>{task ? '수정' : '생성'}</span>
+                <span>{task ? t('task.update') : t('common.create')}</span>
               </>
             )}
           </button>
@@ -413,4 +432,4 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
       </form>
     </Modal>
   )
-} 
+}

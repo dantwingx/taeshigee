@@ -53,7 +53,7 @@ export function LoginPage() {
           <div className="w-24 h-24 bg-primary-600 rounded-3xl mx-auto mb-4 flex items-center justify-center shadow-lg">
             <CheckCircle className="h-12 w-12 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-neutral-900 mb-2">Task Manager</h1>
+          <h1 className="text-2xl font-bold text-neutral-900 mb-2">{t('auth.taskManager')}</h1>
           <p className="text-neutral-600">{t('home.welcome')}</p>
         </div>
 
@@ -101,7 +101,7 @@ export function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   id="password"
                   className={`input pr-10 ${errors.password ? 'border-error-500' : ''}`}
-                  placeholder="비밀번호를 입력하세요"
+                  placeholder={t('auth.passwordPlaceholder')}
                   disabled={isLoading}
                 />
                 <button
@@ -127,7 +127,7 @@ export function LoginPage() {
               {isLoading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>로그인 중...</span>
+                  <span>{t('auth.loggingIn')}</span>
                 </>
               ) : (
                 <>

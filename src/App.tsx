@@ -4,7 +4,7 @@ import { AuthGuard } from '@/components/common/AuthGuard'
 import { ToastContainer } from '@/components/ui/Toast'
 import { HomePage } from '@/domains/tasks/components/HomePage'
 import { TasksPage } from '@/domains/tasks/components/TasksPage'
-import { AnalyticsPage } from '@/domains/analytics/components/AnalyticsPage'
+import { SharedPage } from '@/domains/shared/components/SharedPage'
 import { SettingsPage } from '@/domains/settings/components/SettingsPage'
 import { LoginPage } from '@/domains/auth/components/LoginPage'
 import { RegisterPage } from '@/domains/auth/components/RegisterPage'
@@ -31,7 +31,7 @@ function App() {
         >
           <Route index element={<HomePage />} />
           <Route path="tasks" element={<TasksPage />} />
-          <Route path="analytics" element={<AnalyticsPage />} />
+          <Route path="shared" element={<SharedPage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Routes>

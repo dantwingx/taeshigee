@@ -1,14 +1,16 @@
 import { useState } from 'react'
-import { Calendar, Tag, MoreVertical, Edit, Trash2, Check, Clock, Eye, EyeOff, AlertTriangle, Target } from 'lucide-react'
+import { Calendar, Tag, MoreVertical, Edit, Trash2, Check, AlertTriangle, Target, Eye, Copy, Clock } from 'lucide-react'
 import { useTagStore, useToastStore } from '@/stores'
 import type { Task } from '@/types/task'
 import { useTranslation } from 'react-i18next'
+import i18next from 'i18next'
 
 interface TaskCardProps {
   task: Task
   onToggleComplete: (id: string) => Promise<void>
   onEdit: (task: Task) => void
   onDelete: (id: string) => Promise<void>
+  onDuplicate: (id: string) => Promise<void>
   isLoading?: boolean
 }
 
@@ -36,7 +38,7 @@ const priorityIcons = {
   high: '🎯',
 }
 
-export function TaskCard({ task, onToggleComplete, onEdit, onDelete, isLoading }: TaskCardProps) {
+export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate, isLoading }: TaskCardProps) {
   const [showMenu, setShowMenu] = useState(false)
   const { getTagColor } = useTagStore()
   const { showToast } = useToastStore()
@@ -44,7 +46,7 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, isLoading }
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleDateString('ko-KR', {
+    return date.toLocaleDateString(i18next.language, {
       month: 'short',
       day: 'numeric',
     })
@@ -52,7 +54,7 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, isLoading }
 
   const formatDateTime = (dateString: string, timeString?: string) => {
     const date = new Date(dateString)
-    const dateStr = date.toLocaleDateString('ko-KR', {
+    const dateStr = date.toLocaleDateString(i18next.language, {
       month: 'short',
       day: 'numeric',
     })
@@ -63,12 +65,44 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, isLoading }
     return dateStr
   }
 
+  const formatCreatedAt = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
+    
+    if (diffInHours < 24) {
+      if (diffInHours < 1) {
+        const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60))
+        return diffInMinutes < 1 ? t('common.justNow') : t('common.minutesAgo', { count: diffInMinutes })
+      }
+      return t('common.hoursAgo', { count: diffInHours })
+    } else if (diffInHours < 24 * 7) {
+      const diffInDays = Math.floor(diffInHours / 24)
+      return t('common.daysAgo', { count: diffInDays })
+    } else {
+      return date.toLocaleDateString(i18next.language, {
+        month: 'short',
+        day: 'numeric',
+      })
+    }
+  }
+
   const isOverdue = task.dueDate && new Date(task.dueDate) < new Date() && !task.isCompleted
 
   const handleDelete = async () => {
     try {
       await onDelete(task.id)
       showToast('success', t('toast.taskDeleted'))
+    } catch (error) {
+      showToast('error', t('toast.error'))
+    }
+    setShowMenu(false)
+  }
+
+  const handleDuplicate = async () => {
+    try {
+      await onDuplicate(task.id)
+      showToast('success', t('toast.taskDuplicated'))
     } catch (error) {
       showToast('error', t('toast.error'))
     }
@@ -104,7 +138,7 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, isLoading }
                   {task.title}
                 </h3>
                 {task.isPublic && (
-                  <Eye className="h-4 w-4 text-primary-600 dark:text-primary-400" />
+                  <Eye className="h-4 w-4 text-primary-600 dark:text-primary-400 flex-shrink-0" aria-label={t('common.public')} />
                 )}
               </div>
               
@@ -145,6 +179,13 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, isLoading }
                     <Trash2 className="h-4 w-4" />
                     <span>{t('common.delete')}</span>
                   </button>
+                  <button
+                    onClick={handleDuplicate}
+                    className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+                  >
+                    <Copy className="h-4 w-4" />
+                    <span>{t('common.duplicate')}</span>
+                  </button>
                 </div>
               )}
             </div>
@@ -156,7 +197,8 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, isLoading }
               {task.tags.slice(0, 3).map((tag, index) => (
                 <span
                   key={index}
-                  className={`px-2 py-1 rounded-full text-xs font-medium ${getTagColor(tag)}`}
+                  className={`px-2 py-1 rounded-full text-xs font-medium max-w-[100px] truncate break-words ${getTagColor(tag)}`}
+                  title={tag}
                 >
                   #{tag}
                 </span>
@@ -170,14 +212,22 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, isLoading }
           )}
 
           {/* 메타 정보 */}
-          <div className="mt-3 flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-400">
-            <div className="flex items-center space-x-3">
+          <div className="mt-3 flex flex-wrap items-center justify-between text-xs text-neutral-500 dark:text-neutral-400 gap-y-1">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 min-w-0">
+              {/* 생성 일시 */}
+              <div className="flex items-center space-x-1">
+                <Clock className="h-3 w-3" />
+                <span className="truncate max-w-[90px]" title={new Date(task.createdAt).toLocaleString(i18next.language)}>
+                  {formatCreatedAt(task.createdAt)}
+                </span>
+              </div>
+
               {task.dueDate && (
                 <div className={`flex items-center space-x-1 ${
                   isOverdue ? 'text-error-600 dark:text-error-400' : ''
                 }`}>
                   <Calendar className="h-3 w-3" />
-                  <span>
+                  <span className="truncate max-w-[90px]" title={task.dueTime ? formatDateTime(task.dueDate, task.dueTime) : formatDate(task.dueDate)}>
                     {task.dueTime 
                       ? formatDateTime(task.dueDate, task.dueTime)
                       : formatDate(task.dueDate)
@@ -187,22 +237,44 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, isLoading }
               )}
 
               {task.category && (
-                <div className="flex items-center space-x-1">
+                <div className="flex items-center space-x-1 min-w-0">
                   <Tag className="h-3 w-3" />
-                  <span>{task.category}</span>
+                  <span className="truncate max-w-[90px] break-words" title={t(`task.category${task.category.charAt(0).toUpperCase() + task.category.slice(1)}`)}>
+                    {t(`task.category${task.category.charAt(0).toUpperCase() + task.category.slice(1)}`)}
+                  </span>
                 </div>
               )}
             </div>
 
             {/* 중요도 및 우선순위 배지 */}
-            <div className="flex items-center space-x-1">
-              <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${importanceColors[task.importance]}`}>
+            <div className="flex flex-wrap items-center gap-x-1 gap-y-1 min-w-0">
+              <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 max-w-[120px] truncate break-words ${importanceColors[task.importance]}`}
+                title={t(
+                  task.importance === 'low'
+                    ? 'task.importanceLow'
+                    : task.importance === 'medium'
+                    ? 'task.importanceMedium'
+                    : 'task.importanceHigh'
+                )}
+              >
                 <AlertTriangle className="h-3 w-3" />
-                <span>{importanceIcons[task.importance]} {task.importance === 'low' ? t('task.importanceLow') : task.importance === 'medium' ? t('task.importanceMedium') : t('task.importanceHigh')}</span>
+                <span>
+                  {importanceIcons[task.importance]} {task.importance === 'low' ? t('task.importanceLow') : task.importance === 'medium' ? t('task.importanceMedium') : t('task.importanceHigh')}
+                </span>
               </span>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${priorityColors[task.priority]}`}>
+              <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 max-w-[120px] truncate break-words ${priorityColors[task.priority]}`}
+                title={t(
+                  task.priority === 'low'
+                    ? 'task.priorityLow'
+                    : task.priority === 'medium'
+                    ? 'task.priorityMedium'
+                    : 'task.priorityHigh'
+                )}
+              >
                 <Target className="h-3 w-3" />
-                <span>{priorityIcons[task.priority]} {task.priority === 'low' ? t('task.priorityLow') : task.priority === 'medium' ? t('task.priorityMedium') : t('task.priorityHigh')}</span>
+                <span>
+                  {priorityIcons[task.priority]} {task.priority === 'low' ? t('task.priorityLow') : (task.priority === 'medium' ? t('task.priorityMedium') : t('task.priorityHigh'))}
+                </span>
               </span>
             </div>
           </div>

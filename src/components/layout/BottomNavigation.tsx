@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Home, List, BarChart3, User } from 'lucide-react'
+import { Home, List, Eye, User } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 export function BottomNavigation() {
@@ -9,7 +9,7 @@ export function BottomNavigation() {
   const navigation = [
     { name: t('navigation.home'), href: '/', icon: Home },
     { name: t('navigation.tasks'), href: '/tasks', icon: List },
-    { name: t('analytics.title'), href: '/analytics', icon: BarChart3 },
+    { name: t('navigation.public'), href: '/shared', icon: Eye },
     { name: t('navigation.my'), href: '/settings', icon: User },
   ]
 

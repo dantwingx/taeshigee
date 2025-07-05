@@ -1,20 +1,24 @@
-import { useState, useRef, useEffect } from 'react'
-import { X, Plus } from 'lucide-react'
+import React, { useState, useRef, useEffect } from 'react';
+import { X, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useTagStore } from '@/stores/tagStore'
 
 interface TagInputProps {
-  value: string[]
-  onChange: (tags: string[]) => void
-  placeholder?: string
-  disabled?: boolean
-  className?: string
+  value: string[];
+  onChange: (tags: string[]) => void;
+  placeholder?: string;
+  disabled?: boolean;
+  className?: string;
 }
 
-export function TagInput({ value, onChange, placeholder = "태그를 입력하세요", disabled, className }: TagInputProps) {
-  const [inputValue, setInputValue] = useState('')
-  const [showSuggestions, setShowSuggestions] = useState(false)
-  const [isComposing, setIsComposing] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
+export function TagInput({ value, onChange, placeholder, disabled, className }: TagInputProps) {
+  const { t } = useTranslation();
+  const [inputValue, setInputValue] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showCreateOption, setShowCreateOption] = useState(false);
+  const [isComposing, setIsComposing] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const { tags, addTag } = useTagStore()
 
   // 기존 태그들 (현재 입력된 태그 제외)
@@ -88,19 +92,17 @@ export function TagInput({ value, onChange, placeholder = "태그를 입력하�
   }
 
   return (
-    <div className={`relative ${className}`}>
+    <div ref={containerRef} className={`relative ${className}`}>
       <div className="flex flex-wrap gap-2 p-2 border border-neutral-300 rounded-lg focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-primary-500 transition-colors">
-        {/* 기존 태그들 */}
         {value.map((tag, index) => (
           <span
             key={index}
             className="inline-flex items-center gap-1 px-2 py-1 bg-primary-100 text-primary-800 text-sm rounded-md"
           >
-            <span>{tag}</span>
+            <span>#{tag}</span>
             <button
               type="button"
               onClick={() => removeTag(tag)}
-              disabled={disabled}
               className="hover:bg-primary-200 rounded-full p-0.5 transition-colors"
             >
               <X className="h-3 w-3" />
@@ -108,7 +110,6 @@ export function TagInput({ value, onChange, placeholder = "태그를 입력하�
           </span>
         ))}
         
-        {/* 입력 필드 */}
         <input
           ref={inputRef}
           type="text"
@@ -119,7 +120,7 @@ export function TagInput({ value, onChange, placeholder = "태그를 입력하�
           onCompositionEnd={handleCompositionEnd}
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
-          placeholder={value.length === 0 ? placeholder : ''}
+          placeholder={placeholder || t('task.tagsPlaceholder')}
           disabled={disabled}
           className="flex-1 min-w-0 outline-none bg-transparent text-sm"
         />
@@ -138,7 +139,7 @@ export function TagInput({ value, onChange, placeholder = "태그를 입력하�
                 className="flex items-center justify-between w-full px-3 py-2 text-left hover:bg-neutral-50 transition-colors"
               >
                 <span className="text-sm">{tag.name}</span>
-                <span className="text-xs text-neutral-500">({tag.count}개)</span>
+                <span className="text-xs text-neutral-500">({tag.count}{t('common.count')})</span>
               </button>
             ))}
         </div>
@@ -154,7 +155,7 @@ export function TagInput({ value, onChange, placeholder = "태그를 입력하�
           >
             <Plus className="h-4 w-4 text-primary-600" />
             <span className="text-sm text-primary-600">
-              "{inputValue.trim()}" 태그 추가
+              "{inputValue.trim()}" {t('task.addTag')}
             </span>
           </button>
         </div>

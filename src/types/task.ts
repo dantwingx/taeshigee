@@ -13,11 +13,12 @@ export type Task = {
   createdAt: string
   updatedAt: string
   userId: string
+  likes: string[] // 좋아요한 사용자 ID 배열
 }
 
-export type CreateTaskData = Omit<Task, 'id' | 'isCompleted' | 'createdAt' | 'updatedAt' | 'userId'>
+export type CreateTaskData = Omit<Task, 'id' | 'isCompleted' | 'createdAt' | 'updatedAt' | 'userId' | 'likes'>
 
-export type UpdateTaskData = Partial<Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'userId'>>
+export type UpdateTaskData = Partial<Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'userId' | 'likes'>>
 
 export type TaskStats = {
   total: number
@@ -32,4 +33,11 @@ export interface TagStats {
   name: string
   count: number
   color?: string
+}
+
+// 좋아요 관련 타입
+export interface LikeInfo {
+  taskId: string
+  userId: string
+  timestamp: string
 } 

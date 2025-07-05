@@ -13,7 +13,7 @@ const sizeClasses = {
   sm: 'max-w-md',
   md: 'max-w-lg',
   lg: 'max-w-2xl',
-  xl: 'max-w-4xl',
+  xl: 'max-w-4xl max-h-[90vh]',
   full: 'max-w-full mx-0 h-full',
 }
 
@@ -62,7 +62,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
         </div>
         
         {/* Content */}
-        <div className={`${size === 'full' ? 'flex-1 relative' : 'p-4'}`}>
+        <div className={`${size === 'full' ? 'flex-1 relative' : size === 'xl' ? 'flex-1 overflow-hidden' : 'p-4'}`}>
           {children}
         </div>
       </div>

@@ -7,6 +7,8 @@ import { useTaskStore } from '@/stores/taskStore'
 import { useAuthStore } from '@/stores/authStore'
 import type { Task, CreateTaskData, UpdateTaskData } from '@/types/task'
 import { useTranslation } from 'react-i18next'
+import i18next from 'i18next'
+import { useToastStore } from '@/stores'
 
 type SortField = 'createdAt' | 'dueDate' | 'title' | 'importance' | 'priority'
 type SortOrder = 'asc' | 'desc'
@@ -15,13 +17,14 @@ type FilterStatus = 'all' | 'completed' | 'pending' | 'overdue'
 export function TasksPage() {
   const { user } = useAuthStore()
   const {
-    tasks,
     isLoading,
     error,
     createTask,
     updateTask,
     deleteTask,
+    duplicateTask,
     toggleTaskCompletion,
+    getTasksByUserId,
   } = useTaskStore()
 
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false)
@@ -37,9 +40,21 @@ export function TasksPage() {
   const [isFilterExpanded, setIsFilterExpanded] = useState(false)
 
   const { t } = useTranslation()
+  const { showToast } = useToastStore()
 
-  // 사용자별 태스크 필터링
-  const userTasks = user ? tasks.filter(task => task.userId === user.id) : []
+  // taskStore에서 currentUserId 직접 사용
+  const currentUserId = useTaskStore(state => state.currentUserId)
+  
+  // 사용자별 태스크 필터링 - currentUserId를 사용하여 태스크 가져오기
+  const userTasks = currentUserId ? getTasksByUserId(currentUserId) : []
+  
+  // 디버그 로그 추가
+  console.log('[TasksPage] 사용자별 태스크 필터링:', {
+    currentUserId,
+    currentUser: user ? { id: user.id, email: user.email } : null,
+    userTasksCount: userTasks.length,
+    userTasks: userTasks.map(task => ({ id: task.id, title: task.title, userId: task.userId }))
+  })
 
   // 카테고리 옵션 생성
   const categoryOptions = useMemo(() => {
@@ -160,13 +175,33 @@ export function TasksPage() {
   }
 
   const handleDeleteTask = async (id: string) => {
-    if (window.confirm(t('task.confirmDeleteTask'))) {
+    try {
+      // window.confirm -> toast + auto-delete for demo (replace with modal for real confirm)
+      showToast('warning', t('task.confirmDeleteTask'))
       await deleteTask(id)
+      showToast('success', t('toast.taskDeleted'))
+    } catch (error) {
+      console.error('Delete task error:', error)
+      showToast('error', t('toast.error'))
     }
   }
 
   const handleToggleComplete = async (id: string) => {
-    await toggleTaskCompletion(id)
+    try {
+      await toggleTaskCompletion(id)
+    } catch (error) {
+      console.error('Toggle completion error:', error)
+      // 에러는 이미 taskStore에서 처리되므로 추가 처리 불필요
+    }
+  }
+
+  const handleDuplicateTask = async (id: string) => {
+    try {
+      await duplicateTask(id)
+    } catch (error) {
+      console.error('Duplicate task error:', error)
+      // 에러는 이미 taskStore에서 처리되므로 추가 처리 불필요
+    }
   }
 
   const toggleSortOrder = () => {
@@ -191,9 +226,9 @@ export function TasksPage() {
       {/* 헤더 */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-neutral-900">{t('navigation.tasks')}</h1>
-          <p className="text-sm text-neutral-600">
-            총 {userTasks.length}개 중 {filteredTasks.length}개 표시
+          <h1 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">{t('navigation.tasks')}</h1>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+            {t('task.totalTasksDisplay', { shown: filteredTasks.length, total: userTasks.length })}
           </p>
         </div>
         <button
@@ -211,193 +246,121 @@ export function TasksPage() {
         </div>
       )}
 
-      {/* 검색 및 필터 */}
-      <div className="card p-4 space-y-3">
-        {/* 검색 */}
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+      {/* 검색 + 고급필터 토글 */}
+      <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center w-full rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 px-3 py-2 focus-within:ring-2 focus-within:ring-primary-500">
+          <Search className="shrink-0 h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" />
           <input
             type="text"
             placeholder={t('task.searchTasks')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="input pl-12"
+            className="flex-1 bg-transparent outline-none text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 border-none focus:ring-0"
           />
         </div>
-
-        {/* 기본 필터 (항상 표시) */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <CheckCircle className="h-4 w-4 text-neutral-600" />
-            <span className="text-sm font-medium text-neutral-700">{t('task.filterByStatus')}</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            {[
-              { value: 'all', label: t('common.all') },
-              { value: 'pending', label: t('common.pending') },
-              { value: 'completed', label: t('common.completed') },
-              { value: 'overdue', label: t('common.overdue') },
-            ].map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => setStatusFilter(option.value as FilterStatus)}
-                className={`px-3 py-1 rounded-lg border-2 transition-colors text-xs ${
-                  statusFilter === option.value
-                    ? 'border-primary-500 bg-primary-50 text-primary-700'
-                    : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 고급 필터 토글 */}
-        <div className="flex items-center justify-between">
-          <button
-            onClick={toggleFilterExpansion}
-            className="flex items-center space-x-2 text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
-          >
-            <Filter className="h-4 w-4" />
-            <span>{t('task.filterByStatus')}</span>
-            {isFilterExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </button>
-          <button
-            onClick={clearFilters}
-            className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
-          >
-            {t('common.reset')}
-          </button>
-        </div>
-
-        {/* 고급 필터 (폴딩) */}
-        {isFilterExpanded && (
-          <div className="space-y-3 pt-3 border-t">
-            {/* 중요도 필터 */}
-            <div>
-              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
-                <AlertTriangle className="h-4 w-4" />
-                <span>{t('task.importance')}</span>
-              </label>
-              <div className="grid grid-cols-4 gap-2">
-                {[
-                  { value: 'all', label: t('common.all'), icon: '🔍' },
-                  { value: 'low', label: t('task.importanceLow'), icon: '🟢' },
-                  { value: 'medium', label: t('task.importanceMedium'), icon: '🟡' },
-                  { value: 'high', label: t('task.importanceHigh'), icon: '🔴' },
-                ].map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => setImportanceFilter(option.value)}
-                    className={`px-2 py-1 rounded-lg border-2 transition-colors text-xs ${
-                      importanceFilter === option.value
-                        ? 'border-primary-500 bg-primary-50 text-primary-700'
-                        : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-1">
-                      <span className="text-xs">{option.icon}</span>
-                      <span className="text-xs">{option.label}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* 우선순위 필터 */}
-            <div>
-              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
-                <Target className="h-4 w-4" />
-                <span>{t('task.priority')}</span>
-              </label>
-              <div className="grid grid-cols-4 gap-2">
-                {[
-                  { value: 'all', label: t('common.all'), icon: '🔍' },
-                  { value: 'low', label: t('task.priorityLow'), icon: '📌' },
-                  { value: 'medium', label: t('task.priorityMedium'), icon: '📍' },
-                  { value: 'high', label: t('task.priorityHigh'), icon: '🎯' },
-                ].map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => setPriorityFilter(option.value)}
-                    className={`px-2 py-1 rounded-lg border-2 transition-colors text-xs ${
-                      priorityFilter === option.value
-                        ? 'border-primary-500 bg-primary-50 text-primary-700'
-                        : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-1">
-                      <span className="text-xs">{option.icon}</span>
-                      <span className="text-xs">{option.label}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* 공개 여부 필터 */}
-            <div>
-              <label className="flex items-center space-x-2 text-sm font-medium text-neutral-700 mb-2">
-                <Eye className="h-4 w-4" />
-                <span>{t('task.isPublic')}</span>
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { value: 'all', label: t('common.all'), icon: '🔍' },
-                  { value: 'private', label: t('common.private'), icon: '👁️‍🗨️' },
-                  { value: 'public', label: t('common.public'), icon: '👁️' },
-                ].map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => setPublicFilter(option.value)}
-                    className={`px-2 py-1 rounded-lg border-2 transition-colors text-xs ${
-                      publicFilter === option.value
-                        ? 'border-primary-500 bg-primary-50 text-primary-700'
-                        : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-1">
-                      <span className="text-xs">{option.icon}</span>
-                      <span className="text-xs">{option.label}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* 정렬 */}
-            <div className="flex items-center space-x-2">
-              <Select
-                value={sortField}
-                onChange={(value) => setSortField(value as SortField)}
-                options={[
-                  { value: 'createdAt', label: t('analytics.createdAt') },
-                  { value: 'dueDate', label: t('task.dueDate') },
-                  { value: 'title', label: t('task.title') },
-                  { value: 'importance', label: t('task.importance') },
-                  { value: 'priority', label: t('task.priority') },
-                ]}
-                className="w-32"
-              />
-              <button
-                onClick={toggleSortOrder}
-                className="p-2 rounded-lg hover:bg-neutral-100 transition-colors"
-              >
-                {sortOrder === 'asc' ? (
-                  <SortAsc className="h-4 w-4 text-neutral-500" />
-                ) : (
-                  <SortDesc className="h-4 w-4 text-neutral-500" />
-                )}
-              </button>
-            </div>
-          </div>
-        )}
+        <button
+          onClick={toggleFilterExpansion}
+          className="ml-2 p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center"
+          aria-label={isFilterExpanded ? t('common.collapse') : t('common.expand')}
+        >
+          <Filter className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+          {isFilterExpanded
+            ? <ChevronUp className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            : <ChevronDown className="h-5 w-5 text-gray-500 dark:text-gray-400" />}
+        </button>
       </div>
+
+      {/* 필터 전체 영역 (빨간 박스) */}
+      {isFilterExpanded && (
+        <div className="flex flex-wrap gap-2 items-center mb-2">
+          {/* 상태, 중요도, 우선순위, 공개여부, 정렬, 작성일 등 모든 필터를 한 번에 노출 */}
+          <Select
+            value={statusFilter}
+            onChange={v => setStatusFilter(v as FilterStatus)}
+            options={[
+              { value: 'all', label: t('task.filterByStatus') + ': ' + t('common.all') },
+              { value: 'pending', label: t('task.filterByStatus') + ': ' + t('common.pending') },
+              { value: 'completed', label: t('task.filterByStatus') + ': ' + t('common.completed') },
+              { value: 'overdue', label: t('task.filterByStatus') + ': ' + t('common.overdue') },
+            ]}
+            className="min-w-[120px] w-auto"
+          />
+          {/* 중요도 */}
+          <Select
+            value={importanceFilter}
+            onChange={v => setImportanceFilter(v)}
+            options={[
+              { value: 'all', label: t('task.importance') + ': ' + t('common.all') },
+              { value: 'low', label: t('task.importance') + ': ' + t('task.importanceLow') },
+              { value: 'medium', label: t('task.importance') + ': ' + t('task.importanceMedium') },
+              { value: 'high', label: t('task.importance') + ': ' + t('task.importanceHigh') },
+            ]}
+            className="min-w-[120px] w-auto"
+          />
+          {/* 우선순위 */}
+          <Select
+            value={priorityFilter}
+            onChange={v => setPriorityFilter(v)}
+            options={[
+              { value: 'all', label: t('task.priority') + ': ' + t('common.all') },
+              { value: 'low', label: t('task.priority') + ': ' + t('task.priorityLow') },
+              { value: 'medium', label: t('task.priority') + ': ' + t('task.priorityMedium') },
+              { value: 'high', label: t('task.priority') + ': ' + t('task.priorityHigh') },
+            ]}
+            className="min-w-[120px] w-auto"
+          />
+          {/* 공개여부 */}
+          <Select
+            value={publicFilter}
+            onChange={v => setPublicFilter(v)}
+            options={[
+              { value: 'all', label: t('task.isPublic') + ': ' + t('common.all') },
+              { value: 'private', label: t('task.isPublic') + ': ' + t('common.private') },
+              { value: 'public', label: t('task.isPublic') + ': ' + t('common.public') },
+            ]}
+            className="min-w-[120px] w-auto"
+          />
+          {/* 정렬 */}
+          <Select
+            value={sortField}
+            onChange={(value) => setSortField(value as SortField)}
+            options={[
+              { value: 'createdAt', label: t('task.createdAt') },
+              { value: 'dueDate', label: t('task.dueDate') },
+              { value: 'title', label: t('task.title') },
+              { value: 'importance', label: t('task.importance') },
+              { value: 'priority', label: t('task.priority') },
+            ]}
+            className="min-w-[100px] w-auto"
+          />
+          <button
+            onClick={toggleSortOrder}
+            className="p-2 rounded-lg hover:bg-neutral-100 transition-colors"
+          >
+            {sortOrder === 'asc' ? (
+              <SortAsc className="h-4 w-4 text-neutral-500" />
+            ) : (
+              <SortDesc className="h-4 w-4 text-neutral-500" />
+            )}
+          </button>
+          {/* 리셋 버튼만 남김 */}
+          <div className="flex-1 flex justify-end gap-2 min-w-[120px]">
+            <button
+              onClick={clearFilters}
+              className="text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+            >
+              {t('common.reset')}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 고급 필터 (폴딩) */}
+      {isFilterExpanded && (
+        <div className="space-y-3 pt-3 border-t">
+          {/* (고급 필터 내용은 필요시 추가) */}
+        </div>
+      )}
 
       {/* 태스크 목록 */}
       <div className="space-y-3">
@@ -425,6 +388,7 @@ export function TasksPage() {
               onToggleComplete={handleToggleComplete}
               onEdit={handleEditTask}
               onDelete={handleDeleteTask}
+              onDuplicate={handleDuplicateTask}
               isLoading={isLoading}
             />
           ))

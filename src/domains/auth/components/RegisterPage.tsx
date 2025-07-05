@@ -62,7 +62,7 @@ export function RegisterPage() {
           <div className="w-24 h-24 bg-primary-600 rounded-3xl mx-auto mb-4 flex items-center justify-center shadow-lg">
             <UserPlus className="h-12 w-12 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-neutral-900 mb-2">Task Manager</h1>
+          <h1 className="text-2xl font-bold text-neutral-900 mb-2">{t('auth.taskManager')}</h1>
           <p className="text-neutral-600">{t('home.welcome')}</p>
         </div>
 
@@ -106,12 +106,11 @@ export function RegisterPage() {
               </label>
               <div className="relative">
                 <input
-                  {...register('password')}
-                  type={showPassword ? 'text' : 'password'}
+                  type="password"
                   id="password"
-                  className={`input pr-10 ${errors.password ? 'border-error-500' : ''}`}
-                  placeholder="비밀번호를 입력하세요"
-                  disabled={isLoading}
+                  {...register('password')}
+                  placeholder={t('auth.passwordPlaceholder')}
+                  className="input pr-10"
                 />
                 <button
                   type="button"
@@ -134,12 +133,11 @@ export function RegisterPage() {
               </label>
               <div className="relative">
                 <input
-                  {...register('confirmPassword')}
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type="password"
                   id="confirmPassword"
-                  className={`input pr-10 ${errors.confirmPassword ? 'border-error-500' : ''}`}
-                  placeholder="비밀번호를 다시 입력하세요"
-                  disabled={isLoading}
+                  {...register('confirmPassword')}
+                  placeholder={t('auth.confirmPasswordPlaceholder')}
+                  className="input pr-10"
                 />
                 <button
                   type="button"
@@ -164,7 +162,7 @@ export function RegisterPage() {
               {isLoading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>회원가입 중...</span>
+                  <span>{t('auth.registering')}</span>
                 </>
               ) : (
                 <>

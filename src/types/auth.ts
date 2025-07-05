@@ -1,6 +1,7 @@
 export interface User {
   id: string
   email: string
+  name: string // 사용자 이름
   createdAt: string
   updatedAt: string
 }
@@ -10,6 +11,11 @@ export interface AuthState {
   isAuthenticated: boolean
   isLoading: boolean
   error: string | null
+  // 사용자 ID 관리
+  nextUserId: number
+  usedUserIds: Set<string>
+  // 등록된 이메일 관리
+  registeredEmails: Set<string>
 }
 
 export interface LoginCredentials {
@@ -28,4 +34,11 @@ export interface AuthActions {
   register: (credentials: RegisterCredentials) => Promise<void>
   logout: () => void
   clearError: () => void
+  // 이메일 중복 검증
+  isEmailAvailable: (email: string) => boolean
+  // 사용자 ID 변경 기능
+  changeUserId: (newUserId: string) => Promise<boolean>
+  isUserIdAvailable: (userId: string) => boolean
+  // 사용자 이름 변경 기능
+  changeUserName: (newName: string) => Promise<boolean>
 } 

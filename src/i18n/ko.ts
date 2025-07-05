@@ -4,6 +4,7 @@ export default {
     create: '생성',
     edit: '수정',
     delete: '삭제',
+    duplicate: '복제',
     cancel: '취소',
     save: '저장',
     confirm: '확인',
@@ -26,16 +27,23 @@ export default {
     completed: '완료됨',
     pending: '대기 중',
     inProgress: '진행 중',
-    reset: '초기화'
+    reset: '초기화',
+    saving: '저장 중...',
+    count: '개',
+    appName: 'Taeshigee',
+    appDescription: '태스크 관리의 새로운 경험',
+    justNow: '방금 전',
+    minutesAgo: '{{count}}분 전',
+    hoursAgo: '{{count}}시간 전',
+    daysAgo: '{{count}}일 전'
   },
 
   // 네비게이션
   navigation: {
     home: '홈',
     tasks: '태스크',
-    analytics: '분석',
-    my: '마이',
-    myPage: '마이페이지'
+    public: '공개',
+    my: '내정보',
   },
 
   // 인증
@@ -58,7 +66,13 @@ export default {
     passwordTooShort: '비밀번호는 최소 6자 이상이어야 합니다',
     passwordsDoNotMatch: '비밀번호가 일치하지 않습니다',
     emailAlreadyExists: '이미 존재하는 이메일입니다',
-    invalidCredentials: '이메일 또는 비밀번호가 올바르지 않습니다'
+    invalidCredentials: '이메일 또는 비밀번호가 올바르지 않습니다',
+    loggingIn: '로그인 중...',
+    registering: '회원가입 중...',
+    taskManager: 'Task Manager',
+    passwordPlaceholder: '비밀번호를 입력하세요',
+    confirmPasswordPlaceholder: '비밀번호를 다시 입력하세요',
+    emailPlaceholder: 'your@email.com'
   },
 
   // 태스크
@@ -81,7 +95,11 @@ export default {
     taskDeleted: '태스크가 삭제되었습니다',
     taskCompleted: '태스크가 완료되었습니다',
     taskUncompleted: '태스크가 미완료로 변경되었습니다',
+    taskDuplicated: '태스크가 복제되었습니다',
+    copySuffix: '(복사본)',
+    totalTasksDisplay: '{{total}}개 중 {{shown}}개 표시',
     confirmDeleteTask: '이 태스크를 삭제하시겠습니까?',
+    duplicateTask: '태스크 복제',
     noTasks: '태스크가 없습니다',
     noTasksFound: '검색 결과가 없습니다',
     addNewTask: '새 태스크 추가',
@@ -98,6 +116,9 @@ export default {
     titleRequired: '제목을 입력해주세요',
     descriptionPlaceholder: '태스크 설명을 입력하세요...',
     tagsPlaceholder: '태그를 입력하고 Enter를 누르세요...',
+    tagsInputPlaceholder: '태그를 입력하세요 (Enter 또는 쉼표로 구분)',
+    addTag: '태그 추가',
+    removeTag: '태그 제거',
     priorityHigh: '높음',
     priorityMedium: '보통',
     priorityLow: '낮음',
@@ -110,18 +131,25 @@ export default {
     categoryHealth: '건강',
     categoryFinance: '재정',
     categoryOther: '기타',
-    totalTasksDisplay: '총 0개중 0개 표시',
     statusFilter: '상태별 필터',
     importanceFilter: '중요도',
     priorityFilter: '우선순위',
     publicFilter: '공개여부',
-    createdAt: '작성일'
+    createdAt: '작성일',
+    update: '수정',
+    like: '좋아요',
+    unlike: '좋아요 취소',
+    likeCount: '좋아요 {{count}}개',
+    likeTask: '태스크 좋아요',
+    unlikeTask: '좋아요 취소'
   },
 
   // 홈
   home: {
     welcome: '환영합니다',
     todayTasks: '오늘의 태스크',
+    todayUserTasks: '내 오늘 태스크',
+    todayPublicTasks: '오늘의 공개 태스크',
     upcomingTasks: '예정된 태스크',
     recentTasks: '최근 태스크',
     taskStats: '태스크 통계',
@@ -131,13 +159,15 @@ export default {
     overdueTasks: '기한 초과 태스크',
     completionRate: '완료율',
     noTasksToday: '오늘 예정된 태스크가 없습니다',
+    noTodayUserTasks: '오늘 예정된 내 태스크가 없습니다',
+    noTodayPublicTasks: '오늘의 공개 태스크가 없습니다',
     noUpcomingTasks: '예정된 태스크가 없습니다',
     noRecentTasks: '최근 태스크가 없습니다'
   },
 
-  // 분석
-  analytics: {
-    title: '분석',
+  // 공유
+  shared: {
+    title: '공개',
     publicTasks: '공개 태스크',
     completedTasks: '완료된 태스크',
     taskAnalytics: '태스크 분석',
@@ -176,7 +206,19 @@ export default {
     logout: '로그아웃',
     confirmLogout: '로그아웃하시겠습니까?',
     languageChanged: '언어가 변경되었습니다',
-    themeChanged: '테마가 변경되었습니다'
+    themeChanged: '테마가 변경되었습니다',
+    showMore: '더 보기',
+    showLess: '접기',
+    changeUserId: '사용자 ID 변경',
+    userIdChanged: '사용자 ID가 변경되었습니다',
+    userIdChangeFailed: '사용자 ID 변경에 실패했습니다',
+    userIdAlreadyExists: '이미 사용 중인 사용자 ID입니다',
+    invalidUserIdFormat: '사용자 ID는 영문+숫자 6자 이상 30자 미만이어야 합니다',
+    enterUserId: '사용자 ID를 입력해주세요',
+    userIdPlaceholder: 'user_000001',
+    name: '이름',
+    nameChangeFailed: '이름 변경에 실패했습니다',
+    enterName: '이름을 입력해주세요'
   },
 
   // 토스트 메시지
@@ -186,6 +228,7 @@ export default {
     taskDeleted: '태스크가 삭제되었습니다',
     taskCompleted: '태스크가 완료되었습니다',
     taskUncompleted: '태스크가 미완료로 변경되었습니다',
+    taskDuplicated: '태스크가 복제되었습니다',
     loginSuccess: '로그인되었습니다',
     registerSuccess: '회원가입이 완료되었습니다',
     logoutSuccess: '로그아웃되었습니다',
@@ -194,6 +237,9 @@ export default {
     error: '오류가 발생했습니다',
     success: '성공했습니다',
     warning: '경고',
-    info: '정보'
+    info: '정보',
+    taskLiked: '태스크를 좋아요했습니다',
+    taskUnliked: '좋아요를 취소했습니다',
+    likeError: '좋아요 처리에 실패했습니다'
   }
 }; 

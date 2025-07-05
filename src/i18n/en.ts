@@ -4,6 +4,7 @@ export default {
     create: 'Create',
     edit: 'Edit',
     delete: 'Delete',
+    duplicate: 'Duplicate',
     cancel: 'Cancel',
     save: 'Save',
     confirm: 'Confirm',
@@ -26,14 +27,22 @@ export default {
     completed: 'Completed',
     pending: 'Pending',
     inProgress: 'In Progress',
-    reset: 'Reset'
+    reset: 'Reset',
+    saving: 'Saving...',
+    count: 'items',
+    appName: 'Taeshigee',
+    appDescription: 'A new experience in task management',
+    justNow: 'Just now',
+    minutesAgo: '{{count}} minutes ago',
+    hoursAgo: '{{count}} hours ago',
+    daysAgo: '{{count}} days ago'
   },
 
   // Navigation
   navigation: {
     home: 'Home',
     tasks: 'Tasks',
-    analytics: 'Analytics',
+    public: 'Public',
     my: 'My',
     myPage: 'My Page'
   },
@@ -46,19 +55,25 @@ export default {
     email: 'Email',
     password: 'Password',
     confirmPassword: 'Confirm Password',
-    forgotPassword: 'Forgot Password?',
+    forgotPassword: 'Forgot your password?',
     signInWithGoogle: 'Sign in with Google',
     signUpWithGoogle: 'Sign up with Google',
     alreadyHaveAccount: 'Already have an account?',
     dontHaveAccount: "Don't have an account?",
-    loginSuccess: 'Logged in successfully',
-    registerSuccess: 'Registration completed',
-    logoutSuccess: 'Logged out successfully',
+    loginSuccess: 'Successfully logged in',
+    registerSuccess: 'Registration completed successfully',
+    logoutSuccess: 'Successfully logged out',
     invalidEmail: 'Invalid email address',
     passwordTooShort: 'Password must be at least 6 characters',
     passwordsDoNotMatch: 'Passwords do not match',
     emailAlreadyExists: 'Email already exists',
-    invalidCredentials: 'Invalid email or password'
+    invalidCredentials: 'Invalid email or password',
+    loggingIn: 'Logging in...',
+    registering: 'Registering...',
+    taskManager: 'Task Manager',
+    passwordPlaceholder: 'Enter your password',
+    confirmPasswordPlaceholder: 'Confirm your password',
+    emailPlaceholder: 'your@email.com'
   },
 
   // Task
@@ -76,11 +91,15 @@ export default {
     createTask: 'Create Task',
     editTask: 'Edit Task',
     deleteTask: 'Delete Task',
+    duplicateTask: 'Duplicate Task',
     taskCreated: 'Task created successfully',
     taskUpdated: 'Task updated successfully',
     taskDeleted: 'Task deleted successfully',
     taskCompleted: 'Task marked as completed',
     taskUncompleted: 'Task marked as uncompleted',
+    taskDuplicated: 'Task duplicated successfully',
+    copySuffix: '(Copy)',
+    totalTasksDisplay: '{{shown}} of {{total}} shown',
     confirmDeleteTask: 'Are you sure you want to delete this task?',
     noTasks: 'No tasks found',
     noTasksFound: 'No tasks found',
@@ -98,6 +117,9 @@ export default {
     titleRequired: 'Title is required',
     descriptionPlaceholder: 'Enter task description...',
     tagsPlaceholder: 'Enter tags and press Enter...',
+    tagsInputPlaceholder: 'Enter tags (separate with Enter or comma)',
+    addTag: 'Add tag',
+    removeTag: 'Remove tag',
     priorityHigh: 'High',
     priorityMedium: 'Medium',
     priorityLow: 'Low',
@@ -110,18 +132,25 @@ export default {
     categoryHealth: 'Health',
     categoryFinance: 'Finance',
     categoryOther: 'Other',
-    totalTasksDisplay: 'Showing 0 of 0 total',
     statusFilter: 'Filter by Status',
     importanceFilter: 'Importance',
     priorityFilter: 'Priority',
     publicFilter: 'Public',
-    createdAt: 'Created Date'
+    createdAt: 'Created Date',
+    update: 'Update',
+    like: 'Like',
+    unlike: 'Unlike',
+    likeCount: '{{count}} likes',
+    likeTask: 'Like Task',
+    unlikeTask: 'Unlike Task'
   },
 
-  // Home
+  // 홈
   home: {
     welcome: 'Welcome',
-    todayTasks: "Today's Tasks",
+    todayTasks: 'Today\'s Tasks',
+    todayUserTasks: 'My Today\'s Tasks',
+    todayPublicTasks: 'Today\'s Public Tasks',
     upcomingTasks: 'Upcoming Tasks',
     recentTasks: 'Recent Tasks',
     taskStats: 'Task Statistics',
@@ -131,13 +160,15 @@ export default {
     overdueTasks: 'Overdue Tasks',
     completionRate: 'Completion Rate',
     noTasksToday: 'No tasks scheduled for today',
+    noTodayUserTasks: 'No tasks scheduled for today',
+    noTodayPublicTasks: 'No public tasks for today',
     noUpcomingTasks: 'No upcoming tasks',
     noRecentTasks: 'No recent tasks'
   },
 
-  // Analytics
-  analytics: {
-    title: 'Analytics',
+  // Shared
+  shared: {
+    title: 'Public',
     publicTasks: 'Public Tasks',
     completedTasks: 'Completed Tasks',
     taskAnalytics: 'Task Analytics',
@@ -147,7 +178,7 @@ export default {
     importanceDistribution: 'Importance Distribution',
     weeklyProgress: 'Weekly Progress',
     monthlyProgress: 'Monthly Progress',
-    noPublicTasks: 'No public tasks found',
+    noPublicTasks: 'No public tasks available',
     viewTaskDetails: 'View Task Details',
     createdBy: 'Created by',
     createdAt: 'Created at',
@@ -176,7 +207,19 @@ export default {
     logout: 'Logout',
     confirmLogout: 'Are you sure you want to logout?',
     languageChanged: 'Language changed successfully',
-    themeChanged: 'Theme changed successfully'
+    themeChanged: 'Theme changed successfully',
+    showMore: 'Show more',
+    showLess: 'Show less',
+    changeUserId: 'Change User ID',
+    userIdChanged: 'User ID changed successfully',
+    userIdChangeFailed: 'Failed to change User ID',
+    userIdAlreadyExists: 'User ID already exists',
+    invalidUserIdFormat: 'User ID must be alphanumeric, 6 or more and less than 30 characters',
+    enterUserId: 'Please enter a User ID',
+    userIdPlaceholder: 'user_000001',
+    name: 'Name',
+    nameChangeFailed: 'Failed to change name',
+    enterName: 'Please enter your name'
   },
 
   // Toast messages
@@ -186,6 +229,7 @@ export default {
     taskDeleted: 'Task deleted successfully',
     taskCompleted: 'Task marked as completed',
     taskUncompleted: 'Task marked as uncompleted',
+    taskDuplicated: 'Task duplicated successfully',
     loginSuccess: 'Logged in successfully',
     registerSuccess: 'Registration completed',
     logoutSuccess: 'Logged out successfully',
@@ -194,6 +238,9 @@ export default {
     error: 'An error occurred',
     success: 'Success',
     warning: 'Warning',
-    info: 'Information'
+    info: 'Information',
+    taskLiked: 'Task liked successfully',
+    taskUnliked: 'Task unliked successfully',
+    likeError: 'Failed to process like'
   }
 }; 

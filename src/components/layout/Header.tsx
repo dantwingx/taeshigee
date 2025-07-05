@@ -5,9 +5,18 @@ import { useNavigate } from 'react-router-dom'
 
 export function Header() {
   const { user, logout } = useAuthStore()
-  const { tasks, currentUserId } = useTaskStore()
+  const { currentUserId, getTaskStats } = useTaskStore()
   const { t } = useTranslation()
   const navigate = useNavigate()
+
+  // 사용자별 통계 계산 - 현재 사용자의 태스크만 계산
+  const stats = user ? getTaskStats(user.id) : {
+    total: 0,
+    completed: 0,
+    pending: 0,
+    overdue: 0,
+    completionRate: 0,
+  }
 
   const handleLogout = () => {
     logout()
@@ -27,24 +36,19 @@ export function Header() {
               <span className="text-white font-bold text-sm">T</span>
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">Taeshigee</h1>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400">태스크 관리의 새로운 경험</p>
+              <h1 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">{t('common.appName')}</h1>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('common.appDescription')}</p>
             </div>
           </div>
           
-          {user && (
-            <div className="flex items-center space-x-2 text-xs text-neutral-500 dark:text-neutral-400">
-              <span className="hidden sm:inline">•</span>
-              <span className="hidden sm:inline">{user.email}</span>
-            </div>
-          )}
+          {/* 사용자 이메일 영역 제거 */}
         </div>
         
         <div className="flex items-center space-x-3">
           {user && (
             <div className="text-xs text-neutral-500 dark:text-neutral-400">
               <span className="hidden sm:inline">{t('navigation.tasks')} </span>
-              <span className="font-medium text-neutral-900 dark:text-neutral-100">{tasks.length}개</span>
+              <span className="font-medium text-neutral-900 dark:text-neutral-100">{stats.total}{t('common.count')}</span>
             </div>
           )}
           <button
