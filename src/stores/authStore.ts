@@ -30,6 +30,7 @@ export const useAuthStore = create<AuthStore>()(
       isLoading: false,
       error: null,
       nextUserId: 1,
+      nextUserNumber: 1, // 사용자 번호 관리
       usedUserIds: new Set<string>(),
       registeredEmails: new Set<string>(), // 등록된 이메일 목록 추가
 
@@ -41,7 +42,7 @@ export const useAuthStore = create<AuthStore>()(
           // TODO: 실제 API 호출로 대체
           await new Promise(resolve => setTimeout(resolve, 1000))
           
-          const { nextUserId, usedUserIds } = get()
+          const { nextUserId, nextUserNumber, usedUserIds } = get()
           
           // 일련번호 기반 사용자 ID 생성
           const userId = generateRandomUserId()
@@ -49,13 +50,14 @@ export const useAuthStore = create<AuthStore>()(
           // 임시 사용자 데이터 (실제로는 API 응답에서 받아옴)
           const mockUser = {
             id: userId,
+            userNumber: nextUserNumber, // 사용자 번호 할당
             email: credentials.email,
             name: 'No Name', // 기본값
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           }
           
-          console.log(`[AuthStore] 로그인 성공: ${credentials.email} (ID: ${userId})`)
+          console.log(`[AuthStore] 로그인 성공: ${credentials.email} (ID: ${userId}, Number: ${nextUserNumber})`)
           
           set({
             user: mockUser,
@@ -63,18 +65,19 @@ export const useAuthStore = create<AuthStore>()(
             isLoading: false,
             error: null,
             nextUserId: nextUserId + 1,
+            nextUserNumber: nextUserNumber + 1, // 다음 사용자 번호 증가
             usedUserIds: new Set([...usedUserIds, userId]),
           })
 
           // 태스크 스토어에 현재 사용자 설정 - 동기적으로 처리
           const { useTaskStore } = await import('./taskStore')
           const taskStore = useTaskStore.getState()
-          taskStore.setCurrentUserId(mockUser.id)
-          console.log(`[AuthStore] taskStore currentUserId 설정 완료: ${mockUser.id}`)
+          taskStore.setCurrentUser(mockUser.id, mockUser.userNumber)
+          console.log(`[AuthStore] taskStore currentUser 설정 완료: ${mockUser.id}, ${mockUser.userNumber}`)
           
           // 설정 확인
-          const verifyCurrentUserId = useTaskStore.getState().currentUserId
-          console.log(`[AuthStore] currentUserId 설정 확인: ${verifyCurrentUserId}`)
+          const verifyCurrentUser = useTaskStore.getState()
+          console.log(`[AuthStore] currentUser 설정 확인: ${verifyCurrentUser.currentUserId}, ${verifyCurrentUser.currentUserNumber}`)
         } catch (error) {
           set({
             isLoading: false,
@@ -101,7 +104,7 @@ export const useAuthStore = create<AuthStore>()(
           // TODO: 실제 API 호출로 대체
           await new Promise(resolve => setTimeout(resolve, 1000))
           
-          const { nextUserId, usedUserIds } = get()
+          const { nextUserId, nextUserNumber, usedUserIds } = get()
           
           // 새로운 ID 생성
           const newUserId = generateRandomUserId()
@@ -109,13 +112,14 @@ export const useAuthStore = create<AuthStore>()(
           // 임시 사용자 데이터 (실제로는 API 응답에서 받아옴)
           const mockUser = {
             id: newUserId,
+            userNumber: nextUserNumber, // 사용자 번호 할당
             email: credentials.email,
             name: 'No Name', // 기본값
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           }
           
-          console.log(`[AuthStore] 회원가입 성공: ${credentials.email} (ID: ${newUserId})`)
+          console.log(`[AuthStore] 회원가입 성공: ${credentials.email} (ID: ${newUserId}, Number: ${nextUserNumber})`)
           
           set({
             user: mockUser,
@@ -123,6 +127,7 @@ export const useAuthStore = create<AuthStore>()(
             isLoading: false,
             error: null,
             nextUserId: nextUserId + 1,
+            nextUserNumber: nextUserNumber + 1, // 다음 사용자 번호 증가
             usedUserIds: new Set([...usedUserIds, newUserId]),
             registeredEmails: new Set([...registeredEmails, credentials.email]), // 이메일 등록
           })
@@ -130,12 +135,12 @@ export const useAuthStore = create<AuthStore>()(
           // 태스크 스토어에 현재 사용자 설정
           const { useTaskStore } = await import('./taskStore')
           const taskStore = useTaskStore.getState()
-          taskStore.setCurrentUserId(newUserId)
-          console.log(`[AuthStore] taskStore currentUserId 설정 완료: ${newUserId}`)
+          taskStore.setCurrentUser(newUserId, nextUserNumber)
+          console.log(`[AuthStore] taskStore currentUser 설정 완료: ${newUserId}, ${nextUserNumber}`)
           
           // 설정 확인
-          const verifyCurrentUserId = useTaskStore.getState().currentUserId
-          console.log(`[AuthStore] currentUserId 설정 확인: ${verifyCurrentUserId}`)
+          const verifyCurrentUser = useTaskStore.getState()
+          console.log(`[AuthStore] currentUser 설정 확인: ${verifyCurrentUser.currentUserId}, ${verifyCurrentUser.currentUserNumber}`)
         } catch (error) {
           set({
             isLoading: false,
@@ -148,8 +153,8 @@ export const useAuthStore = create<AuthStore>()(
         // 태스크 스토어에서 현재 사용자 정리
         import('./taskStore').then(({ useTaskStore }) => {
           const taskStore = useTaskStore.getState()
-          taskStore.setCurrentUserId(null)
-          console.log('[AuthStore] taskStore currentUserId 초기화 완료')
+          taskStore.setCurrentUser(null, null)
+          console.log('[AuthStore] taskStore currentUser 초기화 완료')
         })
 
         set({
@@ -197,7 +202,7 @@ export const useAuthStore = create<AuthStore>()(
           
           const oldUserId = user.id
           
-          // 사용자 정보 업데이트
+          // 사용자 정보 업데이트 (userNumber는 변경하지 않음)
           const updatedUser = {
             ...user,
             id: newUserId,
@@ -214,12 +219,12 @@ export const useAuthStore = create<AuthStore>()(
             usedUserIds: newUsedUserIds,
           })
 
-          // 태스크 스토어의 currentUserId도 업데이트
+          // 태스크 스토어의 currentUser도 업데이트 (userNumber는 유지)
           const { useTaskStore } = await import('./taskStore')
           const taskStore = useTaskStore.getState()
-          taskStore.setCurrentUserId(newUserId)
+          taskStore.setCurrentUser(newUserId, user.userNumber) // userNumber는 변경하지 않음
           
-          console.log(`[AuthStore] 사용자 ID 변경 성공: ${oldUserId} -> ${newUserId}`)
+          console.log(`[AuthStore] 사용자 ID 변경 성공: ${oldUserId} -> ${newUserId} (userNumber: ${user.userNumber})`)
           return true
         } catch (error) {
           console.error('[AuthStore] 사용자 ID 변경 실패:', error)
@@ -266,6 +271,7 @@ export const useAuthStore = create<AuthStore>()(
         user: state.user,
         isAuthenticated: state.isAuthenticated,
         nextUserId: state.nextUserId,
+        nextUserNumber: state.nextUserNumber, // 사용자 번호 추가
         usedUserIds: Array.from(state.usedUserIds), // Set을 배열로 변환하여 저장
         registeredEmails: Array.from(state.registeredEmails), // Set을 배열로 변환하여 저장
       }),
@@ -274,12 +280,12 @@ export const useAuthStore = create<AuthStore>()(
         if (state?.user?.id) {
           import('./taskStore').then(({ useTaskStore }) => {
             const taskStore = useTaskStore.getState()
-            taskStore.setCurrentUserId(state.user!.id)
-            console.log(`[AuthStore] onRehydrateStorage: taskStore currentUserId 복원 완료: ${state.user!.id}`)
+            taskStore.setCurrentUser(state.user!.id, state.user!.userNumber) // 사용자 번호도 복원
+            console.log(`[AuthStore] onRehydrateStorage: taskStore currentUser 복원 완료: ${state.user!.id}, ${state.user!.userNumber}`)
             
             // 복원 확인
-            const verifyCurrentUserId = useTaskStore.getState().currentUserId
-            console.log(`[AuthStore] onRehydrateStorage: currentUserId 복원 확인: ${verifyCurrentUserId}`)
+            const verifyCurrentUser = useTaskStore.getState()
+            console.log(`[AuthStore] onRehydrateStorage: currentUser 복원 확인: ${verifyCurrentUser.currentUserId}, ${verifyCurrentUser.currentUserNumber}`)
           })
         } else {
           console.log('[AuthStore] onRehydrateStorage: 사용자 정보가 없어 currentUserId 복원하지 않음')

@@ -21,6 +21,9 @@ export function SharedPage() {
   const [selectedTask, setSelectedTask] = useState<PublicTask | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
 
+  // currentUserId는 좋아요 기능에서만 사용하므로 그대로 유지
+  // 태스크 소유권은 userNumber로 관리되지만, 좋아요는 userId로 관리
+
   // 공개된 태스크만 필터링하고 최신순으로 정렬
   useEffect(() => {
     const publicTaskList = getAllPublicTasks()

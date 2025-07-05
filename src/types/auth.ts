@@ -1,5 +1,6 @@
 export interface User {
   id: string
+  userNumber: number // 사용자 번호 (serial number)
   email: string
   name: string // 사용자 이름
   createdAt: string
@@ -13,6 +14,7 @@ export interface AuthState {
   error: string | null
   // 사용자 ID 관리
   nextUserId: number
+  nextUserNumber: number // 사용자 번호 관리
   usedUserIds: Set<string>
   // 등록된 이메일 관리
   registeredEmails: Set<string>

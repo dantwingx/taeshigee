@@ -14,7 +14,8 @@ import {
   Edit,
   Check,
   X,
-  ChevronDown
+  ChevronDown,
+  Database
 } from 'lucide-react'
 import { useState } from 'react'
 import { useToastStore } from '@/stores'
@@ -292,6 +293,13 @@ export function SettingsPage() {
             )}
             
             <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
+              <span className="text-gray-600 dark:text-gray-400">사용자 번호</span>
+              <span className="font-mono text-sm text-gray-900 dark:text-white">
+                {user?.userNumber || 'N/A'}
+              </span>
+            </div>
+            
+            <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
               <span className="text-gray-600 dark:text-gray-400">{t('settings.signUpDate')}</span>
               <span className="text-gray-900 dark:text-white">
                 {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-'}
@@ -400,6 +408,18 @@ export function SettingsPage() {
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
                   모든 태스크 데이터 삭제
+                </button>
+                
+                <button
+                  onClick={() => {
+                    const { migrateToUserNumber } = useTaskStore.getState()
+                    migrateToUserNumber()
+                    showToast('success', '데이터 마이그레이션이 완료되었습니다.')
+                  }}
+                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm flex items-center justify-center"
+                >
+                  <Database className="w-4 h-4 mr-2" />
+                  userId → userNumber 마이그레이션
                 </button>
                 
                 <p className="text-xs text-red-600 dark:text-red-400">

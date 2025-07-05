@@ -4,20 +4,21 @@ import type { Task, CreateTaskData, UpdateTaskData } from '@/types/task'
 import i18next from 'i18next'
 
 interface TaskStore {
-  // 사용자별 태스크 저장소
-  userTasks: Record<string, Task[]>
+  // 사용자별 태스크 저장소 (사용자 번호로 관리)
+  userTasks: Record<number, Task[]>
   currentUserId: string | null
+  currentUserNumber: number | null
   isLoading: boolean
   error: string | null
-  setCurrentUserId: (userId: string | null) => void
+  setCurrentUser: (userId: string | null, userNumber: number | null) => void
   createTask: (data: CreateTaskData) => Promise<void>
   updateTask: (id: string, data: UpdateTaskData) => Promise<void>
   deleteTask: (id: string) => Promise<void>
   duplicateTask: (id: string) => Promise<void>
   toggleTaskCompletion: (id: string) => Promise<void>
   toggleTaskLike: (taskId: string) => Promise<void>
-  getTasksByUserId: (userId: string) => Task[]
-  getTaskStats: (userId: string) => {
+  getTasksByUserNumber: (userNumber: number) => Task[]
+  getTaskStats: (userNumber: number) => {
     total: number
     completed: number
     pending: number
@@ -27,11 +28,13 @@ interface TaskStore {
   isTaskLikedByUser: (taskId: string, userId: string) => boolean
   getTaskLikeCount: (taskId: string) => number
   // 현재 사용자가 볼 수 있는 태스크만 반환하는 함수
-  getVisibleTasks: (userId: string) => Task[]
+  getVisibleTasks: (userNumber: number) => Task[]
   // 모든 공개 태스크를 가져오는 함수
   getAllPublicTasks: () => Task[]
   // 개발용: 모든 데이터 초기화
   clearAllData: () => void
+  // 기존 userId 기반 데이터를 userNumber 기반으로 마이그레이션
+  migrateToUserNumber: () => void
 }
 
 export const useTaskStore = create<TaskStore>()(
@@ -39,12 +42,13 @@ export const useTaskStore = create<TaskStore>()(
     (set, get) => ({
       userTasks: {},
       currentUserId: null,
+      currentUserNumber: null,
       isLoading: false,
       error: null,
 
-      setCurrentUserId: (userId: string | null) => {
-        console.log('[TaskStore] setCurrentUserId 호출:', userId)
-        set({ currentUserId: userId })
+      setCurrentUser: (userId: string | null, userNumber: number | null) => {
+        console.log('[TaskStore] setCurrentUser 호출:', { userId, userNumber })
+        set({ currentUserId: userId, currentUserNumber: userNumber })
       },
 
       // 개발용: 모든 데이터 초기화 함수
@@ -53,17 +57,54 @@ export const useTaskStore = create<TaskStore>()(
         set({
           userTasks: {},
           currentUserId: null,
+          currentUserNumber: null,
           isLoading: false,
           error: null,
         })
       },
 
+      // 기존 userId 기반 데이터를 userNumber 기반으로 마이그레이션
+      migrateToUserNumber: () => {
+        const state = get()
+        const oldUserTasks = state.userTasks as any // 임시로 any 타입 사용
+        
+        // userId 기반 데이터가 있는지 확인
+        if (Object.keys(oldUserTasks).some(key => isNaN(Number(key)))) {
+          console.log('[TaskStore] userId 기반 데이터를 userNumber 기반으로 마이그레이션 시작')
+          
+          const newUserTasks: Record<number, Task[]> = {}
+          
+          // 각 사용자별로 태스크를 userNumber로 재구성
+          Object.entries(oldUserTasks).forEach(([userId, tasks]) => {
+            if (Array.isArray(tasks)) {
+              // 임시로 userNumber를 1부터 할당 (실제로는 사용자 정보에서 가져와야 함)
+              const userNumber = 1 // 임시 값
+              
+              const migratedTasks = tasks.map(task => ({
+                ...task,
+                userNumber: userNumber, // userNumber 필드 추가
+              }))
+              
+              newUserTasks[userNumber] = migratedTasks
+            }
+          })
+          
+          set({
+            userTasks: newUserTasks,
+          })
+          
+          console.log('[TaskStore] 마이그레이션 완료:', newUserTasks)
+        } else {
+          console.log('[TaskStore] 이미 userNumber 기반 데이터입니다.')
+        }
+      },
+
       createTask: async (data: CreateTaskData) => {
         set({ isLoading: true, error: null })
         try {
-          const currentUserId = get().currentUserId
-          if (!currentUserId) {
-            throw new Error('로그인이 필요합니다. currentUserId가 설정되지 않았습니다.')
+          const { currentUserId, currentUserNumber } = get()
+          if (!currentUserId || !currentUserNumber) {
+            throw new Error('로그인이 필요합니다. currentUser가 설정되지 않았습니다.')
           }
 
           const newTask: Task = {
@@ -74,12 +115,13 @@ export const useTaskStore = create<TaskStore>()(
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             userId: currentUserId,
+            userNumber: currentUserNumber, // 사용자 번호 저장
           }
           
           set((state) => ({
             userTasks: {
               ...state.userTasks,
-              [currentUserId]: [...(state.userTasks[currentUserId] || []), newTask],
+              [currentUserNumber]: [...(state.userTasks[currentUserNumber] || []), newTask],
             },
             isLoading: false,
           }))
@@ -94,9 +136,9 @@ export const useTaskStore = create<TaskStore>()(
       updateTask: async (id: string, data: UpdateTaskData) => {
         set({ isLoading: true, error: null })
         try {
-          const currentUserId = get().currentUserId
-          if (!currentUserId) {
-            throw new Error('로그인이 필요합니다. currentUserId가 설정되지 않았습니다.')
+          const { currentUserId, currentUserNumber } = get()
+          if (!currentUserId || !currentUserNumber) {
+            throw new Error('로그인이 필요합니다. currentUser가 설정되지 않았습니다.')
           }
 
           // 모든 사용자의 태스크에서 해당 태스크 찾기
@@ -107,15 +149,15 @@ export const useTaskStore = create<TaskStore>()(
             throw new Error('태스크를 찾을 수 없습니다.')
           }
 
-          // 태스크 소유자 확인 (자신의 태스크만 수정 가능)
-          if (taskToUpdate.userId !== currentUserId) {
+          // 태스크 소유자 확인 (사용자 번호로 비교)
+          if (taskToUpdate.userNumber !== currentUserNumber) {
             throw new Error('자신의 태스크만 수정할 수 있습니다.')
           }
 
           set((state) => ({
             userTasks: {
               ...state.userTasks,
-              [taskToUpdate.userId]: (state.userTasks[taskToUpdate.userId] || []).map((task) => {
+              [taskToUpdate.userNumber]: (state.userTasks[taskToUpdate.userNumber] || []).map((task) => {
                 if (task.id === id) {
                   return {
                     ...task,
@@ -140,11 +182,11 @@ export const useTaskStore = create<TaskStore>()(
       deleteTask: async (id: string) => {
         set({ isLoading: true, error: null })
         try {
-          const currentUserId = get().currentUserId
-          console.log('[TaskStore] deleteTask 호출:', { id, currentUserId })
+          const { currentUserId, currentUserNumber } = get()
+          console.log('[TaskStore] deleteTask 호출:', { id, currentUserId, currentUserNumber })
           
-          if (!currentUserId) {
-            throw new Error('로그인이 필요합니다. currentUserId가 설정되지 않았습니다.')
+          if (!currentUserId || !currentUserNumber) {
+            throw new Error('로그인이 필요합니다. currentUser가 설정되지 않았습니다.')
           }
 
           // 모든 사용자의 태스크에서 해당 태스크 찾기
@@ -153,27 +195,27 @@ export const useTaskStore = create<TaskStore>()(
           
           console.log('[TaskStore] 태스크 찾기 결과:', { 
             allTasksCount: allTasks.length, 
-            taskToDelete: taskToDelete ? { id: taskToDelete.id, userId: taskToDelete.userId } : null 
+            taskToDelete: taskToDelete ? { id: taskToDelete.id, userNumber: taskToDelete.userNumber } : null 
           })
           
           if (!taskToDelete) {
             throw new Error('태스크를 찾을 수 없습니다.')
           }
 
-          // 태스크 소유자 확인 (자신의 태스크만 삭제 가능)
-          if (taskToDelete.userId !== currentUserId) {
+          // 태스크 소유자 확인 (사용자 번호로 비교)
+          if (taskToDelete.userNumber !== currentUserNumber) {
             throw new Error('자신의 태스크만 삭제할 수 있습니다.')
           }
 
           console.log('[TaskStore] 태스크 삭제 실행:', { 
             taskId: taskToDelete.id, 
-            userId: taskToDelete.userId 
+            userNumber: taskToDelete.userNumber 
           })
 
           set((state) => ({
             userTasks: {
               ...state.userTasks,
-              [taskToDelete.userId]: (state.userTasks[taskToDelete.userId] || []).filter((task) => task.id !== id),
+              [taskToDelete.userNumber]: (state.userTasks[taskToDelete.userNumber] || []).filter((task) => task.id !== id),
             },
             isLoading: false,
           }))
@@ -191,10 +233,10 @@ export const useTaskStore = create<TaskStore>()(
       duplicateTask: async (id: string) => {
         set({ isLoading: true, error: null })
         try {
-          const currentUserId = get().currentUserId
-          console.log('[TaskStore] duplicateTask 호출:', { id, currentUserId })
+          const { currentUserId, currentUserNumber } = get()
+          console.log('[TaskStore] duplicateTask 호출:', { id, currentUserId, currentUserNumber })
           
-          if (!currentUserId) {
+          if (!currentUserId || !currentUserNumber) {
             throw new Error('로그인이 필요합니다.')
           }
 
@@ -204,7 +246,7 @@ export const useTaskStore = create<TaskStore>()(
           
           console.log('[TaskStore] 원본 태스크 찾기 결과:', { 
             allTasksCount: allTasks.length, 
-            originalTask: originalTask ? { id: originalTask.id, userId: originalTask.userId } : null 
+            originalTask: originalTask ? { id: originalTask.id, userNumber: originalTask.userNumber } : null 
           })
           
           if (!originalTask) {
@@ -222,18 +264,20 @@ export const useTaskStore = create<TaskStore>()(
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             userId: currentUserId,
+            userNumber: currentUserNumber, // 사용자 번호 저장
           }
 
           console.log('[TaskStore] 복제된 태스크 생성:', { 
             duplicatedTaskId: duplicatedTask.id, 
             duplicatedTaskTitle: duplicatedTask.title, 
-            duplicatedTaskUserId: duplicatedTask.userId 
+            duplicatedTaskUserId: duplicatedTask.userId,
+            duplicatedTaskUserNumber: duplicatedTask.userNumber
           })
 
           set((state) => ({
             userTasks: {
               ...state.userTasks,
-              [currentUserId]: [...(state.userTasks[currentUserId] || []), duplicatedTask],
+              [currentUserNumber]: [...(state.userTasks[currentUserNumber] || []), duplicatedTask],
             },
             isLoading: false,
           }))
@@ -251,10 +295,10 @@ export const useTaskStore = create<TaskStore>()(
       toggleTaskCompletion: async (id: string) => {
         set({ isLoading: true, error: null })
         try {
-          const currentUserId = get().currentUserId
-          console.log('[TaskStore] toggleTaskCompletion 호출:', { id, currentUserId })
+          const { currentUserId, currentUserNumber } = get()
+          console.log('[TaskStore] toggleTaskCompletion 호출:', { id, currentUserId, currentUserNumber })
           
-          if (!currentUserId) {
+          if (!currentUserId || !currentUserNumber) {
             throw new Error('로그인이 필요합니다.')
           }
 
@@ -264,21 +308,21 @@ export const useTaskStore = create<TaskStore>()(
           
           console.log('[TaskStore] 태스크 찾기 결과:', { 
             allTasksCount: allTasks.length, 
-            taskToToggle: taskToToggle ? { id: taskToToggle.id, userId: taskToToggle.userId, isCompleted: taskToToggle.isCompleted } : null 
+            taskToToggle: taskToToggle ? { id: taskToToggle.id, userNumber: taskToToggle.userNumber, isCompleted: taskToToggle.isCompleted } : null 
           })
           
           if (!taskToToggle) {
             throw new Error('태스크를 찾을 수 없습니다.')
           }
 
-          // 태스크 소유자 확인 (자신의 태스크만 토글 가능)
-          if (taskToToggle.userId !== currentUserId) {
+          // 태스크 소유자 확인 (사용자 번호로 비교)
+          if (taskToToggle.userNumber !== currentUserNumber) {
             throw new Error('자신의 태스크만 수정할 수 있습니다.')
           }
 
           console.log('[TaskStore] 태스크 상태 변경 실행:', { 
             taskId: taskToToggle.id, 
-            userId: taskToToggle.userId,
+            userNumber: taskToToggle.userNumber,
             currentStatus: taskToToggle.isCompleted,
             newStatus: !taskToToggle.isCompleted
           })
@@ -286,7 +330,7 @@ export const useTaskStore = create<TaskStore>()(
           set((state) => ({
             userTasks: {
               ...state.userTasks,
-              [taskToToggle.userId]: (state.userTasks[taskToToggle.userId] || []).map((task) => {
+              [taskToToggle.userNumber]: (state.userTasks[taskToToggle.userNumber] || []).map((task) => {
                 if (task.id === id) {
                   return {
                     ...task,
@@ -314,8 +358,8 @@ export const useTaskStore = create<TaskStore>()(
       toggleTaskLike: async (taskId: string) => {
         set({ isLoading: true, error: null })
         try {
-          const currentUserId = get().currentUserId
-          if (!currentUserId) {
+          const { currentUserId, currentUserNumber } = get()
+          if (!currentUserId || !currentUserNumber) {
             throw new Error('로그인이 필요합니다.')
           }
 
@@ -327,7 +371,7 @@ export const useTaskStore = create<TaskStore>()(
             throw new Error('태스크를 찾을 수 없습니다.')
           }
 
-          const taskOwnerId = taskToUpdate.userId
+          const taskOwnerNumber = taskToUpdate.userNumber
           const currentLikes = taskToUpdate.likes || []
           const isLiked = currentLikes.includes(currentUserId)
           const updatedLikes = isLiked
@@ -337,7 +381,7 @@ export const useTaskStore = create<TaskStore>()(
           set((state) => ({
             userTasks: {
               ...state.userTasks,
-              [taskOwnerId]: (state.userTasks[taskOwnerId] || []).map((task) => {
+              [taskOwnerNumber]: (state.userTasks[taskOwnerNumber] || []).map((task) => {
                 if (task.id === taskId) {
                   return {
                     ...task,
@@ -370,12 +414,12 @@ export const useTaskStore = create<TaskStore>()(
         return task ? (task.likes || []).length : 0
       },
 
-      getTasksByUserId: (userId: string) => {
-        return get().userTasks[userId] || []
+      getTasksByUserNumber: (userNumber: number) => {
+        return get().userTasks[userNumber] || []
       },
 
-      getTaskStats: (userId: string) => {
-        const userTasks = get().userTasks[userId] || []
+      getTaskStats: (userNumber: number) => {
+        const userTasks = get().userTasks[userNumber] || []
         const total = userTasks.length
         const completed = userTasks.filter((task) => task.isCompleted).length
         const pending = total - completed
@@ -398,11 +442,11 @@ export const useTaskStore = create<TaskStore>()(
         return allTasks.filter((task) => task.isPublic)
       },
 
-      getVisibleTasks: (userId: string) => {
-        const userTasks = get().userTasks[userId] || []
+      getVisibleTasks: (userNumber: number) => {
+        const userTasks = get().userTasks[userNumber] || []
         const allTasks = Object.values(get().userTasks).flat()
         const otherPublicTasks = allTasks.filter(task => 
-          task.isPublic && task.userId !== userId
+          task.isPublic && task.userNumber !== userNumber
         )
         
         // 사용자 자신의 태스크 + 다른 사용자의 공개 태스크
@@ -413,7 +457,8 @@ export const useTaskStore = create<TaskStore>()(
       name: 'task-storage',
       partialize: (state) => ({ 
         userTasks: state.userTasks,
-        currentUserId: state.currentUserId 
+        currentUserId: state.currentUserId,
+        currentUserNumber: state.currentUserNumber
       }),
     }
   )

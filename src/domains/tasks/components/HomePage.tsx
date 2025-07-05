@@ -22,7 +22,7 @@ export function HomePage() {
     duplicateTask,
     toggleTaskCompletion,
     getTaskStats,
-    getTasksByUserId,
+    getTasksByUserNumber,
     getAllPublicTasks,
   } = useTaskStore()
 
@@ -30,8 +30,8 @@ export function HomePage() {
   const [editingTask, setEditingTask] = useState<Task | null>(null)
   const [activeTab, setActiveTab] = useState<TabType>('todayUser')
 
-  // 사용자별 통계 계산
-  const stats = user ? getTaskStats(user.id) : {
+  // 사용자별 통계 계산 (사용자 번호로)
+  const stats = user ? getTaskStats(user.userNumber) : {
     total: 0,
     completed: 0,
     pending: 0,
@@ -39,18 +39,18 @@ export function HomePage() {
     completionRate: 0,
   }
 
-  // taskStore에서 currentUserId 직접 사용
-  const currentUserId = useTaskStore(state => state.currentUserId)
+  // taskStore에서 currentUserNumber 직접 사용
+  const currentUserNumber = useTaskStore(state => state.currentUserNumber)
   
-  // 사용자별 태스크 필터링 - currentUserId를 사용하여 태스크 가져오기
-  const userTasks = currentUserId ? getTasksByUserId(currentUserId) : []
+  // 사용자별 태스크 필터링 - currentUserNumber를 사용하여 태스크 가져오기
+  const userTasks = currentUserNumber ? getTasksByUserNumber(currentUserNumber) : []
   
   // 디버그 로그 추가
   console.log('[HomePage] 사용자별 태스크 필터링:', {
-    currentUserId,
-    currentUser: user ? { id: user.id, email: user.email } : null,
+    currentUserNumber,
+    currentUser: user ? { id: user.id, userNumber: user.userNumber, email: user.email } : null,
     userTasksCount: userTasks.length,
-    userTasks: userTasks.map(task => ({ id: task.id, title: task.title, userId: task.userId }))
+    userTasks: userTasks.map(task => ({ id: task.id, title: task.title, userNumber: task.userNumber }))
   })
   
   // 모든 공개 태스크 가져오기

@@ -24,7 +24,7 @@ export function TasksPage() {
     deleteTask,
     duplicateTask,
     toggleTaskCompletion,
-    getTasksByUserId,
+    getTasksByUserNumber,
   } = useTaskStore()
 
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false)
@@ -42,18 +42,18 @@ export function TasksPage() {
   const { t } = useTranslation()
   const { showToast } = useToastStore()
 
-  // taskStore에서 currentUserId 직접 사용
-  const currentUserId = useTaskStore(state => state.currentUserId)
+  // taskStore에서 currentUserNumber 직접 사용
+  const currentUserNumber = useTaskStore(state => state.currentUserNumber)
   
-  // 사용자별 태스크 필터링 - currentUserId를 사용하여 태스크 가져오기
-  const userTasks = currentUserId ? getTasksByUserId(currentUserId) : []
+  // 사용자별 태스크 필터링 - currentUserNumber를 사용하여 태스크 가져오기
+  const userTasks = currentUserNumber ? getTasksByUserNumber(currentUserNumber) : []
   
   // 디버그 로그 추가
   console.log('[TasksPage] 사용자별 태스크 필터링:', {
-    currentUserId,
-    currentUser: user ? { id: user.id, email: user.email } : null,
+    currentUserNumber,
+    currentUser: user ? { id: user.id, userNumber: user.userNumber, email: user.email } : null,
     userTasksCount: userTasks.length,
-    userTasks: userTasks.map(task => ({ id: task.id, title: task.title, userId: task.userId }))
+    userTasks: userTasks.map(task => ({ id: task.id, title: task.title, userNumber: task.userNumber }))
   })
 
   // 카테고리 옵션 생성
