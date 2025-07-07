@@ -95,7 +95,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
       dueTime: '',
       importance: 'medium',
       priority: 'medium',
-      category: '',
+      category: 'other', // 기타로 기본 설정
       tags: [],
       isPublic: false,
     },
@@ -125,7 +125,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
         dueTime: getLastTimeOfDay(), // 23:59로 기본 설정
         importance: 'medium',
         priority: 'medium',
-        category: '',
+        category: 'other', // 기타로 기본 설정
         tags: [],
         isPublic: false,
       })
