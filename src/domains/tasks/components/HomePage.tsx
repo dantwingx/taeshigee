@@ -1,21 +1,24 @@
 import { useState, useEffect } from 'react'
-import { Plus } from 'lucide-react'
-import { TaskForm } from './TaskForm'
-import { TaskCard } from './TaskCard'
-import { useTaskStore, useToastStore } from '@/stores'
-import { useAuthStore } from '@/stores/authStore'
-import type { Task, CreateTaskData, UpdateTaskData } from '@/types/task'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
+import { Plus } from 'lucide-react'
+import { useTaskStore } from '@/stores/taskStore'
+import { useAuthStore } from '@/stores/authStore'
+import { useToastStore } from '@/stores'
+import { TaskCard } from './TaskCard'
+import { TaskForm } from './TaskForm'
+import { Task, CreateTaskData, UpdateTaskData } from '@/types/task'
 
 type TabType = 'todayUser' | 'todayPublic' | 'recent'
 
 export function HomePage() {
+  const navigate = useNavigate()
   const { currentUser } = useAuthStore()
   const { showToast } = useToastStore()
   const { t } = useTranslation()
   const {
-    isLoading,
-    error,
+    fetchUserTasks,
+    fetchPublicTasks,
     createTask,
     updateTask,
     deleteTask,
@@ -24,8 +27,8 @@ export function HomePage() {
     getTaskStats,
     getTasksByUserNumber,
     getAllPublicTasks,
-    fetchUserTasks,
-    fetchPublicTasks,
+    isLoading,
+    error,
     clearError,
   } = useTaskStore()
 
@@ -118,6 +121,11 @@ export function HomePage() {
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 5)
 
+  // 태스크 탭으로 이동하는 함수
+  const handleNavigateToTasks = () => {
+    navigate('/tasks')
+  }
+
   const handleCreateTask = async (data: CreateTaskData) => {
     try {
       await createTask(data)
@@ -205,14 +213,20 @@ export function HomePage() {
 
   return (
     <div className="space-y-4">
-      {/* 헤더 */}
-      <div className="flex items-center justify-between">
+      {/* 헤더 - 클릭 가능하도록 수정 */}
+      <div 
+        className="flex items-center justify-between cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-800 p-2 rounded-lg transition-colors"
+        onClick={handleNavigateToTasks}
+      >
         <div>
           <h1 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">{t('home.todayTasks')}</h1>
           <p className="text-sm text-neutral-600 dark:text-neutral-400">{t('home.welcome')}</p>
         </div>
         <button
-          onClick={() => setIsTaskFormOpen(true)}
+          onClick={(e) => {
+            e.stopPropagation() // 이벤트 버블링 방지
+            setIsTaskFormOpen(true)
+          }}
           className="btn-primary p-3 rounded-full shadow-lg"
           disabled={isLoading}
         >
@@ -234,8 +248,11 @@ export function HomePage() {
         </div>
       )}
       
-      {/* 통계 카드 */}
-      <div className="grid grid-cols-2 gap-3">
+      {/* 통계 카드 - 클릭 가능하도록 수정 */}
+      <div 
+        className="grid grid-cols-2 gap-3 cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-800 p-2 rounded-lg transition-colors"
+        onClick={handleNavigateToTasks}
+      >
         <div className="card p-4">
           <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-1 text-sm">{t('home.totalTasks')}</h3>
           <p className="text-xl font-bold text-neutral-600 dark:text-neutral-400">{stats.total}</p>
@@ -291,23 +308,27 @@ export function HomePage() {
         </button>
       </div>
 
-      {/* 태스크 목록 */}
-      <div className="space-y-3">
+      {/* 태스크 목록 - 클릭 가능하도록 수정 */}
+      <div 
+        className="space-y-3 cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-800 p-2 rounded-lg transition-colors"
+        onClick={handleNavigateToTasks}
+      >
         {currentTasks.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-neutral-500 dark:text-neutral-400">{getEmptyMessage()}</p>
           </div>
         ) : (
           currentTasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              onToggleComplete={handleToggleComplete}
-              onEdit={handleEditTask}
-              onDelete={handleDeleteTask}
-              onDuplicate={handleDuplicateTask}
-              isLoading={isLoading}
-            />
+            <div key={task.id} onClick={(e) => e.stopPropagation()}>
+              <TaskCard
+                task={task}
+                onToggleComplete={handleToggleComplete}
+                onEdit={handleEditTask}
+                onDelete={handleDeleteTask}
+                onDuplicate={handleDuplicateTask}
+                isLoading={isLoading}
+              />
+            </div>
           ))
         )}
       </div>
