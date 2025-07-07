@@ -10,7 +10,9 @@ export async function GET(
   try {
     const { id } = await context.params;
     const user = await authenticateRequest(request);
-    
+
+    console.log(`[GET /api/tasks/${id}] 시작 - 사용자: ${user.userId}`);
+
     const { data: task, error } = await supabase
       .from('tasks')
       .select(`
@@ -22,7 +24,13 @@ export async function GET(
       .eq('user_id', user.userId)
       .single();
 
-    if (error || !task) {
+    if (error) {
+      console.error(`[GET /api/tasks/${id}] 태스크 조회 실패:`, error);
+      return createErrorResponse('Task not found', 404);
+    }
+
+    if (!task) {
+      console.error(`[GET /api/tasks/${id}] 태스크를 찾을 수 없음 - 사용자: ${user.userId}`);
       return createErrorResponse('Task not found', 404);
     }
 
@@ -45,12 +53,18 @@ export async function GET(
       updatedAt: task.updated_at,
     };
 
+    console.log(`[GET /api/tasks/${id}] 성공적으로 완료`);
     return Response.json({
       success: true,
       task: transformedTask,
     });
   } catch (error) {
-    return createErrorResponse('Authentication failed', 401);
+    console.error(`[GET /api/tasks/[id]] 예상치 못한 오류:`, error);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+    return createErrorResponse('Internal server error', 500);
   }
 }
 
@@ -64,6 +78,8 @@ export async function PUT(
     const user = await authenticateRequest(request);
     const { title, description, dueDate, dueTime, importance, priority, category, isPublic, tags } = await request.json();
 
+    console.log(`[PUT /api/tasks/${id}] 시작 - 사용자: ${user.userId}`);
+
     // Check if task exists and belongs to user
     const { data: existingTask, error: checkError } = await supabase
       .from('tasks')
@@ -72,20 +88,29 @@ export async function PUT(
       .eq('user_id', user.userId)
       .single();
 
-    if (checkError || !existingTask) {
+    if (checkError) {
+      console.error(`[PUT /api/tasks/${id}] 태스크 존재 확인 실패:`, checkError);
+      return createErrorResponse('Task not found', 404);
+    }
+
+    if (!existingTask) {
+      console.error(`[PUT /api/tasks/${id}] 태스크를 찾을 수 없음 - 사용자: ${user.userId}`);
       return createErrorResponse('Task not found', 404);
     }
 
     // Validate input
     if (title !== undefined && title.trim().length === 0) {
+      console.error(`[PUT /api/tasks/${id}] 제목이 비어있음`);
       return createErrorResponse('Title cannot be empty');
     }
 
     if (importance && !['low', 'medium', 'high'].includes(importance)) {
+      console.error(`[PUT /api/tasks/${id}] 잘못된 중요도 값: ${importance}`);
       return createErrorResponse('Importance must be low, medium, or high');
     }
 
     if (priority && !['low', 'medium', 'high'].includes(priority)) {
+      console.error(`[PUT /api/tasks/${id}] 잘못된 우선순위 값: ${priority}`);
       return createErrorResponse('Priority must be low, medium, or high');
     }
 
@@ -100,6 +125,8 @@ export async function PUT(
     if (category !== undefined) updateData.category = category || null;
     if (isPublic !== undefined) updateData.is_public = isPublic;
 
+    console.log(`[PUT /api/tasks/${id}] 업데이트 데이터:`, updateData);
+
     const { data: task, error: updateError } = await supabase
       .from('tasks')
       .update(updateData)
@@ -108,16 +135,23 @@ export async function PUT(
       .single();
 
     if (updateError) {
+      console.error(`[PUT /api/tasks/${id}] 태스크 업데이트 실패:`, updateError);
       return createErrorResponse('Failed to update task', 500);
     }
 
     // Update tags if provided
     if (tags !== undefined) {
+      console.log(`[PUT /api/tasks/${id}] 태그 업데이트 시작:`, tags);
+      
       // Delete existing tags
-      await supabase
+      const { error: deleteTagsError } = await supabase
         .from('task_tags')
         .delete()
         .eq('task_id', id);
+
+      if (deleteTagsError) {
+        console.error(`[PUT /api/tasks/${id}] 기존 태그 삭제 실패:`, deleteTagsError);
+      }
 
       // Insert new tags
       if (Array.isArray(tags) && tags.length > 0) {
@@ -126,9 +160,13 @@ export async function PUT(
           tag_name: tag.trim(),
         }));
 
-        await supabase
+        const { error: insertTagsError } = await supabase
           .from('task_tags')
           .insert(tagInserts);
+
+        if (insertTagsError) {
+          console.error(`[PUT /api/tasks/${id}] 새 태그 삽입 실패:`, insertTagsError);
+        }
       }
     }
 
@@ -144,6 +182,7 @@ export async function PUT(
       .single();
 
     if (fetchError) {
+      console.error(`[PUT /api/tasks/${id}] 업데이트된 태스크 조회 실패:`, fetchError);
       return createErrorResponse('Failed to fetch updated task', 500);
     }
 
@@ -166,12 +205,18 @@ export async function PUT(
       updatedAt: completeTask.updated_at,
     };
 
+    console.log(`[PUT /api/tasks/${id}] 성공적으로 완료`);
     return Response.json({
       success: true,
       task: transformedTask,
     });
   } catch (error) {
-    return createErrorResponse('Authentication failed', 401);
+    console.error(`[PUT /api/tasks/[id]] 예상치 못한 오류:`, error);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+    return createErrorResponse('Internal server error', 500);
   }
 }
 
@@ -184,6 +229,8 @@ export async function DELETE(
     const { id } = await context.params;
     const user = await authenticateRequest(request);
 
+    console.log(`[DELETE /api/tasks/${id}] 시작 - 사용자: ${user.userId}`);
+
     // Check if task exists and belongs to user
     const { data: existingTask, error: checkError } = await supabase
       .from('tasks')
@@ -192,21 +239,35 @@ export async function DELETE(
       .eq('user_id', user.userId)
       .single();
 
-    if (checkError || !existingTask) {
+    if (checkError) {
+      console.error(`[DELETE /api/tasks/${id}] 태스크 존재 확인 실패:`, checkError);
+      return createErrorResponse('Task not found', 404);
+    }
+
+    if (!existingTask) {
+      console.error(`[DELETE /api/tasks/${id}] 태스크를 찾을 수 없음 - 사용자: ${user.userId}`);
       return createErrorResponse('Task not found', 404);
     }
 
     // Delete task tags first (due to foreign key constraint)
-    await supabase
+    const { error: deleteTagsError } = await supabase
       .from('task_tags')
       .delete()
       .eq('task_id', id);
 
+    if (deleteTagsError) {
+      console.error(`[DELETE /api/tasks/${id}] 태그 삭제 실패:`, deleteTagsError);
+    }
+
     // Delete task likes
-    await supabase
+    const { error: deleteLikesError } = await supabase
       .from('task_likes')
       .delete()
       .eq('task_id', id);
+
+    if (deleteLikesError) {
+      console.error(`[DELETE /api/tasks/${id}] 좋아요 삭제 실패:`, deleteLikesError);
+    }
 
     // Delete task
     const { error: deleteError } = await supabase
@@ -215,14 +276,21 @@ export async function DELETE(
       .eq('id', id);
 
     if (deleteError) {
+      console.error(`[DELETE /api/tasks/${id}] 태스크 삭제 실패:`, deleteError);
       return createErrorResponse('Failed to delete task', 500);
     }
 
+    console.log(`[DELETE /api/tasks/${id}] 성공적으로 완료`);
     return Response.json({
       success: true,
       message: 'Task deleted successfully',
     });
   } catch (error) {
-    return createErrorResponse('Authentication failed', 401);
+    console.error(`[DELETE /api/tasks/[id]] 예상치 못한 오류:`, error);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+    return createErrorResponse('Internal server error', 500);
   }
 } 

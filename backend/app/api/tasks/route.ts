@@ -11,6 +11,8 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search') || '';
     const filter = searchParams.get('filter') || 'all';
     
+    console.log(`[GET /api/tasks] 시작 - 사용자: ${user.userId}, 검색: "${search}", 필터: ${filter}`);
+    
     let query = supabase
       .from('tasks')
       .select(`
@@ -35,6 +37,7 @@ export async function GET(request: NextRequest) {
     const { data: tasks, error } = await query.order('created_at', { ascending: false });
 
     if (error) {
+      console.error(`[GET /api/tasks] 태스크 조회 실패:`, error);
       return createErrorResponse('Failed to fetch tasks', 500);
     }
 
@@ -58,12 +61,18 @@ export async function GET(request: NextRequest) {
       updatedAt: task.updated_at,
     }));
 
+    console.log(`[GET /api/tasks] 성공적으로 완료 - 태스크 수: ${transformedTasks.length}`);
     return Response.json({
       success: true,
       tasks: transformedTasks,
     });
   } catch (error) {
-    return createErrorResponse('Authentication failed', 401);
+    console.error(`[GET /api/tasks] 예상치 못한 오류:`, error);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+    return createErrorResponse('Internal server error', 500);
   }
 }
 
@@ -73,18 +82,35 @@ export async function POST(request: NextRequest) {
     const user = await authenticateRequest(request);
     const { title, description, dueDate, dueTime, importance, priority, category, isPublic, tags } = await request.json();
 
+    console.log(`[POST /api/tasks] 시작 - 사용자: ${user.userId}`);
+
     // Validate input
     if (!title || title.trim().length === 0) {
+      console.error(`[POST /api/tasks] 제목이 비어있음`);
       return createErrorResponse('Title is required');
     }
 
     if (importance && !['low', 'medium', 'high'].includes(importance)) {
+      console.error(`[POST /api/tasks] 잘못된 중요도 값: ${importance}`);
       return createErrorResponse('Importance must be low, medium, or high');
     }
 
     if (priority && !['low', 'medium', 'high'].includes(priority)) {
+      console.error(`[POST /api/tasks] 잘못된 우선순위 값: ${priority}`);
       return createErrorResponse('Priority must be low, medium, or high');
     }
+
+    console.log(`[POST /api/tasks] 태스크 생성 데이터:`, {
+      title: title.trim(),
+      description: description?.trim(),
+      dueDate,
+      dueTime,
+      importance: importance || 'medium',
+      priority: priority || 'medium',
+      category,
+      isPublic: isPublic || false,
+      tags
+    });
 
     // Create task
     const { data: task, error: taskError } = await supabase
@@ -107,11 +133,14 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (taskError) {
+      console.error(`[POST /api/tasks] 태스크 생성 실패:`, taskError);
       return createErrorResponse('Failed to create task', 500);
     }
 
     // Add tags if provided
     if (tags && Array.isArray(tags) && tags.length > 0) {
+      console.log(`[POST /api/tasks] 태그 추가 시작:`, tags);
+      
       const tagInserts = tags.map((tag: string) => ({
         task_id: task.id,
         tag_name: tag.trim(),
@@ -122,7 +151,7 @@ export async function POST(request: NextRequest) {
         .insert(tagInserts);
 
       if (tagError) {
-        console.error('Failed to insert tags:', tagError);
+        console.error(`[POST /api/tasks] 태그 삽입 실패:`, tagError);
       }
     }
 
@@ -138,6 +167,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (fetchError) {
+      console.error(`[POST /api/tasks] 생성된 태스크 조회 실패:`, fetchError);
       return createErrorResponse('Failed to fetch created task', 500);
     }
 
@@ -160,11 +190,17 @@ export async function POST(request: NextRequest) {
       updatedAt: completeTask.updated_at,
     };
 
+    console.log(`[POST /api/tasks] 성공적으로 완료 - 태스크 ID: ${task.id}`);
     return Response.json({
       success: true,
       task: transformedTask,
     });
   } catch (error) {
-    return createErrorResponse('Authentication failed', 401);
+    console.error(`[POST /api/tasks] 예상치 못한 오류:`, error);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+    return createErrorResponse('Internal server error', 500);
   }
 } 

@@ -11,6 +11,8 @@ export async function POST(
     const { id } = await context.params;
     const user = await authenticateRequest(request);
 
+    console.log(`[POST /api/tasks/${id}/like] 시작 - 사용자: ${user.userId}`);
+
     // Check if task exists
     const { data: task, error: taskError } = await supabase
       .from('tasks')
@@ -18,7 +20,13 @@ export async function POST(
       .eq('id', id)
       .single();
 
-    if (taskError || !task) {
+    if (taskError) {
+      console.error(`[POST /api/tasks/${id}/like] 태스크 조회 실패:`, taskError);
+      return createErrorResponse('Task not found', 404);
+    }
+
+    if (!task) {
+      console.error(`[POST /api/tasks/${id}/like] 태스크를 찾을 수 없음`);
       return createErrorResponse('Task not found', 404);
     }
 
@@ -30,27 +38,44 @@ export async function POST(
       .eq('user_id', user.userId)
       .single();
 
+    if (likeError && likeError.code !== 'PGRST116') { // PGRST116는 "no rows returned" 에러
+      console.error(`[POST /api/tasks/${id}/like] 기존 좋아요 확인 실패:`, likeError);
+    }
+
     if (existingLike) {
+      console.log(`[POST /api/tasks/${id}/like] 좋아요 취소 - 현재 카운트: ${task.likes_count}`);
+      
       // Unlike: Remove like and decrease count
-      await supabase
+      const { error: deleteLikeError } = await supabase
         .from('task_likes')
         .delete()
         .eq('task_id', id)
         .eq('user_id', user.userId);
 
-      await supabase
+      if (deleteLikeError) {
+        console.error(`[POST /api/tasks/${id}/like] 좋아요 삭제 실패:`, deleteLikeError);
+      }
+
+      const { error: updateCountError } = await supabase
         .from('tasks')
         .update({ likes_count: task.likes_count - 1 })
         .eq('id', id);
 
+      if (updateCountError) {
+        console.error(`[POST /api/tasks/${id}/like] 좋아요 카운트 감소 실패:`, updateCountError);
+      }
+
+      console.log(`[POST /api/tasks/${id}/like] 좋아요 취소 완료`);
       return Response.json({
         success: true,
         liked: false,
         likesCount: task.likes_count - 1,
       });
     } else {
+      console.log(`[POST /api/tasks/${id}/like] 좋아요 추가 - 현재 카운트: ${task.likes_count}`);
+      
       // Like: Add like and increase count
-      await supabase
+      const { error: insertLikeError } = await supabase
         .from('task_likes')
         .insert({
           task_id: id,
@@ -58,11 +83,20 @@ export async function POST(
           user_number: user.userNumber,
         });
 
-      await supabase
+      if (insertLikeError) {
+        console.error(`[POST /api/tasks/${id}/like] 좋아요 추가 실패:`, insertLikeError);
+      }
+
+      const { error: updateCountError } = await supabase
         .from('tasks')
         .update({ likes_count: task.likes_count + 1 })
         .eq('id', id);
 
+      if (updateCountError) {
+        console.error(`[POST /api/tasks/${id}/like] 좋아요 카운트 증가 실패:`, updateCountError);
+      }
+
+      console.log(`[POST /api/tasks/${id}/like] 좋아요 추가 완료`);
       return Response.json({
         success: true,
         liked: true,
@@ -70,6 +104,11 @@ export async function POST(
       });
     }
   } catch (error) {
-    return createErrorResponse('Authentication failed', 401);
+    console.error(`[POST /api/tasks/[id]/like] 예상치 못한 오류:`, error);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+    return createErrorResponse('Internal server error', 500);
   }
 } 

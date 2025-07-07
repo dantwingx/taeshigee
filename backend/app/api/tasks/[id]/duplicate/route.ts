@@ -11,8 +11,10 @@ export async function POST(
     const { id } = await context.params;
     const user = await authenticateRequest(request);
 
-    // Get the original task with tags
-    const { data: originalTask, error: taskError } = await supabase
+    console.log(`[POST /api/tasks/${id}/duplicate] 시작 - 사용자: ${user.userId}`);
+
+    // Get original task
+    const { data: originalTask, error: fetchError } = await supabase
       .from('tasks')
       .select(`
         *,
@@ -21,37 +23,49 @@ export async function POST(
       .eq('id', id)
       .single();
 
-    if (taskError || !originalTask) {
+    if (fetchError) {
+      console.error(`[POST /api/tasks/${id}/duplicate] 원본 태스크 조회 실패:`, fetchError);
       return createErrorResponse('Task not found', 404);
     }
 
-    // Create new task with same properties (except id and timestamps)
+    if (!originalTask) {
+      console.error(`[POST /api/tasks/${id}/duplicate] 원본 태스크를 찾을 수 없음`);
+      return createErrorResponse('Task not found', 404);
+    }
+
+    // Create duplicated task
+    const duplicatedTaskData = {
+      user_id: user.userId,
+      user_number: user.userNumber,
+      title: `${originalTask.title} (복사본)`,
+      description: originalTask.description,
+      due_date: originalTask.due_date,
+      due_time: originalTask.due_time,
+      importance: originalTask.importance,
+      priority: originalTask.priority,
+      category: originalTask.category,
+      is_completed: false,
+      is_public: false, // 복사본은 기본적으로 비공개
+      likes_count: 0,
+    };
+
+    console.log(`[POST /api/tasks/${id}/duplicate] 복제 태스크 데이터:`, duplicatedTaskData);
+
     const { data: newTask, error: createError } = await supabase
       .from('tasks')
-      .insert({
-        user_id: user.userId,
-        user_number: user.userNumber,
-        title: `${originalTask.title} (Copy)`,
-        description: originalTask.description,
-        due_date: originalTask.due_date,
-        due_time: originalTask.due_time,
-        importance: originalTask.importance,
-        priority: originalTask.priority,
-        category: originalTask.category,
-        is_completed: false, // 복제된 태스크는 미완료 상태로 시작
-        is_public: false, // Duplicated tasks are private by default
-        likes_count: 0,
-      })
+      .insert(duplicatedTaskData)
       .select()
       .single();
 
     if (createError) {
-      console.error('Failed to create duplicated task:', createError);
+      console.error(`[POST /api/tasks/${id}/duplicate] 태스크 복제 실패:`, createError);
       return createErrorResponse('Failed to duplicate task', 500);
     }
 
-    // Copy tags to new task
+    // Copy tags
     if (originalTask.task_tags && originalTask.task_tags.length > 0) {
+      console.log(`[POST /api/tasks/${id}/duplicate] 태그 복제 시작:`, originalTask.task_tags);
+      
       const tagInserts = originalTask.task_tags.map((tag: any) => ({
         task_id: newTask.id,
         tag_name: tag.tag_name,
@@ -62,12 +76,12 @@ export async function POST(
         .insert(tagInserts);
 
       if (tagError) {
-        console.error('Failed to copy tags:', tagError);
+        console.error(`[POST /api/tasks/${id}/duplicate] 태그 복제 실패:`, tagError);
       }
     }
 
     // Fetch the complete duplicated task
-    const { data: completeTask, error: fetchError } = await supabase
+    const { data: completeTask, error: fetchCompleteError } = await supabase
       .from('tasks')
       .select(`
         *,
@@ -77,8 +91,8 @@ export async function POST(
       .eq('id', newTask.id)
       .single();
 
-    if (fetchError) {
-      console.error('Failed to fetch duplicated task:', fetchError);
+    if (fetchCompleteError) {
+      console.error(`[POST /api/tasks/${id}/duplicate] 복제된 태스크 조회 실패:`, fetchCompleteError);
       return createErrorResponse('Failed to fetch duplicated task', 500);
     }
 
@@ -101,12 +115,17 @@ export async function POST(
       updatedAt: completeTask.updated_at,
     };
 
+    console.log(`[POST /api/tasks/${id}/duplicate] 성공적으로 완료 - 새 태스크 ID: ${newTask.id}`);
     return Response.json({
       success: true,
       task: transformedTask,
     });
   } catch (error) {
-    console.error('Duplicate task error:', error);
+    console.error(`[POST /api/tasks/[id]/duplicate] 예상치 못한 오류:`, error);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
     return createErrorResponse('Internal server error', 500);
   }
 } 
