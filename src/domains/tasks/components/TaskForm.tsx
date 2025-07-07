@@ -114,9 +114,13 @@ type TaskFormData = z.infer<typeof taskSchema>
     },
   })
 
-  // task prop이 바뀔 때만 form 값을 업데이트
+  // task prop이 바뀔 때와 isOpen이 true가 될 때 form 값을 업데이트
   useEffect(() => {
-    console.log('[TaskForm] task prop changed:', task)
+    console.log('[TaskForm] task prop changed:', task, 'isOpen:', isOpen)
+    
+    // 모달이 열릴 때만 폼을 초기화
+    if (!isOpen) return
+    
     if (task) {
       console.log('[TaskForm] task.title:', task.title)
       console.log('[TaskForm] task.description:', task.description)
@@ -175,7 +179,7 @@ type TaskFormData = z.infer<typeof taskSchema>
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [task])
+  }, [task, isOpen])
 
   const handleFormSubmit = async (data: TaskFormData) => {
     try {
