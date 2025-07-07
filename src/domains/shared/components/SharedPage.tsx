@@ -18,12 +18,17 @@ interface PublicTask extends Task {
 }
 
 export function SharedPage() {
-  const { getAllPublicTasks, duplicateTask, toggleTaskLike, isTaskLikedByUser, getTaskLikeCount, currentUserId, currentUserNumber } = useTaskStore()
+  const { getAllPublicTasks, fetchPublicTasks, duplicateTask, toggleTaskLike, isTaskLikedByUser, getTaskLikeCount, currentUserId, currentUserNumber } = useTaskStore()
   const { showToast } = useToastStore()
   const { t } = useTranslation()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
+
+  // 컴포넌트 마운트 시 공개 태스크 가져오기
+  useEffect(() => {
+    fetchPublicTasks()
+  }, [fetchPublicTasks])
 
   // 필터/정렬 상태 추가 (TasksPage와 동일)
   const [statusFilter, setStatusFilter] = useState<'all' | 'completed' | 'pending' | 'overdue'>('all')

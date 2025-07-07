@@ -113,11 +113,18 @@ export const useTaskStore = create<TaskStore>()(
           const response = await taskService.getPublicTasks(search, filter)
           
           if (response.success && response.tasks) {
+            // 좋아요 정보를 포함하여 태스크 데이터 변환
+            const tasksWithLikes = response.tasks.map(task => ({
+              ...task,
+              likes: [] // 초기에는 빈 배열로 설정, 좋아요 정보는 별도로 관리
+            }))
+            
             set({
-              publicTasks: response.tasks,
+              publicTasks: tasksWithLikes,
               isLoading: false,
               error: null
             })
+            console.log('[TaskStore] 공개 태스크 로드 완료:', tasksWithLikes.length, '개')
           } else {
             throw new Error('Failed to fetch public tasks')
           }
@@ -377,13 +384,15 @@ export const useTaskStore = create<TaskStore>()(
 
       isTaskLikedByUser: (taskId: string, userNumber: number) => {
         const allTasks = Object.values(get().userTasks).flat()
-        const task = allTasks.find((t) => t.id === taskId)
+        const publicTasks = get().publicTasks
+        const task = allTasks.find((t) => t.id === taskId) || publicTasks.find((t) => t.id === taskId)
         return task ? (task.likes || []).includes(userNumber) : false
       },
 
       getTaskLikeCount: (taskId: string) => {
         const allTasks = Object.values(get().userTasks).flat()
-        const task = allTasks.find((t) => t.id === taskId)
+        const publicTasks = get().publicTasks
+        const task = allTasks.find((t) => t.id === taskId) || publicTasks.find((t) => t.id === taskId)
         return task ? (task.likes || []).length : 0
       },
 
