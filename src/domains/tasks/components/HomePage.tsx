@@ -248,26 +248,23 @@ export function HomePage() {
         </div>
       )}
       
-      {/* 통계 카드 - 클릭 가능하도록 수정 */}
-      <div 
-        className="grid grid-cols-2 gap-3 cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-800 p-2 rounded-lg transition-colors"
-        onClick={handleNavigateToTasks}
-      >
-        <div className="card p-4">
+      {/* 통계 카드 - '전체 태스크'만 클릭 가능 */}
+      <div className="grid grid-cols-2 gap-3">
+        <div
+          className="card p-4 cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+          onClick={handleNavigateToTasks}
+        >
           <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-1 text-sm">{t('home.totalTasks')}</h3>
           <p className="text-xl font-bold text-neutral-600 dark:text-neutral-400">{stats.total}</p>
         </div>
-        
         <div className="card p-4">
           <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-1 text-sm">{t('home.todayTasks')}</h3>
           <p className="text-xl font-bold text-primary-600 dark:text-primary-400">{todayUserTasks.length}</p>
         </div>
-        
         <div className="card p-4">
           <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-1 text-sm">{t('home.completedTasks')}</h3>
           <p className="text-xl font-bold text-success-600 dark:text-success-400">{stats.completed}</p>
         </div>
-        
         <div className="card p-4">
           <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-1 text-sm">{t('home.completionRate')}</h3>
           <p className="text-xl font-bold text-warning-600 dark:text-warning-400">{stats.completionRate}%</p>
