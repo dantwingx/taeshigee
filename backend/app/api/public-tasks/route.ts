@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 
 // GET /api/public-tasks - Get public tasks from all users
 export async function GET(request: NextRequest) {
+  console.error('public-tasks API 진입: ', new Date().toISOString());
   try {
     const { searchParams } = new URL(request.url);
     
