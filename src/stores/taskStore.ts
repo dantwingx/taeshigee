@@ -6,7 +6,7 @@ import i18next from 'i18next'
 
 interface TaskStore {
   // 사용자별 태스크 저장소 (사용자 번호로 관리)
-  userTasks: Record<number, Task[]>
+  userTasks: Record<number | string, Task[]>
   publicTasks: Task[] // 공개 태스크 캐시
   currentUserId: string | null
   currentUserNumber: number | null
@@ -23,8 +23,8 @@ interface TaskStore {
   toggleTaskLike: (taskId: string) => Promise<void>
   
   // Data fetching
-  fetchUserTasks: (search?: string, filter?: string) => Promise<void>
-  fetchPublicTasks: (search?: string, filter?: string) => Promise<void>
+  fetchUserTasks: (search?: string, filter?: string, force?: boolean) => Promise<void>
+  fetchPublicTasks: (search?: string, filter?: string, force?: boolean) => Promise<void>
   
   // Getters
   getTasksByUserNumber: (userNumber: number) => Task[]
@@ -74,11 +74,12 @@ export const useTaskStore = create<TaskStore>()(
         })
       },
 
-      fetchUserTasks: async (search?: string, filter?: string) => {
-        const { currentUserNumber } = get()
-        if (!currentUserNumber) {
-          console.warn('[TaskStore] fetchUserTasks: 사용자가 로그인되지 않음')
-          return
+      fetchUserTasks: async (search?: string, filter?: string, force?: boolean) => {
+        const state = get();
+        const currentUserNumber = state.currentUserNumber;
+        const userNum = currentUserNumber as number;
+        if (!force && typeof userNum === 'number' && !isNaN(userNum) && (state.userTasks[userNum] || state.userTasks[String(userNum)]) && ((state.userTasks[userNum] && state.userTasks[userNum].length > 0) || (state.userTasks[String(userNum)] && state.userTasks[String(userNum)].length > 0)) && !search && !filter) {
+          return; // 이미 데이터가 있으면 중복 호출 방지
         }
 
         set({ isLoading: true, error: null })
@@ -107,7 +108,12 @@ export const useTaskStore = create<TaskStore>()(
         }
       },
 
-      fetchPublicTasks: async (search?: string, filter?: string) => {
+      fetchPublicTasks: async (search?: string, filter?: string, force?: boolean) => {
+        const state = get();
+        if (!force && state.publicTasks && state.publicTasks.length > 0 && !search && !filter) {
+          return; // 이미 데이터가 있으면 중복 호출 방지
+        }
+
         set({ isLoading: true, error: null })
         try {
           const response = await taskService.getPublicTasks(search, filter)

@@ -41,7 +41,7 @@ export function HomePage() {
           // 사용자 태스크와 공개 태스크를 병렬로 가져오기
           await Promise.all([
             fetchUserTasks(),
-            fetchPublicTasks()
+            fetchPublicTasks(undefined, undefined, true) // 공개 태스크는 항상 새로 가져오기
           ])
         } catch (error) {
           console.error('Failed to load data:', error)
@@ -52,6 +52,14 @@ export function HomePage() {
 
     loadData()
   }, [currentUser, fetchUserTasks, fetchPublicTasks, showToast, t])
+
+  // 탭 전환 시 공개 태스크 새로 가져오기
+  useEffect(() => {
+    if (activeTab === 'todayPublic' && currentUser) {
+      // 공개 태스크 탭을 클릭할 때마다 최신 데이터 가져오기
+      fetchPublicTasks(undefined, undefined, true)
+    }
+  }, [activeTab, currentUser, fetchPublicTasks])
 
   // 에러 메시지 표시 후 자동 제거
   useEffect(() => {

@@ -27,7 +27,8 @@ export function SharedPage() {
 
   // 컴포넌트 마운트 시 공개 태스크 가져오기
   useEffect(() => {
-    fetchPublicTasks()
+    // 공개 태스크는 실시간으로 업데이트될 수 있으므로 항상 새로 가져오기
+    fetchPublicTasks(undefined, undefined, true)
   }, [fetchPublicTasks])
 
   // 필터/정렬 상태 추가 (TasksPage와 동일)
