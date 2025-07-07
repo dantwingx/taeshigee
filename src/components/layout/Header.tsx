@@ -124,13 +124,14 @@ export function Header() {
           {/* 태스크 갯수 표시 제거됨 */}
           
           {/* 언어 변경 드롭다운 */}
-          <div className="relative language-dropdown">
+          <div className="relative language-dropdown flex items-center">
             <button
               onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
-              className="p-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors rounded"
+              className="p-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors rounded flex items-center"
               title={t('settings.language')}
             >
               <Globe className="h-4 w-4" />
+              <span className="ml-1 text-xs font-bold text-neutral-700 dark:text-neutral-200 font-mono">{selectedLanguage.toUpperCase()}</span>
             </button>
 
             {isLanguageDropdownOpen && (
@@ -143,6 +144,7 @@ export function Header() {
                   >
                     <span className="text-lg">{lang.flag}</span>
                     <span>{lang.name}</span>
+                    <span className="ml-auto text-xs text-neutral-500 dark:text-neutral-400 font-mono">{lang.code.toUpperCase()}</span>
                   </button>
                 ))}
               </div>
