@@ -76,7 +76,7 @@ export async function PUT(
   try {
     const { id } = await context.params;
     const user = await authenticateRequest(request);
-    const { title, description, dueDate, dueTime, importance, priority, category, isPublic, tags } = await request.json();
+    const { title, description, dueDate, dueTime, importance, priority, category, isPublic, tags, isCompleted } = await request.json();
 
     console.log(`[PUT /api/tasks/${id}] 시작 - 사용자: ${user.userId}`);
 
@@ -124,19 +124,31 @@ export async function PUT(
     if (priority !== undefined) updateData.priority = priority;
     if (category !== undefined) updateData.category = category || null;
     if (isPublic !== undefined) updateData.is_public = isPublic;
+    if (isCompleted !== undefined) updateData.is_completed = isCompleted;
 
     console.log(`[PUT /api/tasks/${id}] 업데이트 데이터:`, updateData);
 
-    const { data: task, error: updateError } = await supabase
-      .from('tasks')
-      .update(updateData)
-      .eq('id', id)
-      .select()
-      .single();
+    // 업데이트할 데이터가 있는지 확인
+    if (Object.keys(updateData).length === 0) {
+      console.log(`[PUT /api/tasks/${id}] 업데이트할 데이터가 없음`);
+      // 업데이트할 데이터가 없으면 기존 태스크를 그대로 반환
+    } else {
+      const { data: task, error: updateError } = await supabase
+        .from('tasks')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
 
-    if (updateError) {
-      console.error(`[PUT /api/tasks/${id}] 태스크 업데이트 실패:`, updateError);
-      return createErrorResponse('Failed to update task', 500);
+      if (updateError) {
+        console.error(`[PUT /api/tasks/${id}] 태스크 업데이트 실패:`, updateError);
+        return createErrorResponse('Failed to update task', 500);
+      }
+
+      if (!task) {
+        console.error(`[PUT /api/tasks/${id}] 업데이트 후 태스크를 찾을 수 없음`);
+        return createErrorResponse('Task not found after update', 404);
+      }
     }
 
     // Update tags if provided
