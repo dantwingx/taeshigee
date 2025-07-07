@@ -26,6 +26,7 @@ export interface Database {
       users: {
         Row: {
           id: string;
+          user_number: number;
           email: string;
           name: string;
           language: string;
@@ -35,6 +36,7 @@ export interface Database {
         };
         Insert: {
           id?: string;
+          user_number?: number;
           email: string;
           name: string;
           language?: string;
@@ -44,6 +46,7 @@ export interface Database {
         };
         Update: {
           id?: string;
+          user_number?: number;
           email?: string;
           name?: string;
           language?: string;
@@ -56,10 +59,15 @@ export interface Database {
         Row: {
           id: string;
           user_id: string;
+          user_number: number;
           title: string;
           description: string | null;
+          due_date: string | null;
+          due_time: string | null;
           importance: 'low' | 'medium' | 'high';
           priority: 'low' | 'medium' | 'high';
+          category: string | null;
+          is_completed: boolean;
           is_public: boolean;
           likes_count: number;
           created_at: string;
@@ -68,10 +76,15 @@ export interface Database {
         Insert: {
           id?: string;
           user_id: string;
+          user_number: number;
           title: string;
           description?: string | null;
+          due_date?: string | null;
+          due_time?: string | null;
           importance?: 'low' | 'medium' | 'high';
           priority?: 'low' | 'medium' | 'high';
+          category?: string | null;
+          is_completed?: boolean;
           is_public?: boolean;
           likes_count?: number;
           created_at?: string;
@@ -80,10 +93,15 @@ export interface Database {
         Update: {
           id?: string;
           user_id?: string;
+          user_number?: number;
           title?: string;
           description?: string | null;
+          due_date?: string | null;
+          due_time?: string | null;
           importance?: 'low' | 'medium' | 'high';
           priority?: 'low' | 'medium' | 'high';
+          category?: string | null;
+          is_completed?: boolean;
           is_public?: boolean;
           likes_count?: number;
           created_at?: string;
@@ -115,18 +133,21 @@ export interface Database {
           id: string;
           task_id: string;
           user_id: string;
+          user_number: number;
           created_at: string;
         };
         Insert: {
           id?: string;
           task_id: string;
           user_id: string;
+          user_number: number;
           created_at?: string;
         };
         Update: {
           id?: string;
           task_id?: string;
           user_id?: string;
+          user_number?: number;
           created_at?: string;
         };
       };

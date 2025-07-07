@@ -54,6 +54,7 @@ export async function POST(
         .insert({
           task_id: params.id,
           user_id: user.userId,
+          user_number: user.userNumber,
         });
 
       await supabase

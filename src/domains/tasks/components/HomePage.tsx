@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next'
 type TabType = 'todayUser' | 'todayPublic' | 'recent'
 
 export function HomePage() {
-  const { user } = useAuthStore()
+  const { currentUser } = useAuthStore()
   const { showToast } = useToastStore()
   const { t } = useTranslation()
   const {
@@ -24,14 +24,47 @@ export function HomePage() {
     getTaskStats,
     getTasksByUserNumber,
     getAllPublicTasks,
+    fetchUserTasks,
+    fetchPublicTasks,
+    clearError,
   } = useTaskStore()
 
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false)
   const [editingTask, setEditingTask] = useState<Task | null>(null)
   const [activeTab, setActiveTab] = useState<TabType>('todayUser')
 
+  // 페이지 로드 시 데이터 가져오기
+  useEffect(() => {
+    const loadData = async () => {
+      if (currentUser) {
+        try {
+          // 사용자 태스크와 공개 태스크를 병렬로 가져오기
+          await Promise.all([
+            fetchUserTasks(),
+            fetchPublicTasks()
+          ])
+        } catch (error) {
+          console.error('Failed to load data:', error)
+          showToast('error', t('toast.loadError'))
+        }
+      }
+    }
+
+    loadData()
+  }, [currentUser, fetchUserTasks, fetchPublicTasks, showToast, t])
+
+  // 에러 메시지 표시 후 자동 제거
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        clearError()
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [error, clearError])
+
   // 사용자별 통계 계산 (사용자 번호로)
-  const stats = user ? getTaskStats(user.userNumber) : {
+  const stats = currentUser ? getTaskStats(currentUser.userNumber) : {
     total: 0,
     completed: 0,
     pending: 0,
@@ -48,7 +81,7 @@ export function HomePage() {
   // 디버그 로그 추가
   console.log('[HomePage] 사용자별 태스크 필터링:', {
     currentUserNumber,
-    currentUser: user ? { id: user.id, userNumber: user.userNumber, email: user.email } : null,
+    currentUser: currentUser ? { id: currentUser.id, userNumber: currentUser.userNumber, email: currentUser.email } : null,
     userTasksCount: userTasks.length,
     userTasks: userTasks.map(task => ({ id: task.id, title: task.title, userNumber: task.userNumber }))
   })
@@ -81,6 +114,7 @@ export function HomePage() {
     try {
       await createTask(data)
       showToast('success', t('toast.taskCreated'))
+      setIsTaskFormOpen(false)
     } catch (error) {
       showToast('error', t('toast.error'))
     }
@@ -91,6 +125,7 @@ export function HomePage() {
       try {
         await updateTask(editingTask.id, data)
         setEditingTask(null)
+        setIsTaskFormOpen(false)
         showToast('success', t('toast.taskUpdated'))
       } catch (error) {
         showToast('error', t('toast.error'))
@@ -104,8 +139,12 @@ export function HomePage() {
   }
 
   const handleDeleteTask = async (id: string) => {
-    // 커스텀 확인 다이얼로그 대신 toast로 안내
-    showToast('warning', t('toast.warning'))
+    try {
+      await deleteTask(id)
+      showToast('success', t('toast.taskDeleted'))
+    } catch (error) {
+      showToast('error', t('toast.error'))
+    }
   }
 
   const handleToggleComplete = async (id: string) => {
@@ -167,10 +206,18 @@ export function HomePage() {
         <button
           onClick={() => setIsTaskFormOpen(true)}
           className="btn-primary p-3 rounded-full shadow-lg"
+          disabled={isLoading}
         >
           <Plus className="h-5 w-5" />
         </button>
       </div>
+
+      {/* 로딩 상태 */}
+      {isLoading && (
+        <div className="flex items-center justify-center p-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+        </div>
+      )}
 
       {/* 에러 메시지 */}
       {error && (
@@ -203,74 +250,61 @@ export function HomePage() {
       </div>
 
       {/* 탭 네비게이션 */}
-      <div className="card p-0">
-        <div className="flex border-b border-neutral-200 dark:border-neutral-700">
-          <button
-            onClick={() => setActiveTab('todayUser')}
-            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-              activeTab === 'todayUser'
-                ? 'text-primary-600 border-b-2 border-primary-600 dark:text-primary-400 dark:border-primary-400'
-                : 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100'
-            }`}
-          >
-            {t('home.todayUserTasks')}
-            <span className="ml-2 text-xs bg-neutral-100 dark:bg-neutral-800 px-2 py-1 rounded-full">
-              {todayUserTasks.length}
-            </span>
-          </button>
-          <button
-            onClick={() => setActiveTab('todayPublic')}
-            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-              activeTab === 'todayPublic'
-                ? 'text-primary-600 border-b-2 border-primary-600 dark:text-primary-400 dark:border-primary-400'
-                : 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100'
-            }`}
-          >
-            {t('home.todayPublicTasks')}
-            <span className="ml-2 text-xs bg-neutral-100 dark:bg-neutral-800 px-2 py-1 rounded-full">
-              {todayPublicTasks.length}
-            </span>
-          </button>
-          <button
-            onClick={() => setActiveTab('recent')}
-            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-              activeTab === 'recent'
-                ? 'text-primary-600 border-b-2 border-primary-600 dark:text-primary-400 dark:border-primary-400'
-                : 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100'
-            }`}
-          >
-            {t('home.recentTasks')}
-            <span className="ml-2 text-xs bg-neutral-100 dark:bg-neutral-800 px-2 py-1 rounded-full">
-              {recentTasks.length}
-            </span>
-          </button>
-        </div>
-
-        {/* 탭 컨텐츠 */}
-        <div className="p-4">
-          {currentTasks.length === 0 ? (
-            <p className="text-center text-neutral-500 dark:text-neutral-400 py-6 text-sm">
-              {getEmptyMessage()}
-            </p>
-          ) : (
-            <div className="space-y-3">
-              {currentTasks.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  onToggleComplete={handleToggleComplete}
-                  onEdit={handleEditTask}
-                  onDelete={handleDeleteTask}
-                  onDuplicate={handleDuplicateTask}
-                  isLoading={isLoading}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+      <div className="flex space-x-1 bg-neutral-100 dark:bg-neutral-800 p-1 rounded-lg">
+        <button
+          onClick={() => setActiveTab('todayUser')}
+          className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
+            activeTab === 'todayUser'
+              ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm'
+              : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'
+          }`}
+        >
+          {t('home.todayUser')} ({todayUserTasks.length})
+        </button>
+        <button
+          onClick={() => setActiveTab('todayPublic')}
+          className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
+            activeTab === 'todayPublic'
+              ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm'
+              : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'
+          }`}
+        >
+          {t('home.todayPublic')} ({todayPublicTasks.length})
+        </button>
+        <button
+          onClick={() => setActiveTab('recent')}
+          className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
+            activeTab === 'recent'
+              ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm'
+              : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'
+          }`}
+        >
+          {t('home.recent')} ({recentTasks.length})
+        </button>
       </div>
 
-      {/* 태스크 생성/수정 모달 */}
+      {/* 태스크 목록 */}
+      <div className="space-y-3">
+        {currentTasks.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="text-neutral-500 dark:text-neutral-400">{getEmptyMessage()}</p>
+          </div>
+        ) : (
+          currentTasks.map((task) => (
+            <TaskCard
+              key={task.id}
+              task={task}
+              onToggleComplete={handleToggleComplete}
+              onEdit={handleEditTask}
+              onDelete={handleDeleteTask}
+              onDuplicate={handleDuplicateTask}
+              isLoading={isLoading}
+            />
+          ))
+        )}
+      </div>
+
+      {/* 태스크 생성/수정 폼 */}
       <TaskForm
         isOpen={isTaskFormOpen}
         onClose={() => {

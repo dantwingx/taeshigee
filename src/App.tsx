@@ -9,16 +9,26 @@ import { SettingsPage } from '@/domains/settings/components/SettingsPage'
 import { LoginPage } from '@/domains/auth/components/LoginPage'
 import { RegisterPage } from '@/domains/auth/components/RegisterPage'
 import { useToastStore } from '@/stores'
+import { useAuthStore } from '@/stores/authStore'
 import { useEffect } from 'react'
 import { initializeDarkMode } from '@/utils/darkMode'
 
 function App() {
   const { toasts, removeToast } = useToastStore()
+  const { initializeAuth } = useAuthStore()
 
-  // 앱 시작 시 다크모드 초기화
+  // 앱 시작 시 초기화
   useEffect(() => {
-    initializeDarkMode()
-  }, [])
+    const initializeApp = async () => {
+      // 다크모드 초기화
+      initializeDarkMode()
+      
+      // 인증 상태 초기화
+      await initializeAuth()
+    }
+
+    initializeApp()
+  }, [initializeAuth])
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-200">

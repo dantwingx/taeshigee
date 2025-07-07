@@ -18,12 +18,11 @@ interface PublicTask extends Task {
 }
 
 export function SharedPage() {
-  const { getAllPublicTasks, duplicateTask, toggleTaskLike, isTaskLikedByUser, getTaskLikeCount, currentUserId } = useTaskStore()
+  const { getAllPublicTasks, duplicateTask, toggleTaskLike, isTaskLikedByUser, getTaskLikeCount, currentUserId, currentUserNumber } = useTaskStore()
   const { showToast } = useToastStore()
   const { t } = useTranslation()
-  const [publicTasks, setPublicTasks] = useState<PublicTask[]>([])
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedTask, setSelectedTask] = useState<PublicTask | null>(null)
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
 
   // 필터/정렬 상태 추가 (TasksPage와 동일)
@@ -35,25 +34,8 @@ export function SharedPage() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
   const [isFilterExpanded, setIsFilterExpanded] = useState(false)
 
-  // currentUserNumber는 좋아요 기능에서 사용, 태스크 소유권도 userNumber로 관리
-  const currentUserNumber = useTaskStore(state => state.currentUserNumber)
-  const users = useAuthStore(state => state.users) || []
-
-  // 공개된 태스크만 필터링하고 최신순으로 정렬
-  useEffect(() => {
-    const publicTaskList = getAllPublicTasks()
-      .map(task => {
-        // 사용자 정보 찾기
-        const user = users.find((u: any) => u.userNumber === task.userNumber)
-        return {
-          ...task,
-          authorName: user ? (user.name && user.name !== 'No Name' ? user.name : user.id) : `User_${task.userNumber}`,
-          authorId: user ? user.id : `User_${task.userNumber}`,
-        }
-      })
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) // 최신순 정렬
-    setPublicTasks(publicTaskList)
-  }, [getAllPublicTasks, users])
+  // 공개 태스크 목록을 store에서 직접 가져옴
+  const publicTasks = getAllPublicTasks()
 
   // 카테고리 옵션 생성 (공개 태스크 기준)
   const categoryOptions = Array.from(new Set(publicTasks.map(task => task.category).filter(Boolean) as string[]))
@@ -152,7 +134,7 @@ export function SharedPage() {
     high: '🎯',
   }
 
-  const openTaskDetail = (task: PublicTask) => {
+  const openTaskDetail = (task: Task) => {
     setSelectedTask(task)
     setIsDetailOpen(true)
   }
@@ -400,7 +382,7 @@ export function SharedPage() {
                   <div className="mt-2 flex items-center gap-x-3 text-xs text-neutral-500 dark:text-neutral-400">
                     <span className="flex items-center gap-x-1">
                       <User className="h-3 w-3" />
-                      <span className="truncate max-w-[90px] text-neutral-700 dark:text-neutral-200">{task.authorName || task.authorId}</span>
+                      <span className="truncate max-w-[90px] text-neutral-700 dark:text-neutral-200">{task.author} ({task.userNumber})</span>
                     </span>
                     <span className="flex items-center gap-x-1">
                       <Clock className="h-3 w-3" />
@@ -474,7 +456,7 @@ export function SharedPage() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-neutral-600 dark:text-neutral-300">{t('shared.createdBy')}:</span>
-                    <span className="ml-2 text-neutral-900 dark:text-neutral-100">{selectedTask.authorName} ({selectedTask.authorId})</span>
+                    <span className="ml-2 text-neutral-900 dark:text-neutral-100">{selectedTask.author} ({selectedTask.userNumber})</span>
                   </div>
                   <div>
                     <span className="text-neutral-600 dark:text-neutral-300">{t('task.isCompleted')}:</span>

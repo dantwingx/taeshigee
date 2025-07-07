@@ -39,11 +39,12 @@ export async function POST(request: NextRequest) {
       .from('users')
       .insert({
         email,
+        password_hash: hashedPassword, // 비밀번호 해시 저장
         name,
         language: 'en',
         dark_mode: false,
       })
-      .select('id, email, name, language, dark_mode')
+      .select('id, user_number, email, name, language, dark_mode')
       .single();
 
     if (error) {
@@ -54,6 +55,7 @@ export async function POST(request: NextRequest) {
     // Generate JWT token
     const token = signToken({
       userId: user.id,
+      userNumber: user.user_number,
       email: user.email,
       name: user.name,
     });
@@ -63,6 +65,7 @@ export async function POST(request: NextRequest) {
       token,
       user: {
         id: user.id,
+        userNumber: user.user_number,
         email: user.email,
         name: user.name,
         language: user.language,

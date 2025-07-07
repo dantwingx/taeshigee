@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     // Find user by email
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, email, name, language, dark_mode')
+      .select('id, user_number, email, name, language, dark_mode')
       .eq('email', email)
       .single();
 
@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
     // Generate JWT token
     const token = signToken({
       userId: user.id,
+      userNumber: user.user_number,
       email: user.email,
       name: user.name,
     });
@@ -40,6 +41,7 @@ export async function POST(request: NextRequest) {
       token,
       user: {
         id: user.id,
+        userNumber: user.user_number,
         email: user.email,
         name: user.name,
         language: user.language,

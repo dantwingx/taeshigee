@@ -15,6 +15,7 @@ export type Task = {
   userId: string // 사용자 ID (변경 가능)
   userNumber: number // 사용자 번호 (변경 불가, 태스크 소유권 식별용)
   likes: number[] // 좋아요한 사용자 번호 배열
+  author?: string // 작성자 이름 (백엔드에서 제공)
 }
 
 export type CreateTaskData = Omit<Task, 'id' | 'isCompleted' | 'createdAt' | 'updatedAt' | 'userId' | 'likes'>

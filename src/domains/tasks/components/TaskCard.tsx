@@ -61,12 +61,10 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
   const { getTagColor } = useTagStore()
   const { showToast } = useToastStore()
   const { t } = useTranslation()
-  const { users } = useAuthStore()
   const { currentUserNumber, toggleTaskLike, isTaskLikedByUser, getTaskLikeCount } = useTaskStore()
 
-  // 작성자 정보 찾기
-  const author = users.find(u => u.userNumber === task.userNumber)
-  const authorDisplay = author ? (author.name && author.name !== 'No Name' ? author.name : author.id) : t('task.unknownUser')
+  // 작성자 정보 - task에서 직접 가져오기
+  const authorDisplay = task.author || t('task.unknownUser')
 
   const isOverdue = task.dueDate && new Date(task.dueDate) < new Date() && !task.isCompleted
 

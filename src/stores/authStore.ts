@@ -4,14 +4,15 @@ import { User, UserSettings } from '@/types/auth'
 import { useTaskStore } from '@/stores/taskStore'
 import { changeLanguage } from '@/i18n'
 import { applyDarkMode } from '@/utils/darkMode'
+import { authService } from '@/services/authService'
+import { userService } from '@/services/userService'
 
 interface AuthState {
   currentUser: User | null
   currentUserId: string | null
   currentUserNumber: number | null
-  users: User[]
-  nextUserNumber: number
-  registeredEmails: Set<string>
+  isLoading: boolean
+  error: string | null
   
   // Actions
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
@@ -19,14 +20,14 @@ interface AuthState {
   logout: () => void
   changeUserId: (newUserId: string) => Promise<{ success: boolean; error?: string }>
   changeUserName: (newName: string) => Promise<{ success: boolean; error?: string }>
-  isUserIdAvailable: (userId: string) => boolean
-  isEmailAvailable: (email: string) => boolean
   createTestAccount: () => void
   
   // User Settings Actions
   updateUserSettings: (settings: Partial<UserSettings>) => Promise<{ success: boolean; error?: string }>
   getUserSettings: () => UserSettings | null
   setCurrentUser: (user: User) => void
+  clearError: () => void
+  initializeAuth: () => Promise<void>
 }
 
 const DEFAULT_USER_SETTINGS: UserSettings = {
@@ -40,124 +41,184 @@ export const useAuthStore = create<AuthState>()(
       currentUser: null,
       currentUserId: null,
       currentUserNumber: null,
-      users: [],
-      nextUserNumber: 1,
-      registeredEmails: new Set(),
+      isLoading: false,
+      error: null,
+
       setCurrentUser: (user) => set({ currentUser: user }),
 
+      clearError: () => set({ error: null }),
+
+      initializeAuth: async () => {
+        const token = authService.getToken()
+        if (token && authService.isAuthenticated()) {
+          try {
+            set({ isLoading: true, error: null })
+            const response = await authService.getCurrentUser()
+            if (response.success && response.user) {
+              const user = response.user
+              // userSettings 매핑
+              const userSettings = {
+                language: user.language ?? 'ko',
+                darkMode: user.darkMode ?? false,
+              }
+              set({ 
+                currentUser: { ...user, userSettings }, 
+                currentUserId: user.id,
+                currentUserNumber: user.userNumber,
+                isLoading: false 
+              })
+              useTaskStore.getState().setCurrentUser(user.id, user.userNumber)
+              // 사용자 설정 적용
+              if (userSettings.language) {
+                changeLanguage(userSettings.language)
+              }
+              if (userSettings.darkMode !== undefined) {
+                applyDarkMode(userSettings.darkMode)
+              }
+            }
+          } catch (error) {
+            console.error('Failed to initialize auth:', error)
+            authService.removeToken()
+            set({ 
+              currentUser: null, 
+              currentUserId: null, 
+              currentUserNumber: null, 
+              isLoading: false 
+            })
+          }
+        }
+      },
+
       login: async (email: string, password: string) => {
-        console.log('authStore login called', email, password)
-        const { users } = get()
-        const user = users.find(u => u.email === email)
-        
-        if (!user) {
-          console.error('User not found:', email)
-          return { success: false, error: 'User not found' }
-        }
-        
-        if (user.password !== password) {
-          console.error('Invalid password for:', email)
-          return { success: false, error: 'Invalid password' }
-        }
-
-        // 사용자 설정이 없으면 기본 설정 생성
-        if (!user.userSettings) {
-          user.userSettings = { ...DEFAULT_USER_SETTINGS }
-        }
-
-        set({ 
-          currentUser: user, 
-          currentUserId: user.id,
-          currentUserNumber: user.userNumber,
-        })
-        // taskStore 동기화
-        useTaskStore.getState().setCurrentUser(user.id, user.userNumber)
-        // 로그인 시 사용자 설정 적용
-        if (user.userSettings) {
-          if (user.userSettings.language) {
-            changeLanguage(user.userSettings.language)
+        set({ isLoading: true, error: null })
+        try {
+          console.log('authStore login called', email, password)
+          
+          const response = await authService.login({ email, password })
+          
+          if (response.success && response.token && response.user) {
+            // 토큰 저장
+            authService.saveToken(response.token)
+            
+            const user = response.user
+            
+            // userSettings 매핑
+            const userSettings = {
+              language: user.language ?? 'ko',
+              darkMode: user.darkMode ?? false,
+            }
+            set({ 
+              currentUser: { ...user, userSettings }, 
+              currentUserId: user.id,
+              currentUserNumber: user.userNumber,
+              isLoading: false,
+              error: null
+            })
+            
+            // taskStore 동기화
+            useTaskStore.getState().setCurrentUser(user.id, user.userNumber)
+            
+            // 로그인 시 사용자 설정 적용
+            if (userSettings.language) {
+              changeLanguage(userSettings.language)
+            }
+            if (userSettings.darkMode !== undefined) {
+              applyDarkMode(userSettings.darkMode)
+            }
+            
+            console.log('authStore login success', user)
+            return { success: true }
+          } else {
+            throw new Error('Login failed')
           }
-          if (user.userSettings.darkMode !== undefined) {
-            applyDarkMode(user.userSettings.darkMode)
-          }
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : '로그인에 실패했습니다.'
+          set({ 
+            error: errorMessage, 
+            isLoading: false 
+          })
+          console.error('authStore login error:', error)
+          return { success: false, error: errorMessage }
         }
-        
-        console.log('authStore login success', user)
-        return { success: true }
       },
 
       register: async (email: string, password: string, name: string) => {
-        console.log('authStore register called', email, password, name)
-        const { users, nextUserNumber, registeredEmails } = get()
-        
-        // 이메일 중복 체크 (대소문자 무시)
-        const emailLower = email.toLowerCase()
-        const isDuplicate = users.some(u => u.email.toLowerCase() === emailLower)
-        if (isDuplicate) {
-          console.error('Email already registered:', email)
-          return { success: false, error: '이미 가입된 이메일입니다.' }
-        }
+        set({ isLoading: true, error: null })
+        try {
+          console.log('authStore register called', email, password, name)
+          
+          const response = await authService.register({ email, password, confirmPassword: password })
+          
+          if (response.success && response.token && response.user) {
+            // 토큰 저장
+            authService.saveToken(response.token)
+            
+            const user = response.user
+            
+            // userSettings 매핑
+            const userSettings = {
+              language: user.language ?? 'ko',
+              darkMode: user.darkMode ?? false,
+            }
+            set({
+              currentUser: { ...user, userSettings },
+              currentUserId: user.id,
+              currentUserNumber: user.userNumber,
+              isLoading: false,
+              error: null
+            })
+            
+            // taskStore 동기화
+            useTaskStore.getState().setCurrentUser(user.id, user.userNumber)
+            
+            // 회원가입 시 사용자 설정 적용
+            if (userSettings.language) {
+              changeLanguage(userSettings.language)
+            }
+            if (userSettings.darkMode !== undefined) {
+              applyDarkMode(userSettings.darkMode)
+            }
 
-        const newUser: User = {
-          id: generateUserId(),
-          userNumber: nextUserNumber,
-          email,
-          password,
-          name,
-          createdAt: new Date().toISOString(),
-          lastUpdated: new Date().toISOString(),
-          userSettings: { ...DEFAULT_USER_SETTINGS }
-        }
-
-        const updatedUsers = [...users, newUser]
-        const updatedEmails = new Set(registeredEmails).add(email)
-
-        set({
-          users: updatedUsers,
-          currentUser: newUser,
-          currentUserId: newUser.id,
-          currentUserNumber: newUser.userNumber,
-          nextUserNumber: nextUserNumber + 1,
-          registeredEmails: updatedEmails
-        })
-        // taskStore 동기화
-        useTaskStore.getState().setCurrentUser(newUser.id, newUser.userNumber)
-        // 회원가입 시 사용자 설정 적용
-        if (newUser.userSettings) {
-          if (newUser.userSettings.language) {
-            changeLanguage(newUser.userSettings.language)
+            console.log('authStore register success', user)
+            return { success: true }
+          } else {
+            throw new Error('Registration failed')
           }
-          if (newUser.userSettings.darkMode !== undefined) {
-            applyDarkMode(newUser.userSettings.darkMode)
-          }
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : '회원가입에 실패했습니다.'
+          set({ 
+            error: errorMessage, 
+            isLoading: false 
+          })
+          console.error('authStore register error:', error)
+          return { success: false, error: errorMessage }
         }
-
-        console.log('authStore register success', newUser)
-        return { success: true }
       },
 
       logout: () => {
-        set({ currentUser: null, currentUserId: null, currentUserNumber: null })
+        authService.removeToken()
+        set({ 
+          currentUser: null, 
+          currentUserId: null, 
+          currentUserNumber: null,
+          error: null 
+        })
         useTaskStore.getState().setCurrentUser(null, null)
       },
 
       changeUserId: async (newUserId: string) => {
-        const { currentUser, users, isUserIdAvailable } = get()
+        const { currentUser } = get()
         
         if (!currentUser) {
           return { success: false, error: 'No user logged in' }
         }
 
-        if (!isUserIdAvailable(newUserId)) {
-          return { success: false, error: 'User ID already exists' }
-        }
-
+        // 실제 API에서는 user ID 변경이 제한적일 수 있으므로 
+        // 현재는 로컬 상태만 업데이트
         const updatedUser = { ...currentUser, id: newUserId, lastUpdated: new Date().toISOString() }
-        const updatedUsers = users.map(u => u.id === currentUser.id ? updatedUser : u)
 
         set({
           currentUser: updatedUser,
-          users: updatedUsers,
           currentUserId: updatedUser.id,
         })
         useTaskStore.getState().setCurrentUser(updatedUser.id, updatedUser.userNumber)
@@ -166,7 +227,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       changeUserName: async (newName: string) => {
-        const { currentUser, users } = get()
+        const { currentUser } = get()
         
         if (!currentUser) {
           return { success: false, error: 'No user logged in' }
@@ -176,113 +237,101 @@ export const useAuthStore = create<AuthState>()(
           return { success: false, error: 'Name cannot be empty' }
         }
 
+        // 실제 API에서는 사용자 이름 변경이 제한적일 수 있으므로
+        // 현재는 로컬 상태만 업데이트
         const updatedUser = { ...currentUser, name: newName.trim(), lastUpdated: new Date().toISOString() }
-        const updatedUsers = users.map(u => u.id === currentUser.id ? updatedUser : u)
 
         set({
-          currentUser: updatedUser,
-          users: updatedUsers
+          currentUser: updatedUser
         })
 
         return { success: true }
       },
 
-      isUserIdAvailable: (userId: string) => {
-        const { users } = get()
-        return !users.some(u => u.id === userId)
-      },
-
-      isEmailAvailable: (email: string) => {
-        const { registeredEmails } = get()
-        return !registeredEmails.has(email)
-      },
-
       createTestAccount: () => {
-        const { users, nextUserNumber, registeredEmails } = get()
-        
+        // 테스트 계정 생성은 개발 환경에서만 사용
         const testUser: User = {
-          id: 'test_user',
-          userNumber: nextUserNumber,
+          id: 'test-user-id',
+          userNumber: 999,
           email: 'test@example.com',
-          password: 'password',
-          name: 'Test User',
+          password: 'test123',
+          name: '테스트 사용자',
           createdAt: new Date().toISOString(),
           lastUpdated: new Date().toISOString(),
           userSettings: { ...DEFAULT_USER_SETTINGS }
         }
 
-        const updatedUsers = [...users, testUser]
-        const updatedEmails = new Set(registeredEmails).add(testUser.email)
-
         set({
-          users: updatedUsers,
           currentUser: testUser,
           currentUserId: testUser.id,
-          nextUserNumber: nextUserNumber + 1,
-          registeredEmails: updatedEmails
+          currentUserNumber: testUser.userNumber
         })
+        
+        useTaskStore.getState().setCurrentUser(testUser.id, testUser.userNumber)
       },
 
-      // User Settings Actions
       updateUserSettings: async (settings: Partial<UserSettings>) => {
-        const { currentUser, users } = get()
+        const { currentUser } = get()
         
         if (!currentUser) {
           return { success: false, error: 'No user logged in' }
         }
 
-        const currentSettings = currentUser.userSettings || DEFAULT_USER_SETTINGS
-        const updatedSettings = { ...currentSettings, ...settings }
-        const updatedUser = { 
-          ...currentUser, 
-          userSettings: updatedSettings,
-          lastUpdated: new Date().toISOString()
+        try {
+          set({ isLoading: true, error: null })
+          
+          const response = await userService.updateSettings(settings)
+          
+          if (response.success) {
+            const updatedUser = {
+              ...currentUser,
+              userSettings: { ...currentUser.userSettings, ...response.settings }
+            }
+            
+            set({
+              currentUser: updatedUser,
+              isLoading: false,
+              error: null
+            })
+
+            // 설정 즉시 적용
+            if (settings.language) {
+              changeLanguage(settings.language)
+            }
+            if (settings.darkMode !== undefined) {
+              applyDarkMode(settings.darkMode)
+            }
+
+            return { success: true }
+          } else {
+            throw new Error('Failed to update settings')
+          }
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : '설정 업데이트에 실패했습니다.'
+          set({ 
+            error: errorMessage, 
+            isLoading: false 
+          })
+          return { success: false, error: errorMessage }
         }
-        const updatedUsers = users.map(u => u.id === currentUser.id ? updatedUser : u)
-
-        set({
-          currentUser: updatedUser,
-          users: updatedUsers
-        })
-
-        return { success: true }
       },
 
       getUserSettings: () => {
         const { currentUser } = get()
-        return currentUser?.userSettings || null
-      }
+        return currentUser?.userSettings || DEFAULT_USER_SETTINGS
+      },
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({
-        users: state.users,
-        nextUserNumber: state.nextUserNumber,
-        registeredEmails: Array.from(state.registeredEmails),
+      partialize: (state) => ({ 
+        currentUser: state.currentUser,
         currentUserId: state.currentUserId,
-        currentUserNumber: state.currentUserNumber,
+        currentUserNumber: state.currentUserNumber
       }),
-      onRehydrateStorage: () => (state) => {
-        if (state) {
-          state.registeredEmails = new Set(state.registeredEmails || [])
-          if (!state.currentUser && state.currentUserId && state.users) {
-            const found = state.users.find(u => u.id === state.currentUserId)
-            if (found) state.currentUser = found
-          }
-        }
-      }
     }
   )
 )
 
 function generateUserId(): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-  let result = ''
-  const length = Math.floor(Math.random() * 7) + 8 // 8-14 characters
-  
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length))
-  }
-  
-  return result
+  return 'user_' + Math.random().toString(36).substr(2, 9)
 } 

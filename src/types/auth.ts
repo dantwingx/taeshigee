@@ -7,6 +7,8 @@ export interface User {
   createdAt: string
   lastUpdated: string
   userSettings?: UserSettings
+  language?: string // 사용자 언어 (백엔드에서 내려줌)
+  darkMode?: boolean // 다크모드 설정 (백엔드에서 내려줌)
 }
 
 export interface UserSettings {

@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       .select(`
         *,
         task_tags(tag_name),
-        users!tasks_user_id_fkey(name)
+        users!tasks_user_id_fkey(name, user_number)
       `)
       .eq('user_id', user.userId);
 
@@ -43,12 +43,17 @@ export async function GET(request: NextRequest) {
       id: task.id,
       title: task.title,
       description: task.description,
+      dueDate: task.due_date,
+      dueTime: task.due_time,
       importance: task.importance,
       priority: task.priority,
+      category: task.category,
+      isCompleted: task.is_completed,
       isPublic: task.is_public,
       likesCount: task.likes_count,
       tags: task.task_tags.map((tag: any) => tag.tag_name),
       author: task.users.name,
+      userNumber: task.users.user_number,
       createdAt: task.created_at,
       updatedAt: task.updated_at,
     }));
@@ -66,7 +71,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const user = await authenticateRequest(request);
-    const { title, description, importance, priority, isPublic, tags } = await request.json();
+    const { title, description, dueDate, dueTime, importance, priority, category, isPublic, tags } = await request.json();
 
     // Validate input
     if (!title || title.trim().length === 0) {
@@ -86,10 +91,15 @@ export async function POST(request: NextRequest) {
       .from('tasks')
       .insert({
         user_id: user.userId,
+        user_number: user.userNumber,
         title: title.trim(),
         description: description?.trim() || null,
+        due_date: dueDate || null,
+        due_time: dueTime || null,
         importance: importance || 'medium',
         priority: priority || 'medium',
+        category: category || null,
+        is_completed: false,
         is_public: isPublic || false,
         likes_count: 0,
       })
@@ -122,7 +132,7 @@ export async function POST(request: NextRequest) {
       .select(`
         *,
         task_tags(tag_name),
-        users!tasks_user_id_fkey(name)
+        users!tasks_user_id_fkey(name, user_number)
       `)
       .eq('id', task.id)
       .single();
@@ -135,12 +145,17 @@ export async function POST(request: NextRequest) {
       id: completeTask.id,
       title: completeTask.title,
       description: completeTask.description,
+      dueDate: completeTask.due_date,
+      dueTime: completeTask.due_time,
       importance: completeTask.importance,
       priority: completeTask.priority,
+      category: completeTask.category,
+      isCompleted: completeTask.is_completed,
       isPublic: completeTask.is_public,
       likesCount: completeTask.likes_count,
       tags: completeTask.task_tags.map((tag: any) => tag.tag_name),
       author: completeTask.users.name,
+      userNumber: completeTask.users.user_number,
       createdAt: completeTask.created_at,
       updatedAt: completeTask.updated_at,
     };

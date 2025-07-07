@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
       .select(`
         *,
         task_tags(tag_name),
-        users!tasks_user_id_fkey(name)
+        users!tasks_user_id_fkey(name, user_number)
       `)
       .eq('is_public', true);
 
@@ -44,12 +44,17 @@ export async function GET(request: NextRequest) {
       id: task.id,
       title: task.title,
       description: task.description,
+      dueDate: task.due_date,
+      dueTime: task.due_time,
       importance: task.importance,
       priority: task.priority,
+      category: task.category,
+      isCompleted: task.is_completed,
       isPublic: task.is_public,
       likesCount: task.likes_count,
       tags: task.task_tags.map((tag: any) => tag.tag_name),
       author: task.users.name,
+      userNumber: task.users.user_number,
       createdAt: task.created_at,
       updatedAt: task.updated_at,
     }));
