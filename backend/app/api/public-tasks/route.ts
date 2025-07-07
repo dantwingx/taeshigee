@@ -64,8 +64,18 @@ export async function GET(request: NextRequest) {
       tasks: transformedTasks,
     });
   } catch (error) {
+    // 상세 에러 로그 출력
+    console.error('GET /api/public-tasks error:', error);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
     return Response.json(
-      { success: false, error: 'Internal server error' },
+      { 
+        success: false, 
+        error: 'Internal server error', 
+        detail: error instanceof Error ? error.message : String(error) 
+      },
       { status: 500 }
     );
   }
