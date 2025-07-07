@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { supabase } from '@/lib/supabase';
 import { signToken } from '@/lib/jwt';
-import { createErrorResponse } from '@/lib/auth';
+import { createApiErrorResponse, createValidationError, handleUnexpectedError } from '@/lib/errorHandler';
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,23 +10,25 @@ export async function POST(request: NextRequest) {
 
     // Validate input
     if (!email || !password) {
-      return createErrorResponse('Email and password are required');
+      return createValidationError('credentials', '이메일과 비밀번호를 입력해주세요.');
     }
 
-    // Find user by email
+    // Find user by email (including password_hash)
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, user_number, email, name, language, dark_mode, created_at, updated_at')
+      .select('id, user_number, email, password_hash, name, language, dark_mode, created_at, updated_at')
       .eq('email', email)
       .single();
 
     if (error || !user) {
-      return createErrorResponse('Invalid email or password');
+      return createApiErrorResponse('INVALID_CREDENTIALS');
     }
 
-    // Note: In a real implementation, you would store and verify hashed passwords
-    // For now, we'll skip password verification since we're not storing passwords in the current schema
-    // This is a simplified version for demonstration purposes
+    // Verify password using bcrypt
+    const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+    if (!isPasswordValid) {
+      return createApiErrorResponse('INVALID_CREDENTIALS');
+    }
 
     // Generate JWT token
     const token = signToken({
@@ -52,6 +54,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Login error:', error);
-    return createErrorResponse('Internal server error', 500);
+    return handleUnexpectedError(error, 'login');
   }
 } 

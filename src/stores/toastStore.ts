@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import type { ToastType } from '@/components/ui/Toast'
+import { UI_CONSTANTS } from '@/utils/constants'
 
 interface Toast {
   id: string
@@ -18,7 +19,7 @@ interface ToastStore {
 export const useToastStore = create<ToastStore>((set, get) => ({
   toasts: [],
 
-  showToast: (type: ToastType, message: string, duration = 5000) => {
+  showToast: (type: ToastType, message: string, duration = UI_CONSTANTS.TOAST_DURATION) => {
     const id = Date.now().toString() + Math.random().toString(36).substr(2, 9)
     const newToast: Toast = { id, type, message, duration }
     

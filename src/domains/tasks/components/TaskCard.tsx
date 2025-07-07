@@ -21,6 +21,7 @@ import {
 import { Task } from '@/types/task'
 import { useToastStore, useTagStore, useAuthStore, useTaskStore } from '@/stores'
 import { formatRelativeTime, formatDueDateTime, formatLocalDate, formatLocalDateTime } from '@/utils/dateUtils'
+import { sanitizeText } from '@/utils/security'
 import i18next from 'i18next'
 
 interface TaskCardProps {
@@ -139,7 +140,7 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
         <h3 className={`font-medium text-neutral-900 dark:text-neutral-100 truncate ${
           task.isCompleted ? 'line-through text-neutral-500 dark:text-neutral-400' : ''
         }`}>
-          {task.title}
+          {sanitizeText(task.title)}
         </h3>
         {task.isPublic && (
           <Eye className="h-4 w-4 text-primary-600 dark:text-primary-400 flex-shrink-0" aria-label={t('common.public')} />
@@ -212,7 +213,7 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
         <p className={`mt-1 text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 ${
           task.isCompleted ? 'line-through' : ''
         }`}>
-          {task.description}
+          {sanitizeText(task.description)}
         </p>
       )}
 
@@ -223,9 +224,9 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
             <span
               key={index}
               className={`px-2 py-1 rounded-full text-xs font-medium max-w-[100px] truncate break-words ${getTagColor(tag)}`}
-              title={tag}
+              title={sanitizeText(tag)}
             >
-              #{tag}
+              #{sanitizeText(tag)}
             </span>
           ))}
           {task.tags.length > 3 && (
@@ -240,7 +241,7 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
       <div className="mt-2 flex items-center gap-x-3 text-xs text-neutral-500 dark:text-neutral-400">
         <span className="flex items-center gap-x-1">
           <User className="h-3 w-3" />
-          <span className="truncate max-w-[90px] text-neutral-700 dark:text-neutral-200">{authorDisplay}</span>
+          <span className="truncate max-w-[90px] text-neutral-700 dark:text-neutral-200">{sanitizeText(authorDisplay)}</span>
         </span>
         <span className="flex items-center gap-x-1">
           <Clock className="h-3 w-3" />
