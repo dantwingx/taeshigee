@@ -22,7 +22,7 @@ JWT_SECRET=your-jwt-secret-key
 
 ## 2. 데이터베이스 스키마 생성
 
-### 2.1 SQL 에디터에서 스키마 실행
+### 2.1 새 프로젝트인 경우
 1. Supabase 대시보드 → SQL Editor
 2. `database_schema.sql` 파일의 내용을 복사하여 실행
 3. 또는 다음 명령어로 파일을 직접 실행:
@@ -35,7 +35,19 @@ supabase db reset
 psql "postgresql://postgres:[password]@db.[project-ref].supabase.co:5432/postgres" -f database_schema.sql
 ```
 
-### 2.2 스키마 확인
+### 2.2 기존 프로젝트 마이그레이션 (UUID → 이메일 기반 ID)
+기존 UUID 기반 users 테이블을 이메일 기반 ID로 마이그레이션하려면:
+
+1. Supabase 대시보드 → SQL Editor
+2. `database_migration.sql` 파일의 내용을 복사하여 실행
+3. 마이그레이션 완료 후 확인:
+
+```sql
+-- 마이그레이션 결과 확인
+SELECT id, email, user_number FROM users LIMIT 5;
+```
+
+### 2.3 스키마 확인
 다음 쿼리로 테이블이 정상적으로 생성되었는지 확인:
 
 ```sql
@@ -65,8 +77,8 @@ npm run dev
 
 ## 4. 주요 테이블 구조
 
-### 4.1 users 테이블
-- `id`: UUID (기본키)
+### 4.1 users 테이블 (이메일 기반 ID)
+- `id`: VARCHAR(100) (기본키, 이메일의 @ 앞 부분)
 - `user_number`: SERIAL (자동 증가, 변경 불가)
 - `email`: VARCHAR(255) (고유)
 - `password_hash`: VARCHAR(255) (bcrypt 해시)
@@ -74,9 +86,14 @@ npm run dev
 - `language`: VARCHAR(10) (기본값: 'ko')
 - `dark_mode`: BOOLEAN (기본값: false)
 
+**ID 생성 규칙:**
+- 기본: 이메일의 @ 앞 부분 (예: `user@example.com` → `user`)
+- 중복 시: 기본ID + 난수 (예: `user_1234`)
+- 최대 시도 횟수 초과 시: 기본ID + 타임스탬프
+
 ### 4.2 tasks 테이블
 - `id`: UUID (기본키)
-- `user_id`: UUID (users.id 참조)
+- `user_id`: VARCHAR(100) (users.id 참조)
 - `user_number`: INTEGER (users.user_number 참조)
 - `title`: VARCHAR(255)
 - `description`: TEXT
@@ -97,7 +114,7 @@ npm run dev
 ### 4.4 task_likes 테이블
 - `id`: UUID (기본키)
 - `task_id`: UUID (tasks.id 참조)
-- `user_id`: UUID (users.id 참조)
+- `user_id`: VARCHAR(100) (users.id 참조)
 - `user_number`: INTEGER (users.user_number 참조)
 
 ## 5. 인덱스 및 성능 최적화
@@ -160,18 +177,27 @@ FROM pg_policies
 WHERE schemaname = 'public';
 ```
 
+### 7.4 마이그레이션 오류
+```sql
+-- 마이그레이션 상태 확인
+SELECT id, email, user_number FROM users ORDER BY user_number;
+
+-- 중복 ID 확인
+SELECT id, COUNT(*) FROM users GROUP BY id HAVING COUNT(*) > 1;
+```
+
 ## 8. 개발 환경 팁
 
 ### 8.1 샘플 데이터 삽입
 ```sql
--- 테스트 사용자 생성
-INSERT INTO users (email, password_hash, name, language, dark_mode) 
-VALUES ('test@example.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4tbQJ5qKqG', '테스트 사용자', 'ko', false);
+-- 테스트 사용자 생성 (이메일 기반 ID)
+INSERT INTO users (id, email, password_hash, name, language, dark_mode) VALUES
+    ('test', 'test@example.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4tbQJ5qKqG', '테스트 사용자', 'ko', false);
 
 -- 테스트 태스크 생성
 INSERT INTO tasks (user_id, user_number, title, description, importance, priority, is_public) 
 VALUES (
-  (SELECT id FROM users WHERE email = 'test@example.com'),
+  'test',
   (SELECT user_number FROM users WHERE email = 'test@example.com'),
   '테스트 태스크',
   '테스트 설명',
@@ -189,5 +215,31 @@ supabase db reset
 # 또는 수동으로 삭제
 DROP TABLE IF EXISTS task_likes, task_tags, tasks, users CASCADE;
 ```
+
+### 8.3 ID 생성 테스트
+```sql
+-- 이메일 기반 ID 생성 테스트
+SELECT 
+    email,
+    CASE 
+        WHEN email LIKE '%@%' THEN 
+            SUBSTRING(email, 1, POSITION('@' IN email) - 1)
+        ELSE 
+            email
+    END as generated_id
+FROM users;
+```
+
+## 9. 이메일 기반 ID 시스템 특징
+
+### 9.1 장점
+- 사용자가 기억하기 쉬운 ID
+- 이메일과 일관성 있는 식별자
+- 자동 중복 처리
+
+### 9.2 주의사항
+- 이메일 변경 시 ID도 변경되어야 함
+- 특수문자가 포함된 이메일의 경우 ID 생성 규칙 고려 필요
+- 보안상 민감한 정보가 ID에 노출될 수 있음
 
 이제 데이터베이스가 완전히 설정되었습니다! 백엔드 서버를 실행하여 API가 정상적으로 작동하는지 확인해보세요. 

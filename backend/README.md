@@ -70,14 +70,22 @@ Register a new user.
   "success": true,
   "token": "jwt_token_here",
   "user": {
-    "id": "user_id",
+    "id": "user",
+    "userNumber": 1,
     "email": "user@example.com",
     "name": "RandomName123",
     "language": "en",
-    "darkMode": false
+    "darkMode": false,
+    "createdAt": "2024-01-01T00:00:00Z",
+    "lastUpdated": "2024-01-01T00:00:00Z"
   }
 }
 ```
+
+**ID Generation Rules:**
+- Default: Email prefix (e.g., `user@example.com` → `user`)
+- Duplicate: Base ID + random number (e.g., `user_1234`)
+- Max attempts exceeded: Base ID + timestamp
 
 #### POST `/api/auth/login`
 Login with existing credentials.
@@ -96,11 +104,14 @@ Login with existing credentials.
   "success": true,
   "token": "jwt_token_here",
   "user": {
-    "id": "user_id",
+    "id": "user",
+    "userNumber": 1,
     "email": "user@example.com",
     "name": "RandomName123",
     "language": "en",
-    "darkMode": false
+    "darkMode": false,
+    "createdAt": "2024-01-01T00:00:00Z",
+    "lastUpdated": "2024-01-01T00:00:00Z"
   }
 }
 ```
@@ -118,9 +129,12 @@ Authorization: Bearer jwt_token_here
 {
   "success": true,
   "user": {
-    "id": "user_id",
+    "id": "user",
+    "userNumber": 1,
     "email": "user@example.com",
-    "name": "RandomName123"
+    "name": "RandomName123",
+    "createdAt": "2024-01-01T00:00:00Z",
+    "lastUpdated": "2024-01-01T00:00:00Z"
   }
 }
 ```
@@ -185,12 +199,17 @@ Authorization: Bearer jwt_token_here
       "id": "task_id",
       "title": "Task Title",
       "description": "Task description",
+      "dueDate": "2024-01-01",
+      "dueTime": "14:30",
       "importance": "high",
       "priority": "medium",
+      "category": "work",
+      "isCompleted": false,
       "isPublic": false,
       "likesCount": 0,
       "tags": ["tag1", "tag2"],
       "author": "User Name",
+      "userNumber": 1,
       "createdAt": "2024-01-01T00:00:00Z",
       "updatedAt": "2024-01-01T00:00:00Z"
     }
@@ -211,8 +230,11 @@ Authorization: Bearer jwt_token_here
 {
   "title": "New Task",
   "description": "Task description",
+  "dueDate": "2024-01-01",
+  "dueTime": "14:30",
   "importance": "high",
   "priority": "medium",
+  "category": "work",
   "isPublic": false,
   "tags": ["tag1", "tag2"]
 }
@@ -299,21 +321,27 @@ Authorization: Bearer jwt_token_here
 ### Tables
 
 #### users
-- `id` (UUID, Primary Key)
-- `email` (VARCHAR, Unique)
-- `name` (VARCHAR)
-- `language` (VARCHAR, Default: 'en')
+- `id` (VARCHAR(100), Primary Key) - Email-based ID
+- `user_number` (SERIAL, Unique) - Auto-incrementing user number
+- `email` (VARCHAR(255), Unique)
+- `name` (VARCHAR(100))
+- `language` (VARCHAR(10), Default: 'en')
 - `dark_mode` (BOOLEAN, Default: false)
 - `created_at` (TIMESTAMP)
 - `updated_at` (TIMESTAMP)
 
 #### tasks
 - `id` (UUID, Primary Key)
-- `user_id` (UUID, Foreign Key to users.id)
-- `title` (VARCHAR)
+- `user_id` (VARCHAR(100), Foreign Key to users.id)
+- `user_number` (INTEGER, Foreign Key to users.user_number)
+- `title` (VARCHAR(255))
 - `description` (TEXT, Nullable)
+- `due_date` (DATE, Nullable)
+- `due_time` (TIME, Nullable)
 - `importance` (ENUM: 'low', 'medium', 'high')
 - `priority` (ENUM: 'low', 'medium', 'high')
+- `category` (VARCHAR(100), Nullable)
+- `is_completed` (BOOLEAN, Default: false)
 - `is_public` (BOOLEAN, Default: false)
 - `likes_count` (INTEGER, Default: 0)
 - `created_at` (TIMESTAMP)
@@ -322,14 +350,37 @@ Authorization: Bearer jwt_token_here
 #### task_tags
 - `id` (UUID, Primary Key)
 - `task_id` (UUID, Foreign Key to tasks.id)
-- `tag_name` (VARCHAR)
+- `tag_name` (VARCHAR(100))
 - `created_at` (TIMESTAMP)
 
 #### task_likes
 - `id` (UUID, Primary Key)
 - `task_id` (UUID, Foreign Key to tasks.id)
-- `user_id` (UUID, Foreign Key to users.id)
+- `user_id` (VARCHAR(100), Foreign Key to users.id)
+- `user_number` (INTEGER, Foreign Key to users.user_number)
 - `created_at` (TIMESTAMP)
+
+## Email-Based ID System
+
+The application uses an email-based ID system where:
+
+1. **Default ID**: Email prefix (before @)
+   - `user@example.com` → `user`
+   - `john.doe@company.com` → `john.doe`
+
+2. **Duplicate Handling**: 
+   - If ID exists: `user_1234` (base + random 4-digit number)
+   - Max attempts exceeded: `user_1703123456789` (base + timestamp)
+
+3. **Benefits**:
+   - User-friendly and memorable IDs
+   - Consistent with email addresses
+   - Automatic duplicate resolution
+
+4. **Considerations**:
+   - IDs may contain sensitive information
+   - Email changes require ID updates
+   - Special characters in emails handled appropriately
 
 ## Testing
 

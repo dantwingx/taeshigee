@@ -3,7 +3,7 @@
 
 -- 사용자 테이블
 CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id VARCHAR(100) PRIMARY KEY, -- 이메일 기반 ID 사용
     user_number SERIAL UNIQUE NOT NULL, -- 사용자 번호 (자동 증가, 변경 불가)
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL, -- bcrypt로 해시된 비밀번호
@@ -17,7 +17,7 @@ CREATE TABLE users (
 -- 태스크 테이블
 CREATE TABLE tasks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id VARCHAR(100) NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- users.id 타입 변경
     user_number INTEGER NOT NULL REFERENCES users(user_number) ON DELETE CASCADE,
     title VARCHAR(255) NOT NULL,
     description TEXT,
@@ -46,7 +46,7 @@ CREATE TABLE task_tags (
 CREATE TABLE task_likes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     task_id UUID NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- users.id 타입 변경
     user_number INTEGER NOT NULL REFERENCES users(user_number) ON DELETE CASCADE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     UNIQUE(task_id, user_number) -- 같은 사용자가 같은 태스크에 중복 좋아요 방지
@@ -191,8 +191,8 @@ GROUP BY tag_name
 ORDER BY usage_count DESC, tag_name;
 
 -- 샘플 데이터 삽입 (선택사항)
--- INSERT INTO users (email, password_hash, name, language, dark_mode) VALUES
---     ('test@example.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4tbQJ5qKqG', '테스트 사용자', 'ko', false);
+-- INSERT INTO users (id, email, password_hash, name, language, dark_mode) VALUES
+--     ('test', 'test@example.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4tbQJ5qKqG', '테스트 사용자', 'ko', false);
 
 -- 권한 설정 (Supabase에서 필요시)
 -- GRANT USAGE ON SCHEMA public TO anon, authenticated;

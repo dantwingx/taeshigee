@@ -4,6 +4,45 @@ import { supabase } from '@/lib/supabase';
 import { signToken } from '@/lib/jwt';
 import { generateRandomName, createErrorResponse } from '@/lib/auth';
 
+// 이메일에서 기본 ID 생성 함수
+function generateUserIdFromEmail(email: string): string {
+  const atIndex = email.indexOf('@');
+  if (atIndex === -1) {
+    return email; // @가 없으면 전체 이메일 사용
+  }
+  return email.substring(0, atIndex);
+}
+
+// 중복되지 않는 ID 생성 함수
+async function generateUniqueUserId(baseUserId: string): Promise<string> {
+  let userId = baseUserId;
+  let counter = 0;
+  const maxAttempts = 100; // 무한 루프 방지
+
+  while (counter < maxAttempts) {
+    // 현재 ID가 사용 중인지 확인
+    const { data: existingUser } = await supabase
+      .from('users')
+      .select('id')
+      .eq('id', userId)
+      .single();
+
+    if (!existingUser) {
+      // 사용 가능한 ID
+      return userId;
+    }
+
+    // 중복되면 난수 생성하여 붙이기
+    const randomSuffix = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+    userId = `${baseUserId}_${randomSuffix}`;
+    counter++;
+  }
+
+  // 최대 시도 횟수 초과 시 타임스탬프 사용
+  const timestamp = Date.now().toString();
+  return `${baseUserId}_${timestamp}`;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json();
@@ -34,12 +73,19 @@ export async function POST(request: NextRequest) {
     // Generate random name
     const name = generateRandomName();
 
-    // Create user
+    // 이메일에서 기본 ID 생성
+    const baseUserId = generateUserIdFromEmail(email);
+    
+    // 중복되지 않는 고유 ID 생성
+    const uniqueUserId = await generateUniqueUserId(baseUserId);
+
+    // Create user with custom ID
     const { data: user, error } = await supabase
       .from('users')
       .insert({
+        id: uniqueUserId, // 커스텀 ID 사용
         email,
-        password_hash: hashedPassword, // 비밀번호 해시 저장
+        password_hash: hashedPassword,
         name,
         language: 'en',
         dark_mode: false,
