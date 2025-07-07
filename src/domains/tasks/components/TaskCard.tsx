@@ -159,6 +159,19 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
         </div>
       </div>
 
+      {/* 마감일/마감시간 */}
+      {task.dueDate && (
+        <div className="mt-1 flex items-center gap-x-1 text-xs text-neutral-600 dark:text-neutral-400">
+          <Calendar className="h-3 w-3" />
+          <span className={`${isOverdue ? 'text-error-600 dark:text-error-400 font-medium' : ''}`}>
+            {task.dueTime 
+              ? formatDueDateTime(task.dueDate, task.dueTime, i18next.language)
+              : formatLocalDate(task.dueDate, i18next.language)
+            }
+          </span>
+        </div>
+      )}
+
       {/* 설명 */}
       {task.description && (
         <p className={`mt-1 text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 ${

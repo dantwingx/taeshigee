@@ -351,6 +351,19 @@ export function SharedPage() {
                     <Eye className="h-4 w-4 text-primary-600 flex-shrink-0" />
                   </div>
                   
+                  {/* 마감일/마감시간 */}
+                  {task.dueDate && (
+                    <div className="mt-1 flex items-center gap-x-1 text-xs text-neutral-600 dark:text-neutral-400">
+                      <Calendar className="h-3 w-3" />
+                      <span className={`${task.dueDate && new Date(task.dueDate) < new Date() && !task.isCompleted ? 'text-error-600 dark:text-error-400 font-medium' : ''}`}>
+                        {task.dueTime 
+                          ? formatDueDateTime(task.dueDate, task.dueTime, i18next.language)
+                          : formatLocalDate(task.dueDate, i18next.language)
+                        }
+                      </span>
+                    </div>
+                  )}
+
                   {/* 설명 */}
                   {task.description && (
                     <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2">
