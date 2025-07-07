@@ -11,17 +11,22 @@ export function initializeDarkMode(): void {
     return
   }
   
-  // localStorage에 없으면 사용자 설정 확인
-  const { getUserSettings } = useAuthStore.getState()
-  const userSettings = getUserSettings()
-  
-  if (userSettings?.darkMode !== undefined) {
-    // 사용자 설정이 있으면 그것을 사용
-    applyDarkMode(userSettings.darkMode)
-  } else {
-    // 사용자 설정이 없으면 시스템 설정을 확인
-    const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    applyDarkMode(isSystemDark)
+  // localStorage에 없으면 시스템 설정을 확인
+  const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+  applyDarkMode(isSystemDark)
+}
+
+// 인증 후 사용자 설정과 동기화
+export function syncDarkModeWithUserSettings(): void {
+  try {
+    const { getUserSettings } = useAuthStore.getState()
+    const userSettings = getUserSettings()
+    
+    if (userSettings?.darkMode !== undefined) {
+      applyDarkMode(userSettings.darkMode)
+    }
+  } catch (error) {
+    console.warn('Failed to sync dark mode with user settings:', error)
   }
 }
 
@@ -44,12 +49,4 @@ export function isDarkModeEnabled(): boolean {
   return document.documentElement.classList.contains('dark')
 }
 
-// 사용자 설정과 동기화
-export function syncDarkModeWithUserSettings(): void {
-  const { getUserSettings } = useAuthStore.getState()
-  const userSettings = getUserSettings()
-  
-  if (userSettings?.darkMode !== undefined) {
-    applyDarkMode(userSettings.darkMode)
-  }
-} 
+ 

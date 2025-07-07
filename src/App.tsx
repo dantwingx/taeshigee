@@ -27,11 +27,18 @@ function App() {
       await initializeAuth()
       
       // 인증 후 사용자 설정과 동기화
-      const { getUserSettings } = useAuthStore.getState()
-      const userSettings = getUserSettings()
-      if (userSettings?.darkMode !== undefined) {
-        // 사용자 설정이 있으면 localStorage와 동기화
-        localStorage.setItem('darkMode', userSettings.darkMode.toString())
+      try {
+        const { getUserSettings } = useAuthStore.getState()
+        const userSettings = getUserSettings()
+        if (userSettings?.darkMode !== undefined) {
+          // 사용자 설정이 있으면 localStorage와 동기화
+          localStorage.setItem('darkMode', userSettings.darkMode.toString())
+          // 다크모드 재적용
+          const { applyDarkMode } = await import('@/utils/darkMode')
+          applyDarkMode(userSettings.darkMode)
+        }
+      } catch (error) {
+        console.warn('Failed to sync user settings:', error)
       }
     }
 
