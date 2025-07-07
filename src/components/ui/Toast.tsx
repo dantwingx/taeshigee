@@ -25,7 +25,7 @@ const toastIcons = {
   warning: AlertTriangle,
 }
 
-export function Toast({ id, type, message, duration = 3000, onClose }: ToastProps) {
+export function Toast({ id, type, message, duration = 200, onClose }: ToastProps) {
   const [isVisible, setIsVisible] = useState(false)
   const Icon = toastIcons[type]
 
