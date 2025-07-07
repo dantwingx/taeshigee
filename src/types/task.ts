@@ -43,4 +43,31 @@ export interface LikeInfo {
   taskId: string
   userId: string
   timestamp: string
+}
+
+export interface TaskTemplate {
+  id: string
+  name: string
+  emoji: string
+  title: string
+  description: string
+  tags: string[]
+  duration: number // 일 단위
+  category: 'health' | 'work' | 'study' | 'hobby' | 'daily' | 'custom'
+  isPopular?: boolean
+  // 자동 설정을 위한 추가 데이터
+  autoSettings?: {
+    category?: string
+    importance?: 'low' | 'medium' | 'high'
+    priority?: 'low' | 'medium' | 'high'
+    isPublic?: boolean
+    dueTime?: string // HH:mm 형식
+    reminderTime?: string // HH:mm 형식
+  }
+}
+
+export interface EmojiCategory {
+  id: string
+  name: string
+  emojis: string[]
 } 

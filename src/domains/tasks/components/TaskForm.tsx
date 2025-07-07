@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useEffect } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { 
   Calendar, 
@@ -23,7 +23,9 @@ import {
 import { Modal } from '@/components/ui/Modal'
 import { Select } from '@/components/ui/Select'
 import { TagInput } from '@/components/ui/TagInput'
-import type { Task, CreateTaskData, UpdateTaskData } from '@/types/task'
+import { TaskTemplateSelector } from '@/components/ui/TaskTemplateSelector'
+import { EmojiPicker } from '@/components/ui/EmojiPicker'
+import type { Task, CreateTaskData, UpdateTaskData, TaskTemplate } from '@/types/task'
 import { getTodayDate, getLastTimeOfDay } from '@/utils/dateUtils'
 
 const taskSchema = z.object({
@@ -53,6 +55,10 @@ interface TaskFormProps {
 
 export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFormProps) {
   const { t } = useTranslation()
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false)
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+  const [selectedEmoji, setSelectedEmoji] = useState('')
+  const titleInputRef = useRef<HTMLInputElement>(null)
   
   const importanceOptions = [
     { value: 'low', label: t('task.importanceLow'), icon: '🟢' },
@@ -106,9 +112,14 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
   // task prop이 변경될 때 form 값을 업데이트
   useEffect(() => {
     if (task) {
-      // 기존 태스크 편집 시
+      // 기존 태스크 편집 시 - 이모지 분리
+      const emojiMatch = task.title.match(/^[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u)
+      const emoji = emojiMatch ? emojiMatch[0] : ''
+      const titleWithoutEmoji = emoji ? task.title.replace(emoji, '').trim() : task.title
+      
+      setSelectedEmoji(emoji)
       reset({
-        title: task.title,
+        title: titleWithoutEmoji,
         description: task.description || '',
         dueDate: task.dueDate ? task.dueDate.split('T')[0] : '',
         dueTime: task.dueTime || '',
@@ -121,6 +132,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
       })
     } else {
       // 새 태스크 생성 시 - 기본값 설정
+      setSelectedEmoji('')
       reset({
         title: '',
         description: '',
@@ -140,12 +152,14 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
     try {
       const formData = {
         ...data,
+        title: selectedEmoji ? `${selectedEmoji} ${data.title}` : data.title,
         dueDate: data.dueDate ? new Date(data.dueDate).toISOString().split('T')[0] : undefined,
         dueTime: data.dueTime || undefined,
       }
       
       await onSubmit(formData)
       reset()
+      setSelectedEmoji('')
       onClose()
     } catch (error) {
       // 에러는 상위 컴포넌트에서 처리
@@ -177,6 +191,72 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
     setValue('isPublic', isPublic)
   }
 
+  const handleTemplateSelect = (template: TaskTemplate) => {
+    // 기본 정보 설정
+    setValue('title', template.title)
+    setValue('description', template.description)
+    setValue('tags', template.tags)
+    setSelectedEmoji(template.emoji)
+    
+    // 자동 설정 적용
+    if (template.autoSettings) {
+      const { autoSettings } = template
+      
+      // 카테고리 설정
+      if (autoSettings.category) {
+        setValue('category', autoSettings.category)
+      }
+      
+      // 중요도 설정
+      if (autoSettings.importance) {
+        setValue('importance', autoSettings.importance)
+      }
+      
+      // 우선순위 설정
+      if (autoSettings.priority) {
+        setValue('priority', autoSettings.priority)
+      }
+      
+      // 공개 여부 설정
+      if (autoSettings.isPublic !== undefined) {
+        setValue('isPublic', autoSettings.isPublic)
+      }
+      
+      // 마감 시간 설정
+      if (autoSettings.dueTime) {
+        setValue('dueTime', autoSettings.dueTime)
+      }
+      
+      // 마감일 설정 (duration 기반)
+      const today = new Date()
+      const dueDate = new Date(today)
+      dueDate.setDate(today.getDate() + template.duration - 1) // duration일 후
+      setValue('dueDate', dueDate.toISOString().split('T')[0])
+    }
+    
+    setShowTemplateSelector(false)
+  }
+
+  const handleEmojiSelect = (emoji: string) => {
+    const input = titleInputRef.current
+    if (input) {
+      const start = input.selectionStart || 0
+      const end = input.selectionEnd || 0
+      const value = input.value
+      const newValue = value.slice(0, start) + emoji + value.slice(end)
+      setValue('title', newValue)
+      // 이모지 뒤로 커서 이동
+      setTimeout(() => {
+        input.focus()
+        input.setSelectionRange(start + emoji.length, start + emoji.length)
+      }, 0)
+    } else {
+      // fallback: 맨 앞에 추가
+      setValue('title', emoji + (watch('title') || ''))
+    }
+    setShowEmojiPicker(false)
+  }
+
   return (
     <Modal
       isOpen={isOpen}
@@ -194,18 +274,40 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
         <div className="flex-1 overflow-y-auto p-4 space-y-4 max-h-[calc(80vh-140px)]">
           {/* 제목 */}
           <div>
-            <label htmlFor="title" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-              <Type className="h-4 w-4" />
-              <span>{t('task.title')} *</span>
-            </label>
-            <input
-              {...register('title')}
-              type="text"
-              id="title"
-              className={`input text-lg ${errors.title ? 'border-error-500 dark:border-error-400' : ''}`}
-              placeholder={t('task.titleRequired')}
-              disabled={isLoading}
-            />
+            <div className="flex items-center justify-between mb-2">
+              <label htmlFor="title" className="flex items-center space-x-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                <Type className="h-4 w-4" />
+                <span>{t('task.title')} *</span>
+              </label>
+              <div className="flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setShowTemplateSelector(true)}
+                  className="px-3 py-1 text-xs bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-lg hover:bg-primary-200 dark:hover:bg-primary-800 transition-colors"
+                >
+                  📋 템플릿
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowEmojiPicker(true)}
+                  className="px-3 py-1 text-xs bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors"
+                >
+                  😊 이모지
+                </button>
+              </div>
+            </div>
+            <div className="relative">
+              {/* selectedEmoji는 제거 */}
+              <input
+                {...register('title')}
+                type="text"
+                id="title"
+                ref={titleInputRef}
+                className={`input text-lg ${errors.title ? 'border-error-500 dark:border-error-400' : ''}`}
+                placeholder={t('task.titleRequired')}
+                disabled={isLoading}
+              />
+            </div>
             {errors.title && (
               <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.title.message}</p>
             )}
@@ -444,6 +546,22 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
           </button>
         </div>
       </form>
+
+      {/* 템플릿 선택기 */}
+      {showTemplateSelector && (
+        <TaskTemplateSelector
+          onSelectTemplate={handleTemplateSelect}
+          onClose={() => setShowTemplateSelector(false)}
+        />
+      )}
+
+      {/* 이모지 선택기 */}
+      {showEmojiPicker && (
+        <EmojiPicker
+          onSelectEmoji={handleEmojiSelect}
+          onClose={() => setShowEmojiPicker(false)}
+        />
+      )}
     </Modal>
   )
 }
