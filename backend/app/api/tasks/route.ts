@@ -2,6 +2,23 @@ import { NextRequest } from 'next/server';
 import { authenticateRequest, createErrorResponse } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 
+// CORS 헤더 설정 함수
+function setCorsHeaders(response: Response): Response {
+  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
+  const origin = allowedOrigins[0] || 'https://taeshigee-production.up.railway.app';
+  response.headers.set('Access-Control-Allow-Origin', origin);
+  response.headers.set('Access-Control-Allow-Credentials', 'true');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  response.headers.set('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
+  return response;
+}
+
+// OPTIONS 요청 처리 (프리플라이트)
+export async function OPTIONS() {
+  const response = new Response(null, { status: 204 });
+  return setCorsHeaders(response);
+}
+
 // GET /api/tasks - Get user's tasks
 export async function GET(request: NextRequest) {
   try {
@@ -38,7 +55,7 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error(`[GET /api/tasks] 태스크 조회 실패:`, error);
-      return createErrorResponse('Failed to fetch tasks', 500);
+      return setCorsHeaders(createErrorResponse('Failed to fetch tasks', 500));
     }
 
     // Transform data to match frontend expectations
@@ -62,17 +79,17 @@ export async function GET(request: NextRequest) {
     }));
 
     console.log(`[GET /api/tasks] 성공적으로 완료 - 태스크 수: ${transformedTasks.length}`);
-    return Response.json({
+    return setCorsHeaders(Response.json({
       success: true,
       tasks: transformedTasks,
-    });
+    }));
   } catch (error) {
     console.error(`[GET /api/tasks] 예상치 못한 오류:`, error);
     if (error instanceof Error) {
       console.error('Error message:', error.message);
       console.error('Error stack:', error.stack);
     }
-    return createErrorResponse('Internal server error', 500);
+    return setCorsHeaders(createErrorResponse('Internal server error', 500));
   }
 }
 
@@ -87,17 +104,17 @@ export async function POST(request: NextRequest) {
     // Validate input
     if (!title || title.trim().length === 0) {
       console.error(`[POST /api/tasks] 제목이 비어있음`);
-      return createErrorResponse('Title is required');
+      return setCorsHeaders(createErrorResponse('Title is required'));
     }
 
     if (importance && !['low', 'medium', 'high'].includes(importance)) {
       console.error(`[POST /api/tasks] 잘못된 중요도 값: ${importance}`);
-      return createErrorResponse('Importance must be low, medium, or high');
+      return setCorsHeaders(createErrorResponse('Importance must be low, medium, or high'));
     }
 
     if (priority && !['low', 'medium', 'high'].includes(priority)) {
       console.error(`[POST /api/tasks] 잘못된 우선순위 값: ${priority}`);
-      return createErrorResponse('Priority must be low, medium, or high');
+      return setCorsHeaders(createErrorResponse('Priority must be low, medium, or high'));
     }
 
     console.log(`[POST /api/tasks] 태스크 생성 데이터:`, {
@@ -134,7 +151,7 @@ export async function POST(request: NextRequest) {
 
     if (taskError) {
       console.error(`[POST /api/tasks] 태스크 생성 실패:`, taskError);
-      return createErrorResponse('Failed to create task', 500);
+      return setCorsHeaders(createErrorResponse('Failed to create task', 500));
     }
 
     // Add tags if provided
@@ -168,7 +185,7 @@ export async function POST(request: NextRequest) {
 
     if (fetchError) {
       console.error(`[POST /api/tasks] 생성된 태스크 조회 실패:`, fetchError);
-      return createErrorResponse('Failed to fetch created task', 500);
+      return setCorsHeaders(createErrorResponse('Failed to fetch created task', 500));
     }
 
     const transformedTask = {
@@ -191,16 +208,16 @@ export async function POST(request: NextRequest) {
     };
 
     console.log(`[POST /api/tasks] 성공적으로 완료 - 태스크 ID: ${task.id}`);
-    return Response.json({
+    return setCorsHeaders(Response.json({
       success: true,
       task: transformedTask,
-    });
+    }));
   } catch (error) {
     console.error(`[POST /api/tasks] 예상치 못한 오류:`, error);
     if (error instanceof Error) {
       console.error('Error message:', error.message);
       console.error('Error stack:', error.stack);
     }
-    return createErrorResponse('Internal server error', 500);
+    return setCorsHeaders(createErrorResponse('Internal server error', 500));
   }
 } 

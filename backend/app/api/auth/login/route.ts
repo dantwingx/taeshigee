@@ -4,8 +4,29 @@ import { supabase } from '@/lib/supabase';
 import { signToken } from '@/lib/jwt';
 import { createApiErrorResponse, createValidationError, handleUnexpectedError } from '@/lib/errorHandler';
 
+// CORS 헤더 설정 함수
+function setCorsHeaders(response: Response): Response {
+  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
+  const origin = allowedOrigins[0] || 'https://taeshigee-production.up.railway.app';
+  
+  response.headers.set('Access-Control-Allow-Origin', origin);
+  response.headers.set('Access-Control-Allow-Credentials', 'true');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  response.headers.set('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
+  
+  return response;
+}
+
+// OPTIONS 요청 처리 (프리플라이트)
+export async function OPTIONS() {
+  console.log('ALLOWED_ORIGINS (OPTIONS):', process.env.ALLOWED_ORIGINS);
+  const response = new Response(null, { status: 204 });
+  return setCorsHeaders(response);
+}
+
 export async function POST(request: NextRequest) {
   try {
+    console.log('ALLOWED_ORIGINS (POST):', process.env.ALLOWED_ORIGINS);
     console.log('[Login API] POST /api/auth/login - Request received');
     
     const { email, password } = await request.json();
@@ -14,7 +35,8 @@ export async function POST(request: NextRequest) {
     // Validate input
     if (!email || !password) {
       console.error('[Login API] Missing credentials');
-      return createValidationError('credentials', '이메일과 비밀번호를 입력해주세요.');
+      const errorResponse = createValidationError('credentials', '이메일과 비밀번호를 입력해주세요.');
+      return setCorsHeaders(errorResponse);
     }
 
     // Find user by email (including password_hash)
@@ -26,7 +48,8 @@ export async function POST(request: NextRequest) {
 
     if (error || !user) {
       console.error('[Login API] User not found or database error:', error);
-      return createApiErrorResponse('INVALID_CREDENTIALS');
+      const errorResponse = createApiErrorResponse('INVALID_CREDENTIALS');
+      return setCorsHeaders(errorResponse);
     }
 
     console.log('[Login API] User found:', user.id);
@@ -35,7 +58,8 @@ export async function POST(request: NextRequest) {
     const isPasswordValid = await bcrypt.compare(password, user.password_hash);
     if (!isPasswordValid) {
       console.error('[Login API] Invalid password for user:', user.id);
-      return createApiErrorResponse('INVALID_CREDENTIALS');
+      const errorResponse = createApiErrorResponse('INVALID_CREDENTIALS');
+      return setCorsHeaders(errorResponse);
     }
 
     console.log('[Login API] Password verified successfully for user:', user.id);
@@ -50,7 +74,7 @@ export async function POST(request: NextRequest) {
 
     console.log('[Login API] Login successful for user:', user.id);
 
-    return Response.json({
+    const successResponse = Response.json({
       success: true,
       token,
       user: {
@@ -64,8 +88,11 @@ export async function POST(request: NextRequest) {
         lastUpdated: user.updated_at,
       },
     });
+    
+    return setCorsHeaders(successResponse);
   } catch (error) {
     console.error('Login error:', error);
-    return handleUnexpectedError(error, 'login');
+    const errorResponse = handleUnexpectedError(error, 'login');
+    return setCorsHeaders(errorResponse);
   }
 } 

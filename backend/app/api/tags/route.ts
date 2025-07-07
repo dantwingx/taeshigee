@@ -1,5 +1,22 @@
 import { supabase } from '@/lib/supabase';
 
+// CORS 헤더 설정 함수
+function setCorsHeaders(response: Response): Response {
+  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
+  const origin = allowedOrigins[0] || 'https://taeshigee-production.up.railway.app';
+  response.headers.set('Access-Control-Allow-Origin', origin);
+  response.headers.set('Access-Control-Allow-Credentials', 'true');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  response.headers.set('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
+  return response;
+}
+
+// OPTIONS 요청 처리 (프리플라이트)
+export async function OPTIONS() {
+  const response = new Response(null, { status: 204 });
+  return setCorsHeaders(response);
+}
+
 // GET /api/tags - Get all unique tags with usage counts
 export async function GET() {
   try {
@@ -10,10 +27,10 @@ export async function GET() {
       .order('tag_name');
 
     if (error) {
-      return Response.json(
+      return setCorsHeaders(Response.json(
         { success: false, error: 'Failed to fetch tags' },
         { status: 500 }
-      );
+      ));
     }
 
     // Count occurrences of each tag
@@ -36,14 +53,14 @@ export async function GET() {
       return a.name.localeCompare(b.name);
     });
 
-    return Response.json({
+    return setCorsHeaders(Response.json({
       success: true,
       tags: uniqueTags,
-    });
+    }));
   } catch {
-    return Response.json(
+    return setCorsHeaders(Response.json(
       { success: false, error: 'Internal server error' },
       { status: 500 }
-    );
+    ));
   }
 } 

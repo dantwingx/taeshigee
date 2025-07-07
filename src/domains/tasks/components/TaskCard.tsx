@@ -98,13 +98,37 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
     
     await toggleTaskLike(task.id)
   }
+
+  // 카드 영역 클릭 핸들러 (편집 기능)
+  const handleCardClick = (e: React.MouseEvent) => {
+    // 버튼이나 입력 요소를 클릭한 경우 편집하지 않음
+    const target = e.target as HTMLElement
+    if (
+      target.tagName === 'BUTTON' ||
+      target.tagName === 'INPUT' ||
+      target.closest('button') ||
+      target.closest('input') ||
+      target.closest('[role="button"]')
+    ) {
+      return
+    }
+    
+    // 내 태스크인 경우에만 편집 가능
+    if (task.userNumber === currentUserNumber) {
+      onEdit(task)
+    }
+  }
+
   const liked = currentUserNumber && isTaskLikedByUser(task.id, currentUserNumber)
   const likeCount = getTaskLikeCount(task.id)
 
   return (
-    <div className={`bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 p-4 transition-all duration-200 ${
-      task.isCompleted ? 'opacity-75' : ''
-    } ${isOverdue ? 'border-error-300 bg-error-50 dark:border-error-600 dark:bg-error-900/20' : ''}`}>
+    <div 
+      className={`bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 p-4 transition-all duration-200 cursor-pointer hover:shadow-md ${
+        task.isCompleted ? 'opacity-75' : ''
+      } ${isOverdue ? 'border-error-300 bg-error-50 dark:border-error-600 dark:bg-error-900/20' : ''}`}
+      onClick={handleCardClick}
+    >
       {/* 제목 + 상태 표시 + 좋아요 + 메뉴 */}
       <div className="flex items-center space-x-2 mb-1">
         {/* 상태 표시: 내 태스크는 체크박스, 공개 태스크는 상태 아이콘 */}
@@ -113,7 +137,10 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
           <input
             type="checkbox"
             checked={task.isCompleted}
-            onChange={() => onToggleComplete(task.id)}
+            onChange={(e) => {
+              e.stopPropagation()
+              onToggleComplete(task.id)
+            }}
             className="form-checkbox h-5 w-5 text-primary-600 mr-2 cursor-pointer"
             aria-label={t('task.toggleComplete')}
             disabled={isLoading}
@@ -156,7 +183,10 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
         {/* 메뉴 버튼 */}
         <div>
           <button
-            onClick={() => setShowMenu(!showMenu)}
+            onClick={(e) => {
+              e.stopPropagation()
+              setShowMenu(!showMenu)
+            }}
             className="p-1 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
           >
             <MoreVertical className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
@@ -164,7 +194,8 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
           {showMenu && (
             <div className="absolute right-0 mt-1 w-32 bg-white dark:bg-neutral-800 rounded-lg shadow-lg border border-neutral-200 dark:border-neutral-700 py-1 z-10">
               <button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation()
                   onEdit(task)
                   setShowMenu(false)
                 }}
@@ -174,14 +205,20 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
                 <span>{t('common.edit')}</span>
               </button>
               <button
-                onClick={handleDelete}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleDelete()
+                }}
                 className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-error-700 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20 transition-colors"
               >
                 <Trash2 className="h-4 w-4" />
                 <span>{t('common.delete')}</span>
               </button>
               <button
-                onClick={handleDuplicate}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleDuplicate()
+                }}
                 className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
               >
                 <Copy className="h-4 w-4" />

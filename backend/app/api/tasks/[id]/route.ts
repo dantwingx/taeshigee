@@ -3,6 +3,23 @@ import { authenticateRequest, createErrorResponse } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 import { randomUUID } from 'crypto';
 
+// CORS 헤더 설정 함수
+function setCorsHeaders(response: Response): Response {
+  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
+  const origin = allowedOrigins[0] || 'https://taeshigee-production.up.railway.app';
+  response.headers.set('Access-Control-Allow-Origin', origin);
+  response.headers.set('Access-Control-Allow-Credentials', 'true');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  response.headers.set('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
+  return response;
+}
+
+// OPTIONS 요청 처리 (프리플라이트)
+export async function OPTIONS() {
+  const response = new Response(null, { status: 204 });
+  return setCorsHeaders(response);
+}
+
 // GET /api/tasks/[id] - Get specific task
 export async function GET(
   request: NextRequest,
@@ -26,18 +43,18 @@ export async function GET(
 
     if (error) {
       console.error(`[GET /api/tasks/${id}] 태스크 조회 실패:`, error);
-      return createErrorResponse('Task not found', 404);
+      return setCorsHeaders(createErrorResponse('Task not found', 404));
     }
 
     if (!task) {
       console.error(`[GET /api/tasks/${id}] 태스크를 찾을 수 없음`);
-      return createErrorResponse('Task not found', 404);
+      return setCorsHeaders(createErrorResponse('Task not found', 404));
     }
 
     // Check if user owns the task
     if (task.user_id !== user.userId) {
       console.error(`[GET /api/tasks/${id}] 권한 없음 - 태스크 소유자: ${task.user_id}, 요청자: ${user.userId}`);
-      return createErrorResponse('Permission denied', 403);
+      return setCorsHeaders(createErrorResponse('Permission denied', 403));
     }
 
     const transformedTask = {
@@ -60,17 +77,17 @@ export async function GET(
     };
 
     console.log(`[GET /api/tasks/${id}] 성공적으로 완료`);
-    return Response.json({
+    return setCorsHeaders(Response.json({
       success: true,
       task: transformedTask,
-    });
+    }));
   } catch (error) {
     console.error(`[GET /api/tasks/[id]] 예상치 못한 오류:`, error);
     if (error instanceof Error) {
       console.error('Error message:', error.message);
       console.error('Error stack:', error.stack);
     }
-    return createErrorResponse('Internal server error', 500);
+    return setCorsHeaders(createErrorResponse('Internal server error', 500));
   }
 }
 
@@ -95,34 +112,34 @@ export async function PUT(
 
     if (checkError) {
       console.error(`[PUT /api/tasks/${id}] 태스크 존재 확인 실패:`, checkError);
-      return createErrorResponse('Task not found', 404);
+      return setCorsHeaders(createErrorResponse('Task not found', 404));
     }
 
     if (!existingTask) {
       console.error(`[PUT /api/tasks/${id}] 태스크를 찾을 수 없음`);
-      return createErrorResponse('Task not found', 404);
+      return setCorsHeaders(createErrorResponse('Task not found', 404));
     }
 
     // Check if user owns the task
     if (existingTask.user_id !== user.userId) {
       console.error(`[PUT /api/tasks/${id}] 권한 없음 - 태스크 소유자: ${existingTask.user_id}, 요청자: ${user.userId}`);
-      return createErrorResponse('Permission denied', 403);
+      return setCorsHeaders(createErrorResponse('Permission denied', 403));
     }
 
     // Validate input
     if (title !== undefined && title.trim().length === 0) {
       console.error(`[PUT /api/tasks/${id}] 제목이 비어있음`);
-      return createErrorResponse('Title cannot be empty');
+      return setCorsHeaders(createErrorResponse('Title cannot be empty'));
     }
 
     if (importance && !['low', 'medium', 'high'].includes(importance)) {
       console.error(`[PUT /api/tasks/${id}] 잘못된 중요도 값: ${importance}`);
-      return createErrorResponse('Importance must be low, medium, or high');
+      return setCorsHeaders(createErrorResponse('Importance must be low, medium, or high'));
     }
 
     if (priority && !['low', 'medium', 'high'].includes(priority)) {
       console.error(`[PUT /api/tasks/${id}] 잘못된 우선순위 값: ${priority}`);
-      return createErrorResponse('Priority must be low, medium, or high');
+      return setCorsHeaders(createErrorResponse('Priority must be low, medium, or high'));
     }
 
     // Update task
@@ -163,12 +180,12 @@ export async function PUT(
 
       if (updateError) {
         console.error(`[PUT /api/tasks/${id}] 태스크 업데이트 실패:`, updateError);
-        return createErrorResponse('Failed to update task', 500);
+        return setCorsHeaders(createErrorResponse('Failed to update task', 500));
       }
 
       if (!task) {
         console.error(`[PUT /api/tasks/${id}] 업데이트 후 태스크를 찾을 수 없음`);
-        return createErrorResponse('Task not found after update', 404);
+        return setCorsHeaders(createErrorResponse('Task not found after update', 404));
       }
     }
 
@@ -201,7 +218,7 @@ export async function PUT(
         for (const tagData of tagInserts) {
           try {
             const { error: singleTagError } = await supabase
-              .from('task_tags')
+          .from('task_tags')
               .insert(tagData);
 
             if (singleTagError) {
@@ -229,7 +246,7 @@ export async function PUT(
 
     if (fetchError) {
       console.error(`[PUT /api/tasks/${id}] 업데이트된 태스크 조회 실패:`, fetchError);
-      return createErrorResponse('Failed to fetch updated task', 500);
+      return setCorsHeaders(createErrorResponse('Failed to fetch updated task', 500));
     }
 
     const transformedTask = {
@@ -252,17 +269,17 @@ export async function PUT(
     };
 
     console.log(`[PUT /api/tasks/${id}] 성공적으로 완료`);
-    return Response.json({
+    return setCorsHeaders(Response.json({
       success: true,
       task: transformedTask,
-    });
+    }));
   } catch (error) {
     console.error(`[PUT /api/tasks/[id]] 예상치 못한 오류:`, error);
     if (error instanceof Error) {
       console.error('Error message:', error.message);
       console.error('Error stack:', error.stack);
     }
-    return createErrorResponse('Internal server error', 500);
+    return setCorsHeaders(createErrorResponse('Internal server error', 500));
   }
 }
 
@@ -286,18 +303,18 @@ export async function DELETE(
 
     if (checkError) {
       console.error(`[DELETE /api/tasks/${id}] 태스크 존재 확인 실패:`, checkError);
-      return createErrorResponse('Task not found', 404);
+      return setCorsHeaders(createErrorResponse('Task not found', 404));
     }
 
     if (!existingTask) {
       console.error(`[DELETE /api/tasks/${id}] 태스크를 찾을 수 없음`);
-      return createErrorResponse('Task not found', 404);
+      return setCorsHeaders(createErrorResponse('Task not found', 404));
     }
 
     // Check if user owns the task
     if (existingTask.user_id !== user.userId) {
       console.error(`[DELETE /api/tasks/${id}] 권한 없음 - 태스크 소유자: ${existingTask.user_id}, 요청자: ${user.userId}`);
-      return createErrorResponse('Permission denied', 403);
+      return setCorsHeaders(createErrorResponse('Permission denied', 403));
     }
 
     // Delete task tags first (due to foreign key constraint)
@@ -328,20 +345,20 @@ export async function DELETE(
 
     if (deleteError) {
       console.error(`[DELETE /api/tasks/${id}] 태스크 삭제 실패:`, deleteError);
-      return createErrorResponse('Failed to delete task', 500);
+      return setCorsHeaders(createErrorResponse('Failed to delete task', 500));
     }
 
     console.log(`[DELETE /api/tasks/${id}] 성공적으로 완료`);
-    return Response.json({
+    return setCorsHeaders(Response.json({
       success: true,
       message: 'Task deleted successfully',
-    });
+    }));
   } catch (error) {
     console.error(`[DELETE /api/tasks/[id]] 예상치 못한 오류:`, error);
     if (error instanceof Error) {
       console.error('Error message:', error.message);
       console.error('Error stack:', error.stack);
     }
-    return createErrorResponse('Internal server error', 500);
+    return setCorsHeaders(createErrorResponse('Internal server error', 500));
   }
 } 

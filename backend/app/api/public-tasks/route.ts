@@ -1,6 +1,23 @@
 import { NextRequest } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
+// CORS 헤더 설정 함수
+function setCorsHeaders(response: Response): Response {
+  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
+  const origin = allowedOrigins[0] || 'https://taeshigee-production.up.railway.app';
+  response.headers.set('Access-Control-Allow-Origin', origin);
+  response.headers.set('Access-Control-Allow-Credentials', 'true');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  response.headers.set('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
+  return response;
+}
+
+// OPTIONS 요청 처리 (프리플라이트)
+export async function OPTIONS() {
+  const response = new Response(null, { status: 204 });
+  return setCorsHeaders(response);
+}
+
 // GET /api/public-tasks - Get public tasks from all users
 export async function GET(request: NextRequest) {
   console.error('public-tasks API 진입: ', new Date().toISOString());
@@ -35,10 +52,10 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Supabase public-tasks 쿼리 에러:', error);
-      return Response.json(
+      return setCorsHeaders(Response.json(
         { success: false, error: 'Failed to fetch public tasks', detail: error.message || String(error) },
         { status: 500 }
-      );
+      ));
     }
 
     // Transform data to match frontend expectations
@@ -61,10 +78,10 @@ export async function GET(request: NextRequest) {
       updatedAt: task.updated_at,
     }));
 
-    return Response.json({
+    return setCorsHeaders(Response.json({
       success: true,
       tasks: transformedTasks,
-    });
+    }));
   } catch (error) {
     // 상세 에러 로그 출력
     console.error('GET /api/public-tasks error:', error);
@@ -72,13 +89,13 @@ export async function GET(request: NextRequest) {
       console.error('Error message:', error.message);
       console.error('Error stack:', error.stack);
     }
-    return Response.json(
+    return setCorsHeaders(Response.json(
       { 
         success: false, 
         error: 'Internal server error', 
         detail: error instanceof Error ? error.message : String(error) 
       },
       { status: 500 }
-    );
+    ));
   }
 } 

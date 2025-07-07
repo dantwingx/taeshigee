@@ -2,6 +2,23 @@ import { NextRequest } from 'next/server';
 import { authenticateRequest, createErrorResponse } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 
+// CORS 헤더 설정 함수
+function setCorsHeaders(response: Response): Response {
+  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
+  const origin = allowedOrigins[0] || 'https://taeshigee-production.up.railway.app';
+  response.headers.set('Access-Control-Allow-Origin', origin);
+  response.headers.set('Access-Control-Allow-Credentials', 'true');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  response.headers.set('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
+  return response;
+}
+
+// OPTIONS 요청 처리 (프리플라이트)
+export async function OPTIONS() {
+  const response = new Response(null, { status: 204 });
+  return setCorsHeaders(response);
+}
+
 // GET /api/stats - Get user and system statistics
 export async function GET(request: NextRequest) {
   try {
@@ -14,7 +31,7 @@ export async function GET(request: NextRequest) {
       .eq('user_id', user.userId);
 
     if (userTasksError) {
-      return createErrorResponse('Failed to fetch user tasks', 500);
+      return setCorsHeaders(createErrorResponse('Failed to fetch user tasks', 500));
     }
 
     // Get user's liked tasks count
@@ -24,7 +41,7 @@ export async function GET(request: NextRequest) {
       .eq('user_id', user.userId);
 
     if (userLikesError) {
-      return createErrorResponse('Failed to fetch user likes', 500);
+      return setCorsHeaders(createErrorResponse('Failed to fetch user likes', 500));
     }
 
     // Get system-wide statistics
@@ -33,7 +50,7 @@ export async function GET(request: NextRequest) {
       .select('id', { count: 'exact' });
 
     if (totalTasksError) {
-      return createErrorResponse('Failed to fetch total tasks', 500);
+      return setCorsHeaders(createErrorResponse('Failed to fetch total tasks', 500));
     }
 
     const { data: publicTasks, error: publicTasksError } = await supabase
@@ -42,7 +59,7 @@ export async function GET(request: NextRequest) {
       .eq('is_public', true);
 
     if (publicTasksError) {
-      return createErrorResponse('Failed to fetch public tasks', 500);
+      return setCorsHeaders(createErrorResponse('Failed to fetch public tasks', 500));
     }
 
     const { data: totalLikes, error: totalLikesError } = await supabase
@@ -50,7 +67,7 @@ export async function GET(request: NextRequest) {
       .select('id', { count: 'exact' });
 
     if (totalLikesError) {
-      return createErrorResponse('Failed to fetch total likes', 500);
+      return setCorsHeaders(createErrorResponse('Failed to fetch total likes', 500));
     }
 
     // Calculate user statistics
@@ -70,12 +87,12 @@ export async function GET(request: NextRequest) {
       totalLikes: totalLikes.length,
     };
 
-    return Response.json({
+    return setCorsHeaders(Response.json({
       success: true,
       userStats,
       systemStats,
-    });
+    }));
   } catch {
-    return createErrorResponse('Authentication failed', 401);
+    return setCorsHeaders(createErrorResponse('Authentication failed', 401));
   }
 } 

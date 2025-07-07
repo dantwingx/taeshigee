@@ -1,6 +1,24 @@
 import { NextRequest } from 'next/server';
 import { authenticateRequest, createErrorResponse } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
+import crypto from 'crypto';
+
+// CORS 헤더 설정 함수
+function setCorsHeaders(response: Response): Response {
+  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
+  const origin = allowedOrigins[0] || 'https://taeshigee-production.up.railway.app';
+  response.headers.set('Access-Control-Allow-Origin', origin);
+  response.headers.set('Access-Control-Allow-Credentials', 'true');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  response.headers.set('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
+  return response;
+}
+
+// OPTIONS 요청 처리 (프리플라이트)
+export async function OPTIONS() {
+  const response = new Response(null, { status: 204 });
+  return setCorsHeaders(response);
+}
 
 // Simple translation function for backend
 function getTranslation(language: string = 'ko') {
@@ -70,12 +88,12 @@ export async function POST(
 
     if (fetchError) {
       console.error(`[POST /api/tasks/${id}/duplicate] 원본 태스크 조회 실패:`, fetchError);
-      return createErrorResponse('Task not found', 404);
+      return setCorsHeaders(createErrorResponse('Task not found', 404));
     }
 
     if (!originalTask) {
       console.error(`[POST /api/tasks/${id}/duplicate] 원본 태스크를 찾을 수 없음`);
-      return createErrorResponse('Task not found', 404);
+      return setCorsHeaders(createErrorResponse('Task not found', 404));
     }
 
     // Create duplicated task
@@ -104,24 +122,37 @@ export async function POST(
 
     if (createError) {
       console.error(`[POST /api/tasks/${id}/duplicate] 태스크 복제 실패:`, createError);
-      return createErrorResponse('Failed to duplicate task', 500);
+      return setCorsHeaders(createErrorResponse('Failed to duplicate task', 500));
     }
 
     // Copy tags
     if (originalTask.task_tags && originalTask.task_tags.length > 0) {
       console.log(`[POST /api/tasks/${id}/duplicate] 태그 복제 시작:`, originalTask.task_tags);
       
+      // 태그 데이터 준비 - id 컬럼에 명시적으로 UUID 생성
       const tagInserts = originalTask.task_tags.map((tag: { tag_name: string }) => ({
+        id: crypto.randomUUID(), // 명시적으로 UUID 생성
         task_id: newTask.id,
         tag_name: tag.tag_name,
       }));
 
-      const { error: tagError } = await supabase
-        .from('task_tags')
-        .insert(tagInserts);
+      console.log(`[POST /api/tasks/${id}/duplicate] 삽입할 태그 데이터:`, tagInserts);
 
-      if (tagError) {
-        console.error(`[POST /api/tasks/${id}/duplicate] 태그 복제 실패:`, tagError);
+      // 각 태그를 개별적으로 삽입하여 오류 추적
+      for (const tagData of tagInserts) {
+        try {
+          const { error: singleTagError } = await supabase
+            .from('task_tags')
+            .insert(tagData);
+
+          if (singleTagError) {
+            console.error(`[POST /api/tasks/${id}/duplicate] 개별 태그 삽입 실패:`, tagData, singleTagError);
+          } else {
+            console.log(`[POST /api/tasks/${id}/duplicate] 개별 태그 삽입 성공:`, tagData);
+          }
+        } catch (error) {
+          console.error(`[POST /api/tasks/${id}/duplicate] 개별 태그 삽입 중 예외 발생:`, tagData, error);
+        }
       }
     }
 
@@ -138,7 +169,7 @@ export async function POST(
 
     if (fetchCompleteError) {
       console.error(`[POST /api/tasks/${id}/duplicate] 복제된 태스크 조회 실패:`, fetchCompleteError);
-      return createErrorResponse('Failed to fetch duplicated task', 500);
+      return setCorsHeaders(createErrorResponse('Failed to fetch duplicated task', 500));
     }
 
     const transformedTask = {
@@ -161,16 +192,16 @@ export async function POST(
     };
 
     console.log(`[POST /api/tasks/${id}/duplicate] 성공적으로 완료 - 새 태스크 ID: ${newTask.id}`);
-    return Response.json({
+    return setCorsHeaders(Response.json({
       success: true,
       task: transformedTask,
-    });
+    }));
   } catch (error) {
     console.error(`[POST /api/tasks/[id]/duplicate] 예상치 못한 오류:`, error);
     if (error instanceof Error) {
       console.error('Error message:', error.message);
       console.error('Error stack:', error.stack);
     }
-    return createErrorResponse('Internal server error', 500);
+    return setCorsHeaders(createErrorResponse('Internal server error', 500));
   }
 } 

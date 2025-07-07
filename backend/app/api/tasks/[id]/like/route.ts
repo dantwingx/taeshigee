@@ -3,6 +3,23 @@ import { authenticateRequest, createErrorResponse } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 import crypto from 'crypto'
 
+// CORS 헤더 설정 함수
+function setCorsHeaders(response: Response): Response {
+  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
+  const origin = allowedOrigins[0] || 'https://taeshigee-production.up.railway.app';
+  response.headers.set('Access-Control-Allow-Origin', origin);
+  response.headers.set('Access-Control-Allow-Credentials', 'true');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  response.headers.set('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
+  return response;
+}
+
+// OPTIONS 요청 처리 (프리플라이트)
+export async function OPTIONS() {
+  const response = new Response(null, { status: 204 });
+  return setCorsHeaders(response);
+}
+
 // POST /api/tasks/[id]/like - Toggle task like
 export async function POST(
   request: NextRequest,
@@ -23,12 +40,12 @@ export async function POST(
 
     if (taskError) {
       console.error(`[POST /api/tasks/${id}/like] 태스크 조회 실패:`, taskError);
-      return createErrorResponse('Task not found', 404);
+      return setCorsHeaders(createErrorResponse('Task not found', 404));
     }
 
     if (!task) {
       console.error(`[POST /api/tasks/${id}/like] 태스크를 찾을 수 없음`);
-      return createErrorResponse('Task not found', 404);
+      return setCorsHeaders(createErrorResponse('Task not found', 404));
     }
 
     // Check if user already liked the task
@@ -39,7 +56,7 @@ export async function POST(
       .eq('user_id', user.userId)
       .single();
 
-    if (likeError && likeError.code !== 'PGRST116') { // PGRST116는 "no rows returned" 에러
+    if (likeError && likeError.code !== 'PGRST116') { // PGRST116은 "no rows returned" 에러
       console.error(`[POST /api/tasks/${id}/like] 기존 좋아요 확인 실패:`, likeError);
     }
 
@@ -68,11 +85,11 @@ export async function POST(
 
       const newLikesCount = Math.max(0, task.likes_count - 1)
       console.log(`[POST /api/tasks/${id}/like] 좋아요 취소 완료 - 새로운 카운트: ${newLikesCount}`);
-      return Response.json({
+      return setCorsHeaders(Response.json({
         success: true,
         liked: false,
         likesCount: newLikesCount,
-      });
+      }));
     } else {
       console.log(`[POST /api/tasks/${id}/like] 좋아요 추가 - 현재 카운트: ${task.likes_count}`);
       
@@ -100,11 +117,11 @@ export async function POST(
       }
 
       console.log(`[POST /api/tasks/${id}/like] 좋아요 추가 완료`);
-      return Response.json({
+      return setCorsHeaders(Response.json({
         success: true,
         liked: true,
         likesCount: task.likes_count + 1,
-      });
+      }));
     }
   } catch (error) {
     console.error(`[POST /api/tasks/[id]/like] 예상치 못한 오류:`, error);
@@ -112,6 +129,6 @@ export async function POST(
       console.error('Error message:', error.message);
       console.error('Error stack:', error.stack);
     }
-    return createErrorResponse('Internal server error', 500);
+    return setCorsHeaders(createErrorResponse('Internal server error', 500));
   }
 } 

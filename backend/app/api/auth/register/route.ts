@@ -4,6 +4,26 @@ import { supabase } from '@/lib/supabase';
 import { signToken } from '@/lib/jwt';
 import { createErrorResponse } from '@/lib/auth';
 
+// CORS 헤더 설정 함수
+function setCorsHeaders(response: Response): Response {
+  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
+  const origin = allowedOrigins[0] || 'https://taeshigee-production.up.railway.app';
+  
+  response.headers.set('Access-Control-Allow-Origin', origin);
+  response.headers.set('Access-Control-Allow-Credentials', 'true');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  response.headers.set('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
+  
+  return response;
+}
+
+// OPTIONS 요청 처리 (프리플라이트)
+export async function OPTIONS() {
+  console.log('ALLOWED_ORIGINS (OPTIONS):', process.env.ALLOWED_ORIGINS);
+  const response = new Response(null, { status: 204 });
+  return setCorsHeaders(response);
+}
+
 // 이메일에서 기본 ID 생성 함수
 function generateUserIdFromEmail(email: string): string {
   const atIndex = email.indexOf('@');
@@ -45,15 +65,18 @@ async function generateUniqueUserId(baseUserId: string): Promise<string> {
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('ALLOWED_ORIGINS (POST):', process.env.ALLOWED_ORIGINS);
     const { email, password } = await request.json();
 
     // Validate input
     if (!email || !password) {
-      return createErrorResponse('Email and password are required');
+      const errorResponse = createErrorResponse('Email and password are required');
+      return setCorsHeaders(errorResponse);
     }
 
     if (password.length < 6) {
-      return createErrorResponse('Password must be at least 6 characters long');
+      const errorResponse = createErrorResponse('Password must be at least 6 characters long');
+      return setCorsHeaders(errorResponse);
     }
 
     // Check if user already exists
@@ -64,7 +87,8 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (existingUser) {
-      return createErrorResponse('User with this email already exists');
+      const errorResponse = createErrorResponse('User with this email already exists');
+      return setCorsHeaders(errorResponse);
     }
 
     // Hash password
@@ -95,7 +119,8 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Database error:', error);
-      return createErrorResponse('Failed to create user', 500);
+      const errorResponse = createErrorResponse('Failed to create user', 500);
+      return setCorsHeaders(errorResponse);
     }
 
     // Generate JWT token
@@ -106,7 +131,7 @@ export async function POST(request: NextRequest) {
       name: user.name,
     });
 
-    return NextResponse.json({
+    const successResponse = NextResponse.json({
       success: true,
       token,
       user: {
@@ -120,8 +145,11 @@ export async function POST(request: NextRequest) {
         lastUpdated: user.updated_at,
       },
     });
+    
+    return setCorsHeaders(successResponse);
   } catch (error) {
     console.error('Registration error:', error);
-    return createErrorResponse('Internal server error', 500);
+    const errorResponse = createErrorResponse('Internal server error', 500);
+    return setCorsHeaders(errorResponse);
   }
 } 

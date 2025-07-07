@@ -240,6 +240,20 @@ export const useTaskStore = create<TaskStore>()(
             throw new Error('Failed to update task')
           }
         } catch (error) {
+          // 404 에러 (태스크가 존재하지 않는 경우)는 로컬에서도 제거
+          if (error instanceof Error && error.message.includes('Task not found')) {
+            console.log(`[TaskStore] 태스크 ${id}가 서버에 존재하지 않음 - 로컬에서도 제거`)
+            set((state) => ({
+              userTasks: {
+                ...state.userTasks,
+                [currentUserNumber]: (state.userTasks[currentUserNumber] || []).filter((task) => task.id !== id),
+              },
+              isLoading: false,
+              error: null
+            }))
+            return // 에러를 던지지 않고 조용히 처리
+          }
+          
           const errorMessage = error instanceof Error ? error.message : '태스크 수정에 실패했습니다.'
           set({
             error: errorMessage,
@@ -272,6 +286,20 @@ export const useTaskStore = create<TaskStore>()(
             throw new Error('Failed to delete task')
           }
         } catch (error) {
+          // 404 에러 (태스크가 존재하지 않는 경우)는 로컬에서도 제거
+          if (error instanceof Error && error.message.includes('Task not found')) {
+            console.log(`[TaskStore] 태스크 ${id}가 서버에 존재하지 않음 - 로컬에서도 제거`)
+            set((state) => ({
+              userTasks: {
+                ...state.userTasks,
+                [currentUserNumber]: (state.userTasks[currentUserNumber] || []).filter((task) => task.id !== id),
+              },
+              isLoading: false,
+              error: null
+            }))
+            return // 에러를 던지지 않고 조용히 처리
+          }
+          
           const errorMessage = error instanceof Error ? error.message : '태스크 삭제에 실패했습니다.'
           set({
             error: errorMessage,
@@ -353,6 +381,19 @@ export const useTaskStore = create<TaskStore>()(
           // API 호출
           await taskService.updateTask(id, { isCompleted: optimisticUpdate })
         } catch (error) {
+          // 404 에러 (태스크가 존재하지 않는 경우)는 로컬에서도 제거
+          if (error instanceof Error && error.message.includes('Task not found')) {
+            console.log(`[TaskStore] 태스크 ${id}가 서버에 존재하지 않음 - 로컬에서도 제거`)
+            set((state) => ({
+              userTasks: {
+                ...state.userTasks,
+                [currentUserNumber]: (state.userTasks[currentUserNumber] || []).filter((task) => task.id !== id),
+              },
+              error: null
+            }))
+            return // 에러를 던지지 않고 조용히 처리
+          }
+          
           // 실패 시 원래 상태로 되돌리기
           set((state) => ({
             userTasks: {
