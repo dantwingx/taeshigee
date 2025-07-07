@@ -16,7 +16,7 @@ export async function GET(
       .select(`
         *,
         task_tags(tag_name),
-        users!tasks_user_id_fkey(name)
+        users!tasks_user_id_fkey(name, user_number)
       `)
       .eq('id', id)
       .eq('user_id', user.userId)
@@ -30,12 +30,17 @@ export async function GET(
       id: task.id,
       title: task.title,
       description: task.description,
+      dueDate: task.due_date,
+      dueTime: task.due_time,
       importance: task.importance,
       priority: task.priority,
+      category: task.category,
+      isCompleted: task.is_completed,
       isPublic: task.is_public,
       likesCount: task.likes_count,
       tags: task.task_tags.map((tag: any) => tag.tag_name),
       author: task.users.name,
+      userNumber: task.users.user_number,
       createdAt: task.created_at,
       updatedAt: task.updated_at,
     };
@@ -57,7 +62,7 @@ export async function PUT(
   try {
     const { id } = await context.params;
     const user = await authenticateRequest(request);
-    const { title, description, importance, priority, isPublic, tags } = await request.json();
+    const { title, description, dueDate, dueTime, importance, priority, category, isPublic, tags } = await request.json();
 
     // Check if task exists and belongs to user
     const { data: existingTask, error: checkError } = await supabase
@@ -88,8 +93,11 @@ export async function PUT(
     const updateData: any = {};
     if (title !== undefined) updateData.title = title.trim();
     if (description !== undefined) updateData.description = description?.trim() || null;
+    if (dueDate !== undefined) updateData.due_date = dueDate || null;
+    if (dueTime !== undefined) updateData.due_time = dueTime || null;
     if (importance !== undefined) updateData.importance = importance;
     if (priority !== undefined) updateData.priority = priority;
+    if (category !== undefined) updateData.category = category || null;
     if (isPublic !== undefined) updateData.is_public = isPublic;
 
     const { data: task, error: updateError } = await supabase
@@ -130,7 +138,7 @@ export async function PUT(
       .select(`
         *,
         task_tags(tag_name),
-        users!tasks_user_id_fkey(name)
+        users!tasks_user_id_fkey(name, user_number)
       `)
       .eq('id', id)
       .single();
@@ -143,12 +151,17 @@ export async function PUT(
       id: completeTask.id,
       title: completeTask.title,
       description: completeTask.description,
+      dueDate: completeTask.due_date,
+      dueTime: completeTask.due_time,
       importance: completeTask.importance,
       priority: completeTask.priority,
+      category: completeTask.category,
+      isCompleted: completeTask.is_completed,
       isPublic: completeTask.is_public,
       likesCount: completeTask.likes_count,
       tags: completeTask.task_tags.map((tag: any) => tag.tag_name),
       author: completeTask.users.name,
+      userNumber: completeTask.users.user_number,
       createdAt: completeTask.created_at,
       updatedAt: completeTask.updated_at,
     };

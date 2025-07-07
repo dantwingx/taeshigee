@@ -136,7 +136,8 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
     try {
       const formData = {
         ...data,
-        dueDate: data.dueDate ? new Date(data.dueDate).toISOString() : undefined,
+        dueDate: data.dueDate ? new Date(data.dueDate).toISOString().split('T')[0] : undefined,
+        dueTime: data.dueTime || undefined,
       }
       
       await onSubmit(formData)
