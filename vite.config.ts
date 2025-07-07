@@ -17,6 +17,7 @@ export default defineConfig({
   preview: {
     port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
     host: '0.0.0.0',
+    open: false, // 브라우저 자동 열기 비활성화
     allowedHosts: ['healthcheck.railway.app', 'localhost', '.railway.app'],
   },
   build: {
