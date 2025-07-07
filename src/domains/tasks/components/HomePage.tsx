@@ -259,7 +259,7 @@ export function HomePage() {
               : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'
           }`}
         >
-          {t('home.todayUser')} ({todayUserTasks.length})
+          {t('home.todayUserTasks')} ({todayUserTasks.length})
         </button>
         <button
           onClick={() => setActiveTab('todayPublic')}
@@ -269,7 +269,7 @@ export function HomePage() {
               : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'
           }`}
         >
-          {t('home.todayPublic')} ({todayPublicTasks.length})
+          {t('home.todayPublicTasks')} ({todayPublicTasks.length})
         </button>
         <button
           onClick={() => setActiveTab('recent')}
@@ -279,7 +279,7 @@ export function HomePage() {
               : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'
           }`}
         >
-          {t('home.recent')} ({recentTasks.length})
+          {t('home.recentTasks')} ({recentTasks.length})
         </button>
       </div>
 

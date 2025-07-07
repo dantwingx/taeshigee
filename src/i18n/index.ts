@@ -76,7 +76,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'ko',
-    debug: true, // 개발 시에만 true로 설정
+    debug: false, // 개발 시에만 true로 설정
     interpolation: {
       escapeValue: false, // React에서는 이미 XSS 방지가 되어있음
     },

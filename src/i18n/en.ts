@@ -237,7 +237,6 @@ export default {
     lastUpdated: 'Last Updated',
     language: 'Language',
     nameChanged: 'Name changed successfully',
-    userIdChanged: 'User ID changed successfully',
     loggedOut: 'Logged out successfully',
     allDataCleared: 'All data cleared successfully',
     testAccountCreated: 'Test account created successfully',

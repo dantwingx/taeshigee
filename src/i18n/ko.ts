@@ -236,7 +236,6 @@ export default {
     lastUpdated: '마지막 업데이트',
     language: '언어',
     nameChanged: '이름이 변경되었습니다',
-    userIdChanged: '사용자 ID가 변경되었습니다',
     loggedOut: '로그아웃되었습니다',
     allDataCleared: '모든 데이터가 삭제되었습니다',
     testAccountCreated: '테스트 계정이 생성되었습니다',

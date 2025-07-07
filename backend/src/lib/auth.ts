@@ -31,13 +31,16 @@ export async function authenticateRequest(request: NextRequest): Promise<JWTPayl
 /**
  * Create authenticated response with user data
  */
-export function createAuthResponse(user: JWTPayload, data?: any) {
+export function createAuthResponse(user: JWTPayload & { created_at?: string, updated_at?: string }, data?: any) {
   return NextResponse.json({
     success: true,
     user: {
       id: user.userId,
+      userNumber: user.userNumber, // 추가
       email: user.email,
       name: user.name,
+      createdAt: user.created_at,
+      lastUpdated: user.updated_at,
     },
     ...data,
   });

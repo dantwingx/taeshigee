@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
         language: 'en',
         dark_mode: false,
       })
-      .select('id, user_number, email, name, language, dark_mode')
+      .select('id, user_number, email, name, language, dark_mode, created_at, updated_at')
       .single();
 
     if (error) {
@@ -70,6 +70,8 @@ export async function POST(request: NextRequest) {
         name: user.name,
         language: user.language,
         darkMode: user.dark_mode,
+        createdAt: user.created_at,
+        lastUpdated: user.updated_at,
       },
     });
   } catch (error) {
