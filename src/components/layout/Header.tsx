@@ -1,16 +1,14 @@
 import { useAuthStore } from '@/stores/authStore'
-import { useTaskStore } from '@/stores/taskStore'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { Moon, Sun, Globe, LogOut, ChevronDown } from 'lucide-react'
-import { languages, getLanguageByCode } from '@/i18n/languages'
+import { Moon, Sun, Globe } from 'lucide-react'
+import { languages } from '@/i18n/languages'
 import { useToastStore } from '@/stores'
 import { applyDarkMode, syncDarkModeWithUserSettings } from '@/utils/darkMode'
 
 export function Header() {
   const { currentUser, logout, updateUserSettings, getUserSettings } = useAuthStore()
-  const { currentUserId, getTaskStats } = useTaskStore()
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const { showToast } = useToastStore()
@@ -19,15 +17,6 @@ export function Header() {
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [selectedLanguage, setSelectedLanguage] = useState('ko')
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false)
-
-  // 사용자별 통계 계산 - 현재 사용자의 태스크만 계산
-  const stats = currentUser ? getTaskStats(currentUser.userNumber) : {
-    total: 0,
-    completed: 0,
-    pending: 0,
-    overdue: 0,
-    completionRate: 0,
-  }
 
   // 컴포넌트 마운트 시 사용자 설정 로드
   useEffect(() => {

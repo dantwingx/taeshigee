@@ -171,7 +171,10 @@ export default {
     titleMaxLength: 'Title must be 100 characters or less',
     descriptionMaxLength: 'Description must be 500 characters or less',
     templateButton: 'Template',
-    emojiButton: 'Emoji'
+    emojiButton: 'Emoji',
+    completed: 'Completed',
+    incomplete: 'Incomplete',
+    toggleComplete: 'Toggle Complete',
   },
 
   // 홈

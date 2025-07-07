@@ -53,7 +53,12 @@ export async function PUT(request: NextRequest) {
     const { language, darkMode, name } = body;
 
     // Validate input
-    const updateData: any = {};
+    const updateData: {
+      language?: string;
+      dark_mode?: boolean;
+      name?: string;
+      updated_at?: string;
+    } = {};
     
     if (language !== undefined) {
       if (typeof language !== 'string' || !['ko', 'en', 'ja', 'zh', 'es', 'fr', 'de', 'it', 'pt', 'ru', 'ar', 'hi', 'th', 'vi', 'id', 'ms', 'tr', 'pl', 'nl', 'sv'].includes(language)) {

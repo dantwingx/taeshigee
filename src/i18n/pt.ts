@@ -43,6 +43,7 @@ export default {
     sortDesc: 'Decrescente',
     addEmoji: 'Adicionar emoji',
     selectEmoji: 'Selecionar emoji',
+    visibility: 'Visibilidade',
     emojiCategory: {
       faces: 'Rostos',
       animals: 'Animais',

@@ -24,6 +24,8 @@ export default {
     nextWeek: "الأسبوع القادم",
     overdue: "متأخر",
     completed: "مكتمل",
+    incomplete: "غير مكتمل",
+    toggleComplete: "تبديل مكتمل/غير مكتمل",
     pending: "في الانتظار",
     inProgress: "قيد التنفيذ",
     reset: "إعادة تعيين",

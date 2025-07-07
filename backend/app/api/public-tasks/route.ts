@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
       isCompleted: task.is_completed,
       isPublic: task.is_public,
       likesCount: task.likes_count,
-      tags: (task.task_tags ?? []).map((tag: any) => tag.tag_name),
+      tags: (task.task_tags ?? []).map((tag: { tag_name: string }) => tag.tag_name),
       author: task.users?.name ?? '',
       userNumber: task.users?.user_number ?? null,
       createdAt: task.created_at,

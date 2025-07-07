@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { X, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useTagStore } from '@/stores/tagStore'
@@ -15,7 +15,6 @@ export function TagInput({ value, onChange, placeholder, disabled, className }: 
   const { t } = useTranslation();
   const [inputValue, setInputValue] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [showCreateOption, setShowCreateOption] = useState(false);
   const [isComposing, setIsComposing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -56,7 +55,7 @@ export function TagInput({ value, onChange, placeholder, disabled, className }: 
     if (trimmedTag && !value.includes(trimmedTag)) {
       const newTags = [...value, trimmedTag]
       onChange(newTags)
-      addTag(trimmedTag, 'current-user') // 실제로는 현재 사용자 ID 전달
+      addTag(trimmedTag)
       setInputValue('')
       setShowSuggestions(false)
     }
@@ -71,7 +70,7 @@ export function TagInput({ value, onChange, placeholder, disabled, className }: 
     if (!value.includes(suggestedTag)) {
       const newTags = [...value, suggestedTag]
       onChange(newTags)
-      addTag(suggestedTag, 'current-user')
+      addTag(suggestedTag)
     }
     setInputValue('')
     setShowSuggestions(false)

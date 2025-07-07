@@ -82,5 +82,46 @@ ALTER TABLE task_likes DROP CONSTRAINT IF EXISTS task_likes_user_id_fkey;
 ALTER TABLE task_likes ADD CONSTRAINT task_likes_user_id_fkey 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
+-- 13. task_tags 테이블 수정 - id 컬럼을 UUID로 변경
+-- 기존 task_tags 테이블이 있다면 삭제하고 재생성
+DROP TABLE IF EXISTS task_tags CASCADE;
+
+CREATE TABLE task_tags (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    task_id UUID NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+    tag_name VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    UNIQUE(task_id, tag_name) -- 같은 태스크에 같은 태그 중복 방지
+);
+
+-- task_tags 인덱스 재생성
+CREATE INDEX idx_task_tags_task_id ON task_tags(task_id);
+CREATE INDEX idx_task_tags_tag_name ON task_tags(tag_name);
+
+-- task_tags RLS 활성화
+ALTER TABLE task_tags ENABLE ROW LEVEL SECURITY;
+
+-- task_tags RLS 정책 재생성
+CREATE POLICY "Users can view task tags" ON task_tags
+    FOR SELECT USING (true);
+
+CREATE POLICY "Users can insert task tags" ON task_tags
+    FOR INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM tasks 
+            WHERE tasks.id = task_tags.task_id 
+            AND tasks.user_id::text = auth.uid()::text
+        )
+    );
+
+CREATE POLICY "Users can delete task tags" ON task_tags
+    FOR DELETE USING (
+        EXISTS (
+            SELECT 1 FROM tasks 
+            WHERE tasks.id = task_tags.task_id 
+            AND tasks.user_id::text = auth.uid()::text
+        )
+    );
+
 -- 마이그레이션 완료 확인
 SELECT 'Migration completed successfully' as status; 

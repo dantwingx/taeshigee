@@ -1,5 +1,6 @@
 import { apiService } from './api';
 import type { Task, CreateTaskData, UpdateTaskData } from '../types/task';
+import i18n from '../i18n';
 
 export interface TasksResponse {
   success: boolean;
@@ -60,7 +61,8 @@ class TaskService {
 
   // 태스크 복제
   async duplicateTask(id: string): Promise<TaskResponse> {
-    const response = await apiService.post<TaskResponse>(`/api/tasks/${id}/duplicate`);
+    const currentLanguage = i18n.language || 'ko';
+    const response = await apiService.post<TaskResponse>(`/api/tasks/${id}/duplicate?lang=${currentLanguage}`);
     return response as TaskResponse;
   }
 

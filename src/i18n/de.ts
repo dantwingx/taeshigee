@@ -41,6 +41,7 @@ export default {
     sortAsc: 'Aufsteigend',
     sortDesc: 'Absteigend',
     selectEmoji: 'Emoji auswählen',
+    visibility: 'Sichtbarkeit',
     emojiCategory: {
       faces: 'Gesichter',
       animals: 'Tiere',

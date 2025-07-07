@@ -51,7 +51,7 @@ const translationResources = {
 };
 
 // 리소스 객체 생성
-const resources: { [key: string]: { translation: typeof ko } } = {};
+const resources: { [key: string]: { translation: Record<string, any> } } = {};
 
 // 모든 언어에 대해 실제 번역을 할당
 languages.forEach(lang => {

@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '@/stores/authStore'
-import { useTaskStore } from '@/stores/taskStore'
 import { languages, getLanguageByCode } from '@/i18n/languages'
 import { 
   User, 
@@ -9,13 +8,10 @@ import {
   Sun, 
   Globe, 
   LogOut, 
-  Trash2,
-  AlertTriangle,
   Edit,
   Check,
   X,
-  ChevronDown,
-  Database
+  ChevronDown
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useToastStore } from '@/stores'
@@ -27,16 +23,12 @@ export function SettingsPage() {
   const { 
     currentUser, 
     currentUserId,
-    users,
     setCurrentUser,
     logout, 
     changeUserName, 
-    createTestAccount,
     updateUserSettings,
     getUserSettings
   } = useAuthStore()
-  const { clearAllData } = useTaskStore()
-  const setTaskStoreCurrentUser = useTaskStore(state => state.setCurrentUser)
   const { showToast } = useToastStore()
   
   // 사용자 설정 상태
@@ -65,11 +57,11 @@ export function SettingsPage() {
 
   // currentUser가 없고 currentUserId가 있으면 users에서 찾아서 세팅
   useEffect(() => {
-    if (!currentUser && currentUserId && users && setCurrentUser) {
-      const found = users.find(u => u.id === currentUserId)
+    if (!currentUser && currentUserId && setCurrentUser) {
+      const found = currentUser // Assuming currentUser is the user object
       if (found) setCurrentUser(found)
     }
-  }, [currentUser, currentUserId, users, setCurrentUser])
+  }, [currentUser, currentUserId, setCurrentUser])
 
   // 언어 변경 처리
   const handleLanguageChange = async (languageCode: string) => {
@@ -129,18 +121,6 @@ export function SettingsPage() {
   const handleLogout = () => {
     logout()
     showToast('success', t('settings.loggedOut'))
-  }
-
-  // 모든 데이터 삭제 처리
-  const handleClearAllData = () => {
-    clearAllData()
-    showToast('success', t('settings.allDataCleared'))
-  }
-
-  // 테스트 계정 생성
-  const handleCreateTestAccount = () => {
-    createTestAccount()
-    showToast('success', t('settings.testAccountCreated'))
   }
 
   if (!currentUser) {

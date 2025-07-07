@@ -1,8 +1,7 @@
-import { NextRequest } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
 // GET /api/tags - Get all unique tags with usage counts
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Get all unique tags with their usage counts
     const { data: tags, error } = await supabase
@@ -41,7 +40,7 @@ export async function GET(request: NextRequest) {
       success: true,
       tags: uniqueTags,
     });
-  } catch (error) {
+  } catch {
     return Response.json(
       { success: false, error: 'Internal server error' },
       { status: 500 }

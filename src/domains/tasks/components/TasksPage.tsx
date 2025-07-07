@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Plus, Search, Filter, SortAsc, SortDesc, AlertTriangle, Target, Eye, EyeOff, ChevronDown, ChevronUp, CheckCircle } from 'lucide-react'
+import { Plus, Search, Filter, SortAsc, SortDesc, ChevronDown, ChevronUp } from 'lucide-react'
 import { TaskForm } from './TaskForm'
 import { TaskCard } from './TaskCard'
 import { Select } from '@/components/ui/Select'
@@ -7,7 +7,6 @@ import { useTaskStore } from '@/stores/taskStore'
 import { useAuthStore } from '@/stores/authStore'
 import type { Task, CreateTaskData, UpdateTaskData } from '@/types/task'
 import { useTranslation } from 'react-i18next'
-import i18next from 'i18next'
 import { useToastStore } from '@/stores'
 
 type SortField = 'createdAt' | 'dueDate' | 'title' | 'importance' | 'priority'
@@ -70,15 +69,6 @@ export function TasksPage() {
     userTasksCount: userTasks.length,
     userTasks: userTasks.map(task => ({ id: task.id, title: task.title, userNumber: task.userNumber }))
   })
-
-  // 카테고리 옵션 생성
-  const categoryOptions = useMemo(() => {
-    const categories = Array.from(new Set(userTasks.map(task => task.category).filter(Boolean) as string[]))
-    return [
-      { value: '', label: t('task.filterByCategory') },
-      ...categories.map(category => ({ value: category, label: category }))
-    ]
-  }, [userTasks, t])
 
   // 필터링된 태스크
   const filteredTasks = useMemo(() => {

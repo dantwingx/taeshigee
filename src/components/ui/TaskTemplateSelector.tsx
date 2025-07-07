@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TaskTemplate } from '@/types/task'
 import { TASK_TEMPLATES } from '@/utils/constants'
@@ -55,11 +55,6 @@ export function TaskTemplateSelector({ onSelectTemplate, onClose }: TaskTemplate
     }
     setShowEmojiPicker(false)
     setEmojiTarget(null)
-  }
-
-  const handleEmojiButtonClick = (type: 'name' | 'description', templateId: string) => {
-    setEmojiTarget({ type, templateId })
-    setShowEmojiPicker(true)
   }
 
   function capitalizeFirst(str: string) {

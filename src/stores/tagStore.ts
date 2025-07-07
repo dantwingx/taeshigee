@@ -10,9 +10,9 @@ interface TagState {
 
 interface TagActions {
   // 태그 관리
-  addTag: (tagName: string, userId: string) => void
-  removeTag: (tagName: string, userId: string) => void
-  updateTagStats: (tasks: any[], userId: string) => void
+  addTag: (tagName: string) => void
+  removeTag: (tagName: string) => void
+  updateTagStats: (tasks: any[]) => void
   getTagColor: (tagName: string) => string
   
   // 상태 관리
@@ -42,7 +42,7 @@ export const useTagStore = create<TagStore>()(
       error: null,
 
       // Actions
-      addTag: (tagName: string, userId: string) => {
+      addTag: (tagName: string) => {
         const { tags } = get()
         const trimmedTagName = tagName.trim()
         
@@ -73,7 +73,7 @@ export const useTagStore = create<TagStore>()(
         }
       },
 
-      removeTag: (tagName: string, userId: string) => {
+      removeTag: (tagName: string) => {
         const { tags } = get()
         const existingTag = tags.find(tag => tag.name === tagName)
         
@@ -94,7 +94,7 @@ export const useTagStore = create<TagStore>()(
         }
       },
 
-      updateTagStats: (tasks: any[], userId: string) => {
+      updateTagStats: (tasks: any[]) => {
         // 모든 태그 수집
         const tagCounts: Record<string, number> = {}
         

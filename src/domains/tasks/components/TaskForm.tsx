@@ -13,11 +13,8 @@ import {
   Edit3, 
   Type, 
   FileText, 
-  AlertTriangle, 
   Target,
   Eye,
-  EyeOff,
-  CheckCircle,
   Lock
 } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'

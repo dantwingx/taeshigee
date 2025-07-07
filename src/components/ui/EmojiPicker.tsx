@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { EmojiCategory } from '@/types/task'
 import { EMOJI_CATEGORIES } from '@/utils/constants'
 
 interface EmojiPickerProps {

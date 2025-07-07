@@ -198,7 +198,7 @@ export function notifyError(error: AppError | Error | string, context?: string):
   }
 
   // 에러 로깅
-  if (error instanceof Error || error instanceof AppError) {
+  if (error instanceof Error || (error && typeof error === 'object' && 'code' in error)) {
     logError('error', message, error, { context })
   } else {
     logError('error', message, undefined, { context })

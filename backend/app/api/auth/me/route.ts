@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
       .eq('id', user.userId)
       .single();
     return createAuthResponse({ ...user, created_at: userData?.created_at, updated_at: userData?.updated_at });
-  } catch (error) {
+  } catch {
     return createErrorResponse('Authentication failed', 401);
   }
 } 

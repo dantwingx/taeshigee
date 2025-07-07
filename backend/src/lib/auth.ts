@@ -23,7 +23,7 @@ export async function authenticateRequest(request: NextRequest): Promise<JWTPayl
     }
     
     return payload;
-  } catch (error) {
+  } catch {
     throw new Error('Authentication failed');
   }
 }
@@ -31,7 +31,7 @@ export async function authenticateRequest(request: NextRequest): Promise<JWTPayl
 /**
  * Create authenticated response with user data
  */
-export function createAuthResponse(user: JWTPayload & { created_at?: string, updated_at?: string }, data?: any) {
+export function createAuthResponse<T = unknown>(user: JWTPayload & { created_at?: string, updated_at?: string }, data?: T) {
   return NextResponse.json({
     success: true,
     user: {

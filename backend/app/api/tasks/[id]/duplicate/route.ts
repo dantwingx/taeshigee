@@ -2,6 +2,34 @@ import { NextRequest } from 'next/server';
 import { authenticateRequest, createErrorResponse } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 
+// Simple translation function for backend
+function getTranslation(language: string = 'ko') {
+  const translations = {
+    ko: { copySuffix: '(복사본)' },
+    en: { copySuffix: '(Copy)' },
+    ja: { copySuffix: '(コピー)' },
+    zh: { copySuffix: '(副本)' },
+    fr: { copySuffix: '(copie)' },
+    es: { copySuffix: '(copia)' },
+    de: { copySuffix: '(Kopie)' },
+    it: { copySuffix: '(copia)' },
+    pt: { copySuffix: '(cópia)' },
+    ru: { copySuffix: '(копия)' },
+    ar: { copySuffix: '(نسخة)' },
+    hi: { copySuffix: '(प्रतिलिपि)' },
+    th: { copySuffix: '(สำเนา)' },
+    vi: { copySuffix: '(bản sao)' },
+    id: { copySuffix: '(salinan)' },
+    ms: { copySuffix: '(salinan)' },
+    tr: { copySuffix: '(kopya)' },
+    pl: { copySuffix: '(kopia)' },
+    nl: { copySuffix: '(kopie)' },
+    sv: { copySuffix: '(kopia)' },
+  };
+  
+  return translations[language as keyof typeof translations] || translations.ko;
+}
+
 // POST /api/tasks/[id]/duplicate - Duplicate task
 export async function POST(
   request: NextRequest,
@@ -11,7 +39,24 @@ export async function POST(
     const { id } = await context.params;
     const user = await authenticateRequest(request);
 
-    console.log(`[POST /api/tasks/${id}/duplicate] 시작 - 사용자: ${user.userId}`);
+    // Get language from request headers or query params
+    const acceptLanguage = request.headers.get('accept-language') || '';
+    const url = new URL(request.url);
+    const langParam = url.searchParams.get('lang');
+    
+    // Determine language (priority: query param > accept-language header > default)
+    let language = 'ko';
+    if (langParam) {
+      language = langParam;
+    } else if (acceptLanguage) {
+      // Extract primary language from accept-language header
+      const primaryLang = acceptLanguage.split(',')[0].split('-')[0];
+      language = primaryLang;
+    }
+
+    const t = getTranslation(language);
+
+    console.log(`[POST /api/tasks/${id}/duplicate] 시작 - 사용자: ${user.userId}, 언어: ${language}`);
 
     // Get original task
     const { data: originalTask, error: fetchError } = await supabase
@@ -37,7 +82,7 @@ export async function POST(
     const duplicatedTaskData = {
       user_id: user.userId,
       user_number: user.userNumber,
-      title: `${originalTask.title} (복사본)`,
+      title: `${originalTask.title} ${t.copySuffix}`,
       description: originalTask.description,
       due_date: originalTask.due_date,
       due_time: originalTask.due_time,
@@ -66,7 +111,7 @@ export async function POST(
     if (originalTask.task_tags && originalTask.task_tags.length > 0) {
       console.log(`[POST /api/tasks/${id}/duplicate] 태그 복제 시작:`, originalTask.task_tags);
       
-      const tagInserts = originalTask.task_tags.map((tag: any) => ({
+      const tagInserts = originalTask.task_tags.map((tag: { tag_name: string }) => ({
         task_id: newTask.id,
         tag_name: tag.tag_name,
       }));
@@ -108,7 +153,7 @@ export async function POST(
       isCompleted: completeTask.is_completed,
       isPublic: completeTask.is_public,
       likesCount: completeTask.likes_count,
-      tags: completeTask.task_tags.map((tag: any) => tag.tag_name),
+      tags: completeTask.task_tags.map((tag: { tag_name: string }) => tag.tag_name),
       author: completeTask.users.name,
       userNumber: completeTask.users.user_number,
       createdAt: completeTask.created_at,

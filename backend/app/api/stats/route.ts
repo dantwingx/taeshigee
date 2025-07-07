@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
       userStats,
       systemStats,
     });
-  } catch (error) {
+  } catch {
     return createErrorResponse('Authentication failed', 401);
   }
 } 

@@ -1,24 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FaUser } from 'react-icons/fa'
-import { Calendar, Tag, MoreVertical, Copy, Heart, Eye, Clock, Search, AlertTriangle, Target, Plus, ChevronDown, ChevronUp, CheckCircle, Filter, SortAsc, SortDesc, User } from 'lucide-react'
+import { Calendar, Copy, Heart, Eye, Clock, Search, AlertTriangle, Target, ChevronDown, ChevronUp, Filter, SortAsc, SortDesc, User } from 'lucide-react'
 import { useTaskStore } from '@/stores/taskStore'
-import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores'
-import { Modal } from '@/components/ui/Modal'
 import { Select } from '@/components/ui/Select'
 import { formatDueDateTime, formatLocalDate, formatLocalDateTime, formatRelativeTime } from '@/utils/dateUtils'
 import i18next from 'i18next'
 import { Task } from '@/types/task'
 import { useTagStore } from '@/stores'
 
-interface PublicTask extends Task {
-  authorName: string
-  authorId: string
-}
-
 export function SharedPage() {
-  const { getAllPublicTasks, fetchPublicTasks, duplicateTask, toggleTaskLike, isTaskLikedByUser, getTaskLikeCount, currentUserId, currentUserNumber } = useTaskStore()
+  const { getAllPublicTasks, fetchPublicTasks, duplicateTask, toggleTaskLike, isTaskLikedByUser, getTaskLikeCount, currentUserNumber } = useTaskStore()
   const { showToast } = useToastStore()
   const { t } = useTranslation()
   const [searchTerm, setSearchTerm] = useState('')

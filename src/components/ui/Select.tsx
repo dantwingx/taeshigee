@@ -9,7 +9,7 @@ interface SelectProps {
   className?: string
 }
 
-export function Select({ value, onChange, options, placeholder, disabled, className }: SelectProps) {
+export function Select({ value, onChange, options, disabled, className }: SelectProps) {
   return (
     <div className={`flex flex-row gap-1 flex-wrap ${className}`}>
       {options.map((option) => (

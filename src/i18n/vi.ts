@@ -25,6 +25,8 @@ export default {
     nextWeek: 'Tuần tới',
     overdue: 'Quá hạn',
     completed: 'Hoàn thành',
+    incomplete: 'Chưa hoàn thành',
+    toggleComplete: 'Chuyển đổi hoàn thành',
     pending: 'Đang chờ',
     inProgress: 'Đang thực hiện',
     reset: 'Đặt lại',
@@ -161,7 +163,10 @@ export default {
     titleMaxLength: 'Tiêu đề phải có tối đa 100 ký tự',
     descriptionMaxLength: 'Mô tả phải có tối đa 500 ký tự',
     templateButton: 'Mẫu',
-    emojiButton: 'Biểu tượng cảm xúc'
+    emojiButton: 'Biểu tượng cảm xúc',
+    completed: 'Hoàn thành',
+    incomplete: 'Chưa hoàn thành',
+    toggleComplete: 'Chuyển đổi hoàn thành'
   },
 
   // Trang chủ

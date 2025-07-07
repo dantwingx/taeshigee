@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { 
   Calendar, 
   Clock, 
-  Tag, 
   MoreVertical, 
   Edit, 
   Trash2, 
@@ -11,15 +10,13 @@ import {
   CheckCircle,
   Circle,
   Heart,
-  MessageCircle,
   Eye,
-  EyeOff,
   AlertTriangle,
   Target,
   User
 } from 'lucide-react'
 import { Task } from '@/types/task'
-import { useToastStore, useTagStore, useAuthStore, useTaskStore } from '@/stores'
+import { useToastStore, useTagStore, useTaskStore } from '@/stores'
 import { formatRelativeTime, formatDueDateTime, formatLocalDate, formatLocalDateTime } from '@/utils/dateUtils'
 import { sanitizeText } from '@/utils/security'
 import i18next from 'i18next'

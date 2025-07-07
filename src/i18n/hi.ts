@@ -151,7 +151,10 @@ export default {
     titleMaxLength: 'शीर्षक 100 अक्षरों से कम होना चाहिए',
     descriptionMaxLength: 'विवरण 500 अक्षरों से कम होना चाहिए',
     templateButton: 'टेम्पलेट',
-    emojiButton: 'इमोजी'
+    emojiButton: 'इमोजी',
+    completed: 'पूर्ण',
+    incomplete: 'अपूर्ण',
+    toggleComplete: 'पूर्ण/अपूर्ण टॉगल करें'
   },
 
   home: {

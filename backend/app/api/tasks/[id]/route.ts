@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { authenticateRequest, createErrorResponse } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
+import { randomUUID } from 'crypto';
 
 // GET /api/tasks/[id] - Get specific task
 export async function GET(
@@ -51,7 +52,7 @@ export async function GET(
       isCompleted: task.is_completed,
       isPublic: task.is_public,
       likesCount: task.likes_count,
-      tags: task.task_tags.map((tag: any) => tag.tag_name),
+      tags: task.task_tags.map((tag: { tag_name: string }) => tag.tag_name),
       author: task.users.name,
       userNumber: task.users.user_number,
       createdAt: task.created_at,
@@ -125,7 +126,17 @@ export async function PUT(
     }
 
     // Update task
-    const updateData: any = {};
+    const updateData: {
+      title?: string;
+      description?: string | null;
+      due_date?: string | null;
+      due_time?: string | null;
+      importance?: string;
+      priority?: string;
+      category?: string | null;
+      is_public?: boolean;
+      is_completed?: boolean;
+    } = {};
     if (title !== undefined) updateData.title = title.trim();
     if (description !== undefined) updateData.description = description?.trim() || null;
     if (dueDate !== undefined) updateData.due_date = dueDate || null;
@@ -177,17 +188,30 @@ export async function PUT(
 
       // Insert new tags
       if (Array.isArray(tags) && tags.length > 0) {
+        // 태그 데이터 준비 - id 컬럼에 명시적으로 UUID 생성
         const tagInserts = tags.map((tag: string) => ({
+          id: randomUUID(), // 명시적으로 UUID 생성
           task_id: id,
           tag_name: tag.trim(),
         }));
 
-        const { error: insertTagsError } = await supabase
-          .from('task_tags')
-          .insert(tagInserts);
+        console.log(`[PUT /api/tasks/${id}] 삽입할 태그 데이터:`, tagInserts);
 
-        if (insertTagsError) {
-          console.error(`[PUT /api/tasks/${id}] 새 태그 삽입 실패:`, insertTagsError);
+        // 각 태그를 개별적으로 삽입하여 오류 추적
+        for (const tagData of tagInserts) {
+          try {
+            const { error: singleTagError } = await supabase
+              .from('task_tags')
+              .insert(tagData);
+
+            if (singleTagError) {
+              console.error(`[PUT /api/tasks/${id}] 개별 태그 삽입 실패:`, tagData, singleTagError);
+            } else {
+              console.log(`[PUT /api/tasks/${id}] 개별 태그 삽입 성공:`, tagData);
+            }
+          } catch (error) {
+            console.error(`[PUT /api/tasks/${id}] 개별 태그 삽입 중 예외 발생:`, tagData, error);
+          }
         }
       }
     }
@@ -220,7 +244,7 @@ export async function PUT(
       isCompleted: completeTask.is_completed,
       isPublic: completeTask.is_public,
       likesCount: completeTask.likes_count,
-      tags: completeTask.task_tags.map((tag: any) => tag.tag_name),
+      tags: completeTask.task_tags.map((tag: { tag_name: string }) => tag.tag_name),
       author: completeTask.users.name,
       userNumber: completeTask.users.user_number,
       createdAt: completeTask.created_at,

@@ -7,19 +7,15 @@ interface AuthGuardProps {
 }
 
 export function AuthGuard({ children }: AuthGuardProps) {
-  const { currentUser, currentUserId, users, setCurrentUser } = useAuthStore()
+  const { currentUser } = useAuthStore()
   const navigate = useNavigate()
   const location = useLocation()
 
   useEffect(() => {
-    if (!currentUser && currentUserId && users && setCurrentUser) {
-      const found = users.find(u => u.id === currentUserId)
-      if (found) setCurrentUser(found)
-    }
     if (!currentUser) {
       navigate('/login', { state: { from: location } })
     }
-  }, [currentUser, currentUserId, users, setCurrentUser, navigate, location])
+  }, [currentUser, navigate, location])
 
   if (!currentUser) {
     return null

@@ -16,7 +16,7 @@ interface ToastStore {
   clearToasts: () => void
 }
 
-export const useToastStore = create<ToastStore>((set, get) => ({
+export const useToastStore = create<ToastStore>((set) => ({
   toasts: [],
 
   showToast: (type: ToastType, message: string, duration = UI_CONSTANTS.TOAST_DURATION) => {

@@ -7,16 +7,16 @@ import { NextResponse } from 'next/server';
 export interface ApiError {
   code: string;
   message: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
   statusCode: number;
 }
 
 export class AppError extends Error {
   public code: string;
   public statusCode: number;
-  public details?: Record<string, any>;
+  public details?: Record<string, unknown>;
 
-  constructor(message: string, code: string, statusCode: number = 500, details?: Record<string, any>) {
+  constructor(message: string, code: string, statusCode: number = 500, details?: Record<string, unknown>) {
     super(message);
     this.name = 'AppError';
     this.code = code;
@@ -114,7 +114,7 @@ export function getErrorStatusCode(errorCode: string): number {
 /**
  * 에러 로깅 (개발 환경에서만 상세 정보 출력)
  */
-export function logError(error: Error | AppError, context?: Record<string, any>): void {
+export function logError(error: Error | AppError, context?: Record<string, unknown>): void {
   const isDevelopment = process.env.NODE_ENV === 'development';
   
   if (isDevelopment) {
@@ -146,7 +146,7 @@ export function logError(error: Error | AppError, context?: Record<string, any>)
  */
 export function createApiErrorResponse(
   errorCode: string,
-  details?: Record<string, any>,
+  details?: Record<string, unknown>,
   customMessage?: string
 ): NextResponse {
   const statusCode = getErrorStatusCode(errorCode);
@@ -177,7 +177,7 @@ export function createApiErrorResponse(
  */
 export function handleUnexpectedError(error: unknown, context?: string): NextResponse {
   let errorCode = 'UNKNOWN_ERROR';
-  let details: Record<string, any> = {};
+  let details: Record<string, unknown> = {};
   
   if (error instanceof AppError) {
     errorCode = error.code;
@@ -195,10 +195,9 @@ export function handleUnexpectedError(error: unknown, context?: string): NextRes
     } else {
       errorCode = 'SERVER_ERROR';
     }
-    details = { originalMessage: error.message };
+    details = { originalMessage: error.message } as Record<string, unknown>;
   } else {
     errorCode = 'UNKNOWN_ERROR';
-    details = { originalError: String(error) };
   }
   
   if (context) {

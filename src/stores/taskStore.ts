@@ -2,7 +2,6 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { Task, CreateTaskData, UpdateTaskData } from '@/types/task'
 import { taskService } from '@/services/taskService'
-import i18next from 'i18next'
 
 interface TaskStore {
   // 사용자별 태스크 저장소 (사용자 번호로 관리)
@@ -123,7 +122,7 @@ export const useTaskStore = create<TaskStore>()(
             set((state) => ({
               userTasks: {
                 ...state.userTasks,
-                [currentUserNumber]: response.tasks
+                [String(currentUserNumber)]: response.tasks
               },
               isLoading: false,
               error: null
