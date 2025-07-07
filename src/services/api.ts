@@ -43,7 +43,8 @@ class ApiService {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || `HTTP error! status: ${response.status}`);
+        // 서버에서 내려온 에러가 객체면 그대로 throw, 아니면 string으로 throw
+        throw data.error || data || { message: `HTTP error! status: ${response.status}` };
       }
 
       return data;

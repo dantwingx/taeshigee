@@ -15,8 +15,18 @@ export default {
     success: 'Berjaya',
     yes: 'Ya',
     no: 'Tidak',
-    public: 'Awam',
+    emojiCategory: {
+      faces: 'Muka',
+      animals: 'Haiwan',
+      food: 'Makanan',
+      activities: 'Aktiviti',
+      objects: 'Objek',
+      symbols: 'Simbol'
+    },
+    copySuffix: '(Salinan)',
+    visibility: 'Keterlihatan',
     private: 'Peribadi',
+    public: 'Awam',
     all: 'Semua',
     none: 'Tiada',
     today: 'Hari ini',
@@ -40,7 +50,33 @@ export default {
     daysAgo: "{{count}} hari yang lalu",
     sort: 'Isih',
     sortAsc: 'Menaik',
-    sortDesc: 'Menurun'
+    sortDesc: 'Menurun',
+    selectEmoji: 'Pilih emoji',
+    addTag: 'Tambah tag',
+    removeTag: 'Buang tag',
+    priorityHigh: 'Tinggi',
+    priorityMedium: 'Sederhana',
+    priorityLow: 'Rendah',
+    importanceHigh: 'Sangat penting',
+    importanceMedium: 'Penting',
+    importanceLow: 'Biasa',
+    categoryWork: 'Kerja',
+    categoryPersonal: 'Peribadi',
+    categoryStudy: 'Kajian',
+    categoryHealth: 'Kesihatan',
+    categoryFinance: 'Kewangan',
+    categoryOther: 'Lain-lain',
+    totalTasksDisplay: 'Memaparkan 0 daripada 0 jumlah',
+    statusFilter: 'Tapis mengikut status',
+    importanceFilter: 'Kepentingan',
+    priorityFilter: 'Keutamaan',
+    publicFilter: 'Awam',
+    createdAt: 'Tarikh dicipta',
+    update: 'Kemas kini',
+    titleMaxLength: 'Tajuk mestilah tidak melebihi 100 aksara',
+    descriptionMaxLength: 'Penerangan mestilah tidak melebihi 500 aksara',
+    templateButton: 'Templat',
+    emojiButton: 'Emoji'
   },
 
   // Navigasi
@@ -82,7 +118,12 @@ export default {
     emailInvalid: "Sila masukkan alamat e-mel yang sah.",
     passwordMin: "Kata laluan mesti sekurang-kurangnya 6 aksara.",
     confirmPasswordRequired: "Sila sahkan kata laluan anda.",
-    passwordsDontMatch: "Kata laluan tidak sepadan."
+    passwordsDontMatch: "Kata laluan tidak sepadan.",
+    loginFailed: 'Log masuk gagal',
+    registerFailed: 'Pendaftaran gagal',
+    networkError: 'Ralat rangkaian',
+    serverError: 'Ralat pelayan',
+    unknownError: 'Ralat tidak diketahui'
   },
 
   // Tugas
@@ -144,7 +185,11 @@ export default {
     priorityFilter: 'Keutamaan',
     publicFilter: 'Awam',
     createdAt: 'Tarikh dicipta',
-    update: 'Kemas kini'
+    update: 'Kemas kini',
+    titleMaxLength: 'Tajuk mestilah tidak melebihi 100 aksara',
+    descriptionMaxLength: 'Penerangan mestilah tidak melebihi 500 aksara',
+    templateButton: 'Templat',
+    emojiButton: 'Emoji'
   },
 
   // Laman Utama
@@ -262,5 +307,86 @@ export default {
     success: 'Berjaya',
     warning: 'Amaran',
     info: 'Maklumat'
+  },
+
+  templateExamples: {
+    diet3days: {
+      name: 'Diet 3 Hari',
+      title: 'Diet dengan makanan sihat selama 3 hari',
+      description: 'Cabarkan diri anda untuk menurunkan berat badan dengan makan sihat selama 3 hari.',
+      tags: ['3 hari', 'Kesihatan', 'Diet'],
+    },
+    dietWeek: {
+      name: 'Diet 1 Minggu',
+      title: 'Diet konsisten selama 1 minggu',
+      description: 'Urus pemakanan anda selama seminggu untuk membina badan yang sihat.',
+      tags: ['7 hari', 'Kesihatan', 'Diet'],
+    },
+    dietMonth: {
+      name: 'Diet 1 Bulan',
+      title: 'Diet sistematik selama 1 bulan',
+      description: 'Capai matlamat anda dengan diet sistematik selama 1 bulan.',
+      tags: ['30 hari', 'Kesihatan', 'Diet'],
+    },
+    exerciseDaily: {
+      name: 'Senaman Harian',
+      title: 'Bersenam Setiap Hari',
+      description: 'Cipta gaya hidup sihat dengan bersenam sekurang-kurangnya 30 minit setiap hari',
+      tags: ['kesihatan', 'senaman', 'tabiat']
+    },
+    waterIntake: {
+      name: 'Minum Air',
+      title: 'Minum 2L Air Sehari',
+      description: 'Minum lebih daripada 2L air sehari untuk badan yang sihat',
+      tags: ['kesihatan', 'hidrasi', 'tabiat']
+    },
+    studyDaily: {
+      name: 'Belajar Harian',
+      title: 'Belajar Setiap Hari',
+      description: 'Bina pengetahuan dengan belajar sekurang-kurangnya 1 jam setiap hari',
+      tags: ['belajar', 'pembelajaran', 'tabiat']
+    },
+    languageStudy: {
+      name: 'Belajar Bahasa',
+      title: 'Belajar Bahasa Asing',
+      description: 'Tingkatkan kemahiran bahasa anda dengan belajar bahasa asing selama 30 minit setiap hari',
+      tags: ['belajar', 'bahasa', 'asing']
+    },
+    workPlanning: {
+      name: 'Perancangan Kerja',
+      title: 'Rancang Kerja Anda',
+      description: 'Rancang dan laksanakan kerja anda setiap hari',
+      tags: ['kerja', 'perancangan', 'produktiviti']
+    },
+    skillImprovement: {
+      name: 'Penambahbaikan Kemahiran',
+      title: 'Tingkatkan Kemahiran Teknikal',
+      description: 'Pelajari kemahiran baharu dan gunakannya dalam kerja anda',
+      tags: ['kerja', 'kemahiran', 'pembangunan']
+    },
+    reading: {
+      name: 'Membaca',
+      title: 'Membaca Buku',
+      description: 'Baca buku sekurang-kurangnya 30 minit setiap hari',
+      tags: ['hobi', 'membaca', 'pengetahuan']
+    },
+    musicPractice: {
+      name: 'Latihan Muzik',
+      title: 'Berlatih Muzik',
+      description: 'Tingkatkan kemahiran muzik anda dengan berlatih alat muzik setiap hari',
+      tags: ['hobi', 'muzik', 'latihan']
+    },
+    earlySleep: {
+      name: 'Tidur Awal',
+      title: 'Tidur Awal',
+      description: 'Tidur sebelum jam 11 malam setiap hari',
+      tags: ['harian', 'tidur', 'kesihatan']
+    },
+    gratitude: {
+      name: 'Jurnal Kesyukuran',
+      title: 'Tulis Jurnal Kesyukuran',
+      description: 'Tulis 3 perkara yang anda syukuri setiap hari',
+      tags: ['harian', 'kesyukuran', 'fikiran']
+    }
   }
 }; 

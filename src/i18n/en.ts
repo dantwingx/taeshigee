@@ -17,6 +17,7 @@ export default {
     no: 'No',
     public: 'Public',
     private: 'Private',
+    visibility: 'Visibility',
     all: 'All',
     none: 'None',
     today: 'Today',
@@ -40,7 +41,17 @@ export default {
     daysAgo: "{{count}} day(s) ago",
     sort: 'Sort',
     sortAsc: 'Ascending',
-    sortDesc: 'Descending'
+    sortDesc: 'Descending',
+    addEmoji: 'Add Emoji',
+    selectEmoji: 'Select Emoji',
+    emojiCategory: {
+      faces: 'Faces',
+      animals: 'Animals',
+      food: 'Food',
+      activities: 'Activities',
+      objects: 'Objects',
+      symbols: 'Symbols'
+    }
   },
 
   // Navigation
@@ -82,7 +93,12 @@ export default {
     emailInvalid: "Please enter a valid email address.",
     passwordMin: "Password must be at least 6 characters.",
     confirmPasswordRequired: "Please confirm your password.",
-    passwordsDontMatch: "Passwords do not match."
+    passwordsDontMatch: "Passwords do not match.",
+    loginFailed: 'Login failed',
+    registerFailed: 'Registration failed',
+    networkError: 'Network error occurred',
+    serverError: 'Server error occurred',
+    unknownError: 'An unknown error occurred'
   },
 
   // Task
@@ -151,7 +167,11 @@ export default {
     unlike: 'Unlike',
     likeCount: '{{count}} likes',
     likeTask: 'Like Task',
-    unlikeTask: 'Unlike Task'
+    unlikeTask: 'Unlike Task',
+    titleMaxLength: 'Title must be 100 characters or less',
+    descriptionMaxLength: 'Description must be 500 characters or less',
+    templateButton: 'Template',
+    emojiButton: 'Emoji'
   },
 
   // 홈
@@ -251,6 +271,24 @@ export default {
     clearAllData: 'Clear All Data'
   },
 
+  // Task Template
+  template: {
+    selectTemplate: 'Select Task Template',
+    searchTemplate: 'Search templates...',
+    popularTemplates: 'Popular Templates',
+    allTemplates: 'All Templates',
+    categoryTemplates: '{{category}} Templates',
+    days: 'days',
+    category: {
+      all: 'All',
+      health: 'Health',
+      study: 'Study',
+      work: 'Work',
+      hobby: 'Hobby',
+      daily: 'Daily'
+    }
+  },
+
   // Toast messages
   toast: {
     taskCreated: 'Task created successfully',
@@ -271,5 +309,86 @@ export default {
     taskLiked: 'Task liked successfully',
     taskUnliked: 'Task unliked successfully',
     likeError: 'Failed to process like'
+  },
+
+  templateExamples: {
+    diet3days: {
+      name: '3-Day Diet',
+      title: 'Diet with healthy meals for 3 days',
+      description: 'Challenge yourself to lose weight by eating healthy for 3 days.',
+      tags: ['3 days', 'Health', 'Diet'],
+    },
+    dietWeek: {
+      name: '1-Week Diet',
+      title: 'Consistent diet for 1 week',
+      description: 'Manage your meals for a week to build a healthy body.',
+      tags: ['7 days', 'Health', 'Diet'],
+    },
+    dietMonth: {
+      name: '1-Month Diet',
+      title: 'Systematic diet for 1 month',
+      description: 'Achieve your goal with a systematic diet for 1 month.',
+      tags: ['30 days', 'Health', 'Diet'],
+    },
+    exerciseDaily: {
+      name: 'Daily Exercise',
+      title: 'Exercise Daily',
+      description: 'Create a healthy lifestyle by exercising for at least 30 minutes every day',
+      tags: ['health', 'exercise', 'habit']
+    },
+    waterIntake: {
+      name: 'Drink Water',
+      title: 'Drink 2L of Water a Day',
+      description: 'Drink more than 2L of water a day for a healthy body',
+      tags: ['health', 'hydration', 'habit']
+    },
+    studyDaily: {
+      name: 'Daily Study',
+      title: 'Study Daily',
+      description: 'Build knowledge by studying for at least 1 hour every day',
+      tags: ['study', 'learning', 'habit']
+    },
+    languageStudy: {
+      name: 'Language Study',
+      title: 'Foreign Language Study',
+      description: 'Improve your language skills by studying a foreign language for 30 minutes every day',
+      tags: ['study', 'language', 'foreign']
+    },
+    workPlanning: {
+      name: 'Work Planning',
+      title: 'Plan Your Work',
+      description: 'Plan and execute your work every day',
+      tags: ['work', 'planning', 'productivity']
+    },
+    skillImprovement: {
+      name: 'Skill Improvement',
+      title: 'Improve Technical Skills',
+      description: 'Learn new skills and apply them to your work',
+      tags: ['work', 'skills', 'development']
+    },
+    reading: {
+      name: 'Reading',
+      title: 'Read Books',
+      description: 'Read books for at least 30 minutes every day',
+      tags: ['hobby', 'reading', 'knowledge']
+    },
+    musicPractice: {
+      name: 'Music Practice',
+      title: 'Practice Music',
+      description: 'Improve your musical skills by practicing an instrument every day',
+      tags: ['hobby', 'music', 'practice']
+    },
+    earlySleep: {
+      name: 'Go to Bed Early',
+      title: 'Go to Bed Early',
+      description: 'Go to bed before 11 PM every day',
+      tags: ['daily', 'sleep', 'health']
+    },
+    gratitude: {
+      name: 'Gratitude Journal',
+      title: 'Write a Gratitude Journal',
+      description: 'Write down 3 things you are grateful for every day',
+      tags: ['daily', 'gratitude', 'mind']
+    }
   }
 }; 

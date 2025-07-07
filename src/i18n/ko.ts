@@ -17,6 +17,7 @@ export default {
     no: '아니오',
     public: '공개',
     private: '비공개',
+    visibility: '공개 여부',
     all: '전체',
     none: '없음',
     today: '오늘',
@@ -39,6 +40,16 @@ export default {
     sort: '정렬',
     sortAsc: '오름차순',
     sortDesc: '내림차순',
+    addEmoji: '이모지 추가',
+    selectEmoji: '이모지 선택',
+    emojiCategory: {
+      faces: '표정',
+      animals: '동물',
+      food: '음식',
+      activities: '활동',
+      objects: '물건',
+      symbols: '기호'
+    },
   },
 
   // 네비게이션
@@ -79,7 +90,12 @@ export default {
     emailInvalid: "올바른 이메일 주소를 입력해주세요",
     passwordMin: "비밀번호는 최소 6자 이상이어야 합니다",
     confirmPasswordRequired: "비밀번호 확인을 입력해주세요",
-    passwordsDontMatch: "비밀번호가 일치하지 않습니다"
+    passwordsDontMatch: "비밀번호가 일치하지 않습니다",
+    loginFailed: '로그인에 실패했습니다',
+    registerFailed: '회원가입에 실패했습니다',
+    networkError: '네트워크 오류가 발생했습니다',
+    serverError: '서버 오류가 발생했습니다',
+    unknownError: '알 수 없는 오류가 발생했습니다'
   },
 
   // 태스크
@@ -151,7 +167,11 @@ export default {
     unlikeTask: '좋아요 취소',
     completed: '완료',
     incomplete: '미완료',
-    toggleComplete: '완료/미완료 전환'
+    toggleComplete: '완료/미완료 전환',
+    titleMaxLength: '제목은 100자 이하여야 합니다',
+    descriptionMaxLength: '설명은 500자 이하여야 합니다',
+    templateButton: '템플릿',
+    emojiButton: '이모지',
   },
 
   // 홈
@@ -251,6 +271,24 @@ export default {
     clearAllData: '모든 데이터 삭제'
   },
 
+  // 태스크 템플릿
+  template: {
+    selectTemplate: '태스크 템플릿 선택',
+    searchTemplate: '템플릿 검색...',
+    popularTemplates: '인기 템플릿',
+    allTemplates: '전체 템플릿',
+    categoryTemplates: '{{category}} 템플릿',
+    days: '일',
+    category: {
+      all: '전체',
+      health: '건강',
+      study: '학습',
+      work: '업무',
+      hobby: '취미',
+      daily: '일상'
+    }
+  },
+
   // 토스트 메시지
   toast: {
     taskCreated: '태스크가 생성되었습니다',
@@ -271,5 +309,86 @@ export default {
     taskLiked: '태스크를 좋아요했습니다',
     taskUnliked: '좋아요를 취소했습니다',
     likeError: '좋아요 처리에 실패했습니다'
+  },
+
+  templateExamples: {
+    diet3days: {
+      name: '3일 다이어트',
+      title: '3일 동안 건강한 식단으로 다이어트',
+      description: '3일간 건강한 식단을 실천하여 체중 감량에 도전하세요.',
+      tags: ['3일', '건강', '다이어트'],
+    },
+    dietWeek: {
+      name: '1주 다이어트',
+      title: '1주 동안 꾸준한 다이어트',
+      description: '1주일 동안 꾸준히 식단을 관리하여 건강한 몸을 만드세요.',
+      tags: ['7일', '건강', '다이어트'],
+    },
+    dietMonth: {
+      name: '1개월 다이어트',
+      title: '1개월 체계적 다이어트',
+      description: '1개월 동안 체계적으로 다이어트하여 목표를 달성하세요.',
+      tags: ['30일', '건강', '다이어트'],
+    },
+    exerciseDaily: {
+      name: '매일 운동',
+      title: '매일 운동하기',
+      description: '매일 30분 이상 운동으로 건강한 생활 만들기',
+      tags: ['건강', '운동', '습관']
+    },
+    waterIntake: {
+      name: '물 마시기',
+      title: '하루 2L 물 마시기',
+      description: '하루에 2L 이상의 물을 마셔 건강한 몸 만들기',
+      tags: ['건강', '수분', '습관']
+    },
+    studyDaily: {
+      name: '매일 공부',
+      title: '매일 공부하기',
+      description: '매일 1시간 이상 공부로 지식 쌓기',
+      tags: ['학습', '공부', '습관']
+    },
+    languageStudy: {
+      name: '언어 학습',
+      title: '외국어 학습',
+      description: '매일 30분 외국어 공부로 언어 실력 향상하기',
+      tags: ['학습', '언어', '외국어']
+    },
+    workPlanning: {
+      name: '업무 계획',
+      title: '업무 계획 세우기',
+      description: '매일 업무 계획을 세우고 실행하기',
+      tags: ['업무', '계획', '생산성']
+    },
+    skillImprovement: {
+      name: '기술 향상',
+      title: '기술 스킬 향상',
+      description: '새로운 기술을 배우고 실무에 적용하기',
+      tags: ['업무', '기술', '개발']
+    },
+    reading: {
+      name: '독서',
+      title: '독서하기',
+      description: '매일 30분 이상 책 읽기',
+      tags: ['취미', '독서', '지식']
+    },
+    musicPractice: {
+      name: '음악 연습',
+      title: '음악 연습하기',
+      description: '매일 악기 연습으로 음악 실력 향상하기',
+      tags: ['취미', '음악', '연습']
+    },
+    earlySleep: {
+      name: '일찍 자기',
+      title: '일찍 자기',
+      description: '매일 11시 이전에 취침하기',
+      tags: ['일상', '수면', '건강']
+    },
+    gratitude: {
+      name: '감사 일기',
+      title: '감사 일기 쓰기',
+      description: '매일 감사한 일 3가지 적기',
+      tags: ['일상', '감사', '마음']
+    }
   }
 }; 

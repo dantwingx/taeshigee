@@ -39,7 +39,16 @@ export default {
     daysAgo: "vor {{count}} Tag(en)",
     sort: 'Sortieren',
     sortAsc: 'Aufsteigend',
-    sortDesc: 'Absteigend'
+    sortDesc: 'Absteigend',
+    selectEmoji: 'Emoji auswählen',
+    emojiCategory: {
+      faces: 'Gesichter',
+      animals: 'Tiere',
+      food: 'Essen',
+      activities: 'Aktivitäten',
+      objects: 'Gegenstände',
+      symbols: 'Symbole'
+    }
   },
 
   navigation: {
@@ -78,7 +87,12 @@ export default {
     emailInvalid: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
     passwordMin: "Das Passwort muss mindestens 6 Zeichen lang sein.",
     confirmPasswordRequired: "Bitte bestätigen Sie Ihr Passwort.",
-    passwordsDontMatch: "Die Passwörter stimmen nicht überein."
+    passwordsDontMatch: "Die Passwörter stimmen nicht überein.",
+    loginFailed: 'Anmeldung fehlgeschlagen',
+    registerFailed: 'Registrierung fehlgeschlagen',
+    networkError: 'Netzwerkfehler',
+    serverError: 'Serverfehler',
+    unknownError: 'Unbekannter Fehler'
   },
 
   task: {
@@ -141,7 +155,11 @@ export default {
     priorityFilter: "Priorität",
     publicFilter: "Öffentlich",
     createdAt: "Erstellungsdatum",
-    update: "Aktualisieren"
+    update: "Aktualisieren",
+    titleMaxLength: 'Der Titel darf maximal 100 Zeichen lang sein',
+    descriptionMaxLength: 'Die Beschreibung darf maximal 500 Zeichen lang sein',
+    templateButton: 'Vorlage',
+    emojiButton: 'Emoji'
   },
 
   home: {
@@ -254,5 +272,86 @@ export default {
     success: "Erfolg",
     warning: "Warnung",
     info: "Information"
+  },
+
+  templateExamples: {
+    diet3days: {
+      name: '3-Tage-Diät',
+      title: 'Diät mit gesunden Mahlzeiten für 3 Tage',
+      description: 'Fordern Sie sich heraus, 3 Tage lang gesund zu essen.',
+      tags: ['3 Tage', 'Gesundheit', 'Diät'],
+    },
+    dietWeek: {
+      name: '1-Wochen-Diät',
+      title: 'Konsequente Diät für 1 Woche',
+      description: 'Verwalten Sie Ihre Mahlzeiten eine Woche lang, um einen gesunden Körper aufzubauen.',
+      tags: ['7 Tage', 'Gesundheit', 'Diät'],
+    },
+    dietMonth: {
+      name: '1-Monats-Diät',
+      title: 'Systematische Diät für 1 Monat',
+      description: 'Erreichen Sie Ihr Ziel mit einer systematischen Diät für 1 Monat.',
+      tags: ['30 Tage', 'Gesundheit', 'Diät'],
+    },
+    exerciseDaily: {
+      name: 'Tägliche Bewegung',
+      title: 'Täglich trainieren',
+      description: 'Schaffen Sie einen gesunden Lebensstil, indem Sie jeden Tag mindestens 30 Minuten trainieren.',
+      tags: ['Gesundheit', 'Bewegung', 'Gewohnheit']
+    },
+    waterIntake: {
+      name: 'Wasser trinken',
+      title: '2L Wasser pro Tag trinken',
+      description: 'Trinken Sie mehr als 2L Wasser pro Tag für einen gesunden Körper.',
+      tags: ['Gesundheit', 'Hydration', 'Gewohnheit']
+    },
+    studyDaily: {
+      name: 'Tägliches Lernen',
+      title: 'Täglich lernen',
+      description: 'Bauen Sie Wissen auf, indem Sie jeden Tag mindestens 1 Stunde lernen.',
+      tags: ['Lernen', 'Studium', 'Gewohnheit']
+    },
+    languageStudy: {
+      name: 'Sprachen lernen',
+      title: 'Fremdsprachen lernen',
+      description: 'Verbessern Sie Ihre Sprachkenntnisse, indem Sie jeden Tag 30 Minuten eine Fremdsprache lernen.',
+      tags: ['Lernen', 'Sprache', 'Fremdsprache']
+    },
+    workPlanning: {
+      name: 'Arbeitsplanung',
+      title: 'Arbeit planen',
+      description: 'Planen und führen Sie Ihre Arbeit jeden Tag aus.',
+      tags: ['Arbeit', 'Planung', 'Produktivität']
+    },
+    skillImprovement: {
+      name: 'Fähigkeiten verbessern',
+      title: 'Technische Fähigkeiten verbessern',
+      description: 'Lernen Sie neue Fähigkeiten und wenden Sie sie in Ihrer Arbeit an.',
+      tags: ['Arbeit', 'Fähigkeiten', 'Entwicklung']
+    },
+    reading: {
+      name: 'Lesen',
+      title: 'Bücher lesen',
+      description: 'Lesen Sie jeden Tag mindestens 30 Minuten Bücher.',
+      tags: ['Hobby', 'Lesen', 'Wissen']
+    },
+    musicPractice: {
+      name: 'Musik üben',
+      title: 'Musik üben',
+      description: 'Verbessern Sie Ihre musikalischen Fähigkeiten, indem Sie jeden Tag ein Instrument üben.',
+      tags: ['Hobby', 'Musik', 'Übung']
+    },
+    earlySleep: {
+      name: 'Früh schlafen gehen',
+      title: 'Früh schlafen gehen',
+      description: 'Gehen Sie jeden Tag vor 23 Uhr ins Bett.',
+      tags: ['Täglich', 'Schlaf', 'Gesundheit']
+    },
+    gratitude: {
+      name: 'Dankbarkeitstagebuch',
+      title: 'Dankbarkeitstagebuch schreiben',
+      description: 'Schreiben Sie jeden Tag 3 Dinge auf, für die Sie dankbar sind.',
+      tags: ['Täglich', 'Dankbarkeit', 'Geist']
+    }
   }
 }; 

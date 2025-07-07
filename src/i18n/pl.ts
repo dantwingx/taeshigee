@@ -15,8 +15,18 @@ export default {
     success: 'Sukces',
     yes: 'Tak',
     no: 'Nie',
-    public: 'Publiczne',
+    emojiCategory: {
+      faces: 'Twarze',
+      animals: 'Zwierzęta',
+      food: 'Jedzenie',
+      activities: 'Aktywności',
+      objects: 'Przedmioty',
+      symbols: 'Symbole'
+    },
+    copySuffix: '(Kopia)',
+    visibility: 'Widoczność',
     private: 'Prywatne',
+    public: 'Publiczne',
     all: 'Wszystkie',
     none: 'Brak',
     today: 'Dzisiaj',
@@ -40,7 +50,33 @@ export default {
     daysAgo: "{{count}} dni temu",
     sort: 'Sortuj',
     sortAsc: 'Rosnąco',
-    sortDesc: 'Malejąco'
+    sortDesc: 'Malejąco',
+    selectEmoji: 'Wybierz emoji',
+    addTag: 'Dodaj tag',
+    removeTag: 'Usuń tag',
+    priorityHigh: 'Wysoki',
+    priorityMedium: 'Średni',
+    priorityLow: 'Niski',
+    importanceHigh: 'Bardzo ważne',
+    importanceMedium: 'Ważne',
+    importanceLow: 'Normalne',
+    categoryWork: 'Praca',
+    categoryPersonal: 'Osobiste',
+    categoryStudy: 'Nauka',
+    categoryHealth: 'Zdrowie',
+    categoryFinance: 'Finanse',
+    categoryOther: 'Inne',
+    totalTasksDisplay: 'Pokazuję 0 z 0 łącznie',
+    statusFilter: 'Filtruj według statusu',
+    importanceFilter: 'Ważność',
+    priorityFilter: 'Priorytet',
+    publicFilter: 'Publiczne',
+    createdAt: 'Data utworzenia',
+    update: 'Aktualizuj',
+    titleMaxLength: 'Tytuł może mieć maksymalnie 100 znaków',
+    descriptionMaxLength: 'Opis może mieć maksymalnie 500 znaków',
+    templateButton: 'Szablon',
+    emojiButton: 'Emoji'
   },
 
   // Nawigacja
@@ -82,7 +118,12 @@ export default {
     emailInvalid: "Wprowadź poprawny adres e-mail.",
     passwordMin: "Hasło musi mieć co najmniej 6 znaków.",
     confirmPasswordRequired: "Potwierdź swoje hasło.",
-    passwordsDontMatch: "Hasła nie są zgodne."
+    passwordsDontMatch: "Hasła nie są zgodne.",
+    loginFailed: 'Logowanie nie powiodło się',
+    registerFailed: 'Rejestracja nie powiodła się',
+    networkError: 'Błąd sieci',
+    serverError: 'Błąd serwera',
+    unknownError: 'Nieznany błąd'
   },
 
   // Zadanie
@@ -144,7 +185,11 @@ export default {
     priorityFilter: 'Priorytet',
     publicFilter: 'Publiczne',
     createdAt: 'Data utworzenia',
-    update: 'Aktualizuj'
+    update: 'Aktualizuj',
+    titleMaxLength: 'Tytuł może mieć maksymalnie 100 znaków',
+    descriptionMaxLength: 'Opis może mieć maksymalnie 500 znaków',
+    templateButton: 'Szablon',
+    emojiButton: 'Emoji'
   },
 
   // Strona główna
@@ -262,5 +307,86 @@ export default {
     info: 'Informacja',
     showMore: "Pokaż więcej",
     showLess: "Pokaż mniej"
+  },
+
+  templateExamples: {
+    diet3days: {
+      name: 'Dieta 3-dniowa',
+      title: 'Dieta 3-dniowa',
+      description: 'Zdrowa dieta przez 3 dni',
+      tags: ['Zdrowie', 'Dieta', 'Posiłek']
+    },
+    dietWeek: {
+      name: 'Dieta tygodniowa',
+      title: 'Dieta tygodniowa',
+      description: 'Zdrowe ciało dzięki diecie przez tydzień',
+      tags: ['Zdrowie', 'Dieta', 'Ćwiczenia']
+    },
+    dietMonth: {
+      name: 'Dieta miesięczna',
+      title: 'Dieta miesięczna',
+      description: 'Osiągnij cel dzięki systematycznej diecie przez miesiąc',
+      tags: ['Zdrowie', 'Dieta', 'Cel']
+    },
+    exerciseDaily: {
+      name: 'Codzienne ćwiczenia',
+      title: 'Codzienne ćwiczenia',
+      description: 'Zdrowy styl życia dzięki codziennym ćwiczeniom przez co najmniej 30 minut',
+      tags: ['Zdrowie', 'Ćwiczenia', 'Nawyk']
+    },
+    waterIntake: {
+      name: 'Picie wody',
+      title: 'Pij 2 litry wody dziennie',
+      description: 'Pij ponad 2 litry wody dziennie dla zdrowego ciała',
+      tags: ['Zdrowie', 'Nawodnienie', 'Nawyk']
+    },
+    studyDaily: {
+      name: 'Codzienna nauka',
+      title: 'Codzienna nauka',
+      description: 'Zdobądź wiedzę ucząc się co najmniej 1 godzinę dziennie',
+      tags: ['Nauka', 'Wiedza', 'Nawyk']
+    },
+    languageStudy: {
+      name: 'Nauka języka',
+      title: 'Nauka języka obcego',
+      description: 'Popraw swoje umiejętności językowe ucząc się języka obcego przez 30 minut dziennie',
+      tags: ['Nauka', 'Język', 'Obcy']
+    },
+    workPlanning: {
+      name: 'Planowanie pracy',
+      title: 'Planowanie pracy',
+      description: 'Planuj i realizuj swoją pracę każdego dnia',
+      tags: ['Praca', 'Planowanie', 'Produktywność']
+    },
+    skillImprovement: {
+      name: 'Rozwój umiejętności',
+      title: 'Rozwój umiejętności technicznych',
+      description: 'Ucz się nowych umiejętności i stosuj je w pracy',
+      tags: ['Praca', 'Umiejętności', 'Rozwój']
+    },
+    reading: {
+      name: 'Czytanie',
+      title: 'Czytanie książek',
+      description: 'Czytaj książki przez co najmniej 30 minut dziennie',
+      tags: ['Hobby', 'Czytanie', 'Wiedza']
+    },
+    musicPractice: {
+      name: 'Ćwiczenie muzyki',
+      title: 'Ćwiczenie muzyki',
+      description: 'Popraw swoje umiejętności muzyczne ćwicząc codziennie na instrumencie',
+      tags: ['Hobby', 'Muzyka', 'Ćwiczenie']
+    },
+    earlySleep: {
+      name: 'Wcześnie spać',
+      title: 'Wcześnie spać',
+      description: 'Kładź się spać przed 23:00 każdego dnia',
+      tags: ['Codziennie', 'Sen', 'Zdrowie']
+    },
+    gratitude: {
+      name: 'Dziennik wdzięczności',
+      title: 'Pisz dziennik wdzięczności',
+      description: 'Zapisz 3 rzeczy, za które jesteś wdzięczny każdego dnia',
+      tags: ['Codziennie', 'Wdzięczność', 'Umysł']
+    }
   }
 }; 

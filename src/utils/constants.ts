@@ -138,14 +138,17 @@ export const PERFORMANCE_CONSTANTS = {
 
 // 표준 태스크 템플릿
 export const TASK_TEMPLATES: TaskTemplate[] = [
-  // 건강 관련
   {
     id: 'diet-3days',
-    name: '3일 다이어트',
+    name: 'templateExamples.diet3days.name',
     emoji: '🥗',
-    title: '3일 다이어트',
-    description: '3일간 건강한 식단으로 다이어트하기',
-    tags: ['건강', '다이어트', '식단'],
+    title: 'templateExamples.diet3days.title',
+    description: 'templateExamples.diet3days.description',
+    tags: [
+      'templateExamples.diet3days.tags.0',
+      'templateExamples.diet3days.tags.1',
+      'templateExamples.diet3days.tags.2'
+    ],
     duration: 3,
     category: 'health',
     isPopular: true,
@@ -160,11 +163,15 @@ export const TASK_TEMPLATES: TaskTemplate[] = [
   },
   {
     id: 'diet-week',
-    name: '1주 다이어트',
+    name: 'templateExamples.dietWeek.name',
     emoji: '💪',
-    title: '1주 다이어트',
-    description: '1주간 꾸준한 다이어트로 건강한 몸 만들기',
-    tags: ['건강', '다이어트', '운동'],
+    title: 'templateExamples.dietWeek.title',
+    description: 'templateExamples.dietWeek.description',
+    tags: [
+      'templateExamples.dietWeek.tags.0',
+      'templateExamples.dietWeek.tags.1',
+      'templateExamples.dietWeek.tags.2'
+    ],
     duration: 7,
     category: 'health',
     isPopular: true,
@@ -179,11 +186,15 @@ export const TASK_TEMPLATES: TaskTemplate[] = [
   },
   {
     id: 'diet-month',
-    name: '1개월 다이어트',
+    name: 'templateExamples.dietMonth.name',
     emoji: '🎯',
-    title: '1개월 다이어트',
-    description: '1개월간 체계적인 다이어트로 목표 달성하기',
-    tags: ['건강', '다이어트', '목표'],
+    title: 'templateExamples.dietMonth.title',
+    description: 'templateExamples.dietMonth.description',
+    tags: [
+      'templateExamples.dietMonth.tags.0',
+      'templateExamples.dietMonth.tags.1',
+      'templateExamples.dietMonth.tags.2'
+    ],
     duration: 30,
     category: 'health',
     isPopular: true,
@@ -198,11 +209,15 @@ export const TASK_TEMPLATES: TaskTemplate[] = [
   },
   {
     id: 'exercise-daily',
-    name: '매일 운동',
+    name: 'templateExamples.exerciseDaily.name',
     emoji: '🏃‍♂️',
-    title: '매일 운동하기',
-    description: '매일 30분 이상 운동으로 건강한 생활 만들기',
-    tags: ['건강', '운동', '습관'],
+    title: 'templateExamples.exerciseDaily.title',
+    description: 'templateExamples.exerciseDaily.description',
+    tags: [
+      'templateExamples.exerciseDaily.tags.0',
+      'templateExamples.exerciseDaily.tags.1',
+      'templateExamples.exerciseDaily.tags.2'
+    ],
     duration: 1,
     category: 'health',
     autoSettings: {
@@ -216,11 +231,15 @@ export const TASK_TEMPLATES: TaskTemplate[] = [
   },
   {
     id: 'water-intake',
-    name: '물 마시기',
+    name: 'templateExamples.waterIntake.name',
     emoji: '💧',
-    title: '하루 2L 물 마시기',
-    description: '하루에 2L 이상의 물을 마셔 건강한 몸 만들기',
-    tags: ['건강', '수분', '습관'],
+    title: 'templateExamples.waterIntake.title',
+    description: 'templateExamples.waterIntake.description',
+    tags: [
+      'templateExamples.waterIntake.tags.0',
+      'templateExamples.waterIntake.tags.1',
+      'templateExamples.waterIntake.tags.2'
+    ],
     duration: 1,
     category: 'health',
     autoSettings: {
@@ -232,15 +251,17 @@ export const TASK_TEMPLATES: TaskTemplate[] = [
       reminderTime: '10:00'
     }
   },
-  
-  // 학습 관련
   {
     id: 'study-daily',
-    name: '매일 공부',
+    name: 'templateExamples.studyDaily.name',
     emoji: '📚',
-    title: '매일 공부하기',
-    description: '매일 1시간 이상 공부로 지식 쌓기',
-    tags: ['학습', '공부', '습관'],
+    title: 'templateExamples.studyDaily.title',
+    description: 'templateExamples.studyDaily.description',
+    tags: [
+      'templateExamples.studyDaily.tags.0',
+      'templateExamples.studyDaily.tags.1',
+      'templateExamples.studyDaily.tags.2'
+    ],
     duration: 1,
     category: 'study',
     autoSettings: {
@@ -254,11 +275,15 @@ export const TASK_TEMPLATES: TaskTemplate[] = [
   },
   {
     id: 'language-study',
-    name: '언어 학습',
+    name: 'templateExamples.languageStudy.name',
     emoji: '🌍',
-    title: '외국어 학습',
-    description: '매일 30분 외국어 공부로 언어 실력 향상하기',
-    tags: ['학습', '언어', '외국어'],
+    title: 'templateExamples.languageStudy.title',
+    description: 'templateExamples.languageStudy.description',
+    tags: [
+      'templateExamples.languageStudy.tags.0',
+      'templateExamples.languageStudy.tags.1',
+      'templateExamples.languageStudy.tags.2'
+    ],
     duration: 1,
     category: 'study',
     autoSettings: {
@@ -270,15 +295,17 @@ export const TASK_TEMPLATES: TaskTemplate[] = [
       reminderTime: '19:00'
     }
   },
-  
-  // 업무 관련
   {
     id: 'work-planning',
-    name: '업무 계획',
+    name: 'templateExamples.workPlanning.name',
     emoji: '📋',
-    title: '업무 계획 세우기',
-    description: '매일 업무 계획을 세우고 실행하기',
-    tags: ['업무', '계획', '생산성'],
+    title: 'templateExamples.workPlanning.title',
+    description: 'templateExamples.workPlanning.description',
+    tags: [
+      'templateExamples.workPlanning.tags.0',
+      'templateExamples.workPlanning.tags.1',
+      'templateExamples.workPlanning.tags.2'
+    ],
     duration: 1,
     category: 'work',
     autoSettings: {
@@ -292,11 +319,15 @@ export const TASK_TEMPLATES: TaskTemplate[] = [
   },
   {
     id: 'skill-improvement',
-    name: '기술 향상',
+    name: 'templateExamples.skillImprovement.name',
     emoji: '⚡',
-    title: '기술 스킬 향상',
-    description: '새로운 기술을 배우고 실무에 적용하기',
-    tags: ['업무', '기술', '개발'],
+    title: 'templateExamples.skillImprovement.title',
+    description: 'templateExamples.skillImprovement.description',
+    tags: [
+      'templateExamples.skillImprovement.tags.0',
+      'templateExamples.skillImprovement.tags.1',
+      'templateExamples.skillImprovement.tags.2'
+    ],
     duration: 7,
     category: 'work',
     autoSettings: {
@@ -308,15 +339,17 @@ export const TASK_TEMPLATES: TaskTemplate[] = [
       reminderTime: '20:00'
     }
   },
-  
-  // 취미 관련
   {
     id: 'reading',
-    name: '독서',
+    name: 'templateExamples.reading.name',
     emoji: '📖',
-    title: '독서하기',
-    description: '매일 30분 이상 책 읽기',
-    tags: ['취미', '독서', '지식'],
+    title: 'templateExamples.reading.title',
+    description: 'templateExamples.reading.description',
+    tags: [
+      'templateExamples.reading.tags.0',
+      'templateExamples.reading.tags.1',
+      'templateExamples.reading.tags.2'
+    ],
     duration: 1,
     category: 'hobby',
     autoSettings: {
@@ -330,11 +363,15 @@ export const TASK_TEMPLATES: TaskTemplate[] = [
   },
   {
     id: 'music-practice',
-    name: '음악 연습',
+    name: 'templateExamples.musicPractice.name',
     emoji: '🎵',
-    title: '음악 연습하기',
-    description: '매일 악기 연습으로 음악 실력 향상하기',
-    tags: ['취미', '음악', '연습'],
+    title: 'templateExamples.musicPractice.title',
+    description: 'templateExamples.musicPractice.description',
+    tags: [
+      'templateExamples.musicPractice.tags.0',
+      'templateExamples.musicPractice.tags.1',
+      'templateExamples.musicPractice.tags.2'
+    ],
     duration: 1,
     category: 'hobby',
     autoSettings: {
@@ -346,15 +383,17 @@ export const TASK_TEMPLATES: TaskTemplate[] = [
       reminderTime: '20:00'
     }
   },
-  
-  // 일상 관련
   {
     id: 'early-sleep',
-    name: '일찍 자기',
+    name: 'templateExamples.earlySleep.name',
     emoji: '😴',
-    title: '일찍 자기',
-    description: '매일 11시 이전에 취침하기',
-    tags: ['일상', '수면', '건강'],
+    title: 'templateExamples.earlySleep.title',
+    description: 'templateExamples.earlySleep.description',
+    tags: [
+      'templateExamples.earlySleep.tags.0',
+      'templateExamples.earlySleep.tags.1',
+      'templateExamples.earlySleep.tags.2'
+    ],
     duration: 1,
     category: 'daily',
     autoSettings: {
@@ -368,11 +407,15 @@ export const TASK_TEMPLATES: TaskTemplate[] = [
   },
   {
     id: 'gratitude',
-    name: '감사 일기',
+    name: 'templateExamples.gratitude.name',
     emoji: '🙏',
-    title: '감사 일기 쓰기',
-    description: '매일 감사한 일 3가지 적기',
-    tags: ['일상', '감사', '마음'],
+    title: 'templateExamples.gratitude.title',
+    description: 'templateExamples.gratitude.description',
+    tags: [
+      'templateExamples.gratitude.tags.0',
+      'templateExamples.gratitude.tags.1',
+      'templateExamples.gratitude.tags.2'
+    ],
     duration: 1,
     category: 'daily',
     autoSettings: {
@@ -390,21 +433,22 @@ export const TASK_TEMPLATES: TaskTemplate[] = [
 export const EMOJI_CATEGORIES: EmojiCategory[] = [
   {
     id: 'faces',
-    name: '표정',
+    name: 'emojiCategory.faces',
     emojis: ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇', '🙂', '🙃', '😉', '😌', '😍', '🥰', '😘', '😗', '😙', '😚', '😋', '😛', '😝', '😜', '🤪', '🤨', '🧐', '🤓', '😎', '🤩', '🥳', '😏', '😒', '😞', '😔', '😟', '😕', '🙁', '☹️', '😣', '😖', '😫', '😩', '🥺', '😢', '😭', '😤', '😠', '😡', '🤬', '🤯', '😳', '🥵', '🥶', '😱', '😨', '😰', '😥', '😓', '🤗', '🤔', '🤭', '🤫', '🤥', '😶', '😐', '😑', '😯', '😦', '😧', '😮', '😲', '🥱', '😴', '🤤', '😪', '😵', '🤐', '🥴', '🤢', '🤮', '🤧', '😷', '🤒', '🤕', '🤑', '🤠']
   },
   {
     id: 'animals',
-    name: '동물',
+    name: 'emojiCategory.animals',
     emojis: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐵', '🐔', '🐧', '🐦', '🐤', '🐣', '🦆', '🦅', '🦉', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🐛', '🦋', '🐌', '🐞', '🐜', '🦟', '🦗', '🕷', '🕸', '🦂', '🐢', '🐍', '🦎', '🦖', '🦕', '🐙', '🦑', '🦐', '🦞', '🦀', '🐡', '🐠', '🐟', '🐬', '🐳', '🐋', '🦈', '🐊', '🐅', '🐆', '🦓', '🦍', '🦧', '🐘', '🦛', '🦏', '🐪', '🐫', '🦒', '🦘', '🐃', '🐂', '🐄', '🐎', '🐖', '🐏', '🐑', '🦙', '🐐', '🦌', '🐕', '🐩', '🦮', '🐕‍🦺', '🐈', '🐈‍⬛', '🐓', '🦃', '🦚', '🦜', '🦢', '🦩', '🕊', '🐇', '🦝', '🦨', '🦡', '🦫', '🦦', '🦥', '🐁', '🐀', '🐿', '🦔']
   },
   {
     id: 'food',
-    name: '음식',
+    name: 'emojiCategory.food',
     emojis: ['🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🥑', '🥦', '🥬', '🥒', '🌶', '🫑', '🌽', '🥕', '🫒', '🧄', '🧅', '🥔', '🍠', '🥐', '🥯', '🍞', '🥖', '🥨', '🧀', '🥚', '🍳', '🧈', '🥞', '🧇', '🥓', '🥩', '🍗', '🍖', '🦴', '🌭', '🍔', '🍟', '🍕', '🥪', '🥙', '🧆', '🌮', '🌯', '🫔', '🥗', '🥘', '🫕', '🥫', '🍝', '🍜', '🍲', '🍛', '🍣', '🍱', '🥟', '🦪', '🍤', '🍙', '🍚', '🍘', '🍥', '🥠', '🥮', '🍢', '🍡', '🍧', '🍨', '🍦', '🥧', '🧁', '🍰', '🎂', '🍮', '🍭', '🍬', '🍫', '🍿', '🍪', '🌰', '🥜', '🍯', '🥛', '🍼', '🫖', '☕', '🍵', '🧃', '🥤', '🧋', '🍶', '🍺', '🍷', '🥂', '🥃', '🍸', '🍹', '🧉', '🍾', '🥄', '🍴', '🍽', '🥣', '🥡', '🥢', '🧂', '🥄', '🔪', '🍾', '🧊', '🥄', '🍴', '🍽', '🥣', '🥡', '🥢', '🧂']
   },
   {
     id: 'activities',
+    name: 'emojiCategory.activities',
     name: '활동',
     emojis: ['⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🥏', '🎱', '🪀', '🏓', '🏸', '🏒', '🏑', '🥍', '🏏', '🥅', '⛳', '🪁', '🏹', '🎣', '🤿', '🥊', '🥋', '🎽', '🛹', '🛷', '⛸', '🥌', '🎿', '⛷', '🏂', '🪂', '🏋️‍♀️', '🏋️', '🏋️‍♂️', '🤼‍♀️', '🤼', '🤼‍♂️', '🤸‍♀️', '🤸', '🤸‍♂️', '⛹️‍♀️', '⛹️', '⛹️‍♂️', '🤺', '🤾‍♀️', '🤾', '🤾‍♂️', '🏊‍♀️', '🏊', '🏊‍♂️', '🚣‍♀️', '🚣', '🚣‍♂️', '🧗‍♀️', '🧗', '🧗‍♂️', '🚵‍♀️', '🚵', '🚵‍♂️', '🚴‍♀️', '🚴', '🚴‍♂️', '🏆', '🥇', '🥈', '🥉', '🏅', '🎖', '🏵', '🎗', '🎫', '🎟', '🎪', '🤹‍♀️', '🤹', '🤹‍♂️', '🎭', '🩰', '🎨', '🎬', '🎤', '🎧', '🎼', '🎹', '🥁', '🪘', '🎷', '🎺', '🎸', '🪕', '🎻', '🎲', '♟', '🎯', '🎳', '🎮', '🎰', '🧩', '🎨', '📱', '📲', '💻', '⌨️', '🖥', '🖨', '🖱', '🖲', '🕹', '🎮', '🎰', '🧩', '🎨']
   },

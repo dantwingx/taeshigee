@@ -131,8 +131,21 @@ export const useAuthStore = create<AuthState>()(
           } else {
             throw new Error('Login failed')
           }
-        } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : '로그인에 실패했습니다.'
+        } catch (error: any) {
+          let errorMessage = '로그인에 실패했습니다.';
+          // 서버에서 내려온 에러가 객체라면
+          if (error && typeof error === 'object') {
+            // 서버 표준 에러 객체
+            if (error.code === 'INVALID_CREDENTIALS') {
+              errorMessage = 'auth.invalidCredentials';
+            } else if (typeof error.message === 'string') {
+              errorMessage = error.message;
+            }
+          } else if (typeof error === 'string') {
+            errorMessage = error;
+          } else if (error instanceof Error) {
+            errorMessage = error.message;
+          }
           set({ 
             error: errorMessage, 
             isLoading: false 
@@ -184,8 +197,20 @@ export const useAuthStore = create<AuthState>()(
           } else {
             throw new Error('Registration failed')
           }
-        } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : '회원가입에 실패했습니다.'
+        } catch (error: any) {
+          let errorMessage = '회원가입에 실패했습니다.';
+          // 서버에서 내려온 에러가 객체라면
+          if (error && typeof error === 'object') {
+            if (error.code === 'EMAIL_ALREADY_EXISTS') {
+              errorMessage = 'auth.emailAlreadyExists';
+            } else if (typeof error.message === 'string') {
+              errorMessage = error.message;
+            }
+          } else if (typeof error === 'string') {
+            errorMessage = error;
+          } else if (error instanceof Error) {
+            errorMessage = error.message;
+          }
           set({ 
             error: errorMessage, 
             isLoading: false 

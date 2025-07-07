@@ -40,7 +40,18 @@ export default {
     daysAgo: "{{count}} hari yang lalu",
     sort: 'Urutkan',
     sortAsc: 'Naik',
-    sortDesc: 'Turun'
+    sortDesc: 'Turun',
+    selectEmoji: 'Pilih emoji',
+    copySuffix: '(Salinan)',
+    visibility: 'Visibilitas',
+    emojiCategory: {
+      faces: 'Wajah',
+      animals: 'Hewan',
+      food: 'Makanan',
+      activities: 'Aktivitas',
+      objects: 'Benda',
+      symbols: 'Simbol'
+    }
   },
 
   // Navigasi
@@ -82,7 +93,12 @@ export default {
     emailInvalid: "Silakan masukkan alamat email yang valid.",
     passwordMin: "Kata sandi harus terdiri dari minimal 6 karakter.",
     confirmPasswordRequired: "Silakan konfirmasi kata sandi Anda.",
-    passwordsDontMatch: "Kata sandi tidak cocok."
+    passwordsDontMatch: "Kata sandi tidak cocok.",
+    loginFailed: 'Login gagal',
+    registerFailed: 'Registrasi gagal',
+    networkError: 'Kesalahan jaringan',
+    serverError: 'Kesalahan server',
+    unknownError: 'Kesalahan tidak diketahui'
   },
 
   // Tugas
@@ -144,7 +160,11 @@ export default {
     priorityFilter: 'Prioritas',
     publicFilter: 'Publik',
     createdAt: 'Tanggal dibuat',
-    update: 'Perbarui'
+    update: 'Perbarui',
+    titleMaxLength: 'Judul harus maksimal 100 karakter',
+    descriptionMaxLength: 'Deskripsi harus maksimal 500 karakter',
+    templateButton: 'Template',
+    emojiButton: 'Emoji'
   },
 
   // Beranda
@@ -262,5 +282,86 @@ export default {
     info: 'Informasi',
     showMore: 'Tampilkan lebih banyak',
     showLess: 'Tampilkan lebih sedikit'
+  },
+
+  templateExamples: {
+    diet3days: {
+      name: 'Diet 3 Hari',
+      title: 'Diet 3 Hari',
+      description: 'Diet sehat selama 3 hari',
+      tags: ['Kesehatan', 'Diet', 'Makan']
+    },
+    dietWeek: {
+      name: 'Diet 1 Minggu',
+      title: 'Diet 1 Minggu',
+      description: 'Tubuh sehat dengan diet berkelanjutan selama 1 minggu',
+      tags: ['Kesehatan', 'Diet', 'Olahraga']
+    },
+    dietMonth: {
+      name: 'Diet 1 Bulan',
+      title: 'Diet 1 Bulan',
+      description: 'Capai tujuan dengan diet terstruktur selama 1 bulan',
+      tags: ['Kesehatan', 'Diet', 'Tujuan']
+    },
+    exerciseDaily: {
+      name: 'Olahraga Harian',
+      title: 'Olahraga Setiap Hari',
+      description: 'Gaya hidup sehat dengan olahraga minimal 30 menit setiap hari',
+      tags: ['Kesehatan', 'Olahraga', 'Kebiasaan']
+    },
+    waterIntake: {
+      name: 'Minum Air',
+      title: 'Minum 2 Liter Air Setiap Hari',
+      description: 'Minum lebih dari 2 liter air setiap hari untuk tubuh sehat',
+      tags: ['Kesehatan', 'Hidrasi', 'Kebiasaan']
+    },
+    studyDaily: {
+      name: 'Belajar Harian',
+      title: 'Belajar Setiap Hari',
+      description: 'Tingkatkan pengetahuan dengan belajar minimal 1 jam setiap hari',
+      tags: ['Belajar', 'Pengetahuan', 'Kebiasaan']
+    },
+    languageStudy: {
+      name: 'Belajar Bahasa',
+      title: 'Belajar Bahasa Asing',
+      description: 'Tingkatkan kemampuan bahasa dengan belajar bahasa asing 30 menit setiap hari',
+      tags: ['Belajar', 'Bahasa', 'Asing']
+    },
+    workPlanning: {
+      name: 'Perencanaan Kerja',
+      title: 'Perencanaan Kerja',
+      description: 'Rencanakan dan laksanakan pekerjaan Anda setiap hari',
+      tags: ['Kerja', 'Perencanaan', 'Produktivitas']
+    },
+    skillImprovement: {
+      name: 'Pengembangan Keterampilan',
+      title: 'Pengembangan Keterampilan Teknis',
+      description: 'Pelajari keterampilan baru dan terapkan dalam pekerjaan Anda',
+      tags: ['Kerja', 'Keterampilan', 'Pengembangan']
+    },
+    reading: {
+      name: 'Membaca',
+      title: 'Membaca Buku',
+      description: 'Baca buku minimal 30 menit setiap hari',
+      tags: ['Hobi', 'Membaca', 'Pengetahuan']
+    },
+    musicPractice: {
+      name: 'Latihan Musik',
+      title: 'Latihan Musik',
+      description: 'Tingkatkan kemampuan musik dengan berlatih alat musik setiap hari',
+      tags: ['Hobi', 'Musik', 'Latihan']
+    },
+    earlySleep: {
+      name: 'Tidur Lebih Awal',
+      title: 'Tidur Lebih Awal',
+      description: 'Tidur sebelum jam 11 malam setiap hari',
+      tags: ['Harian', 'Tidur', 'Kesehatan']
+    },
+    gratitude: {
+      name: 'Jurnal Syukur',
+      title: 'Menulis Jurnal Syukur',
+      description: 'Tulis 3 hal yang Anda syukuri setiap hari',
+      tags: ['Harian', 'Syukur', 'Pikiran']
+    }
   }
 }; 

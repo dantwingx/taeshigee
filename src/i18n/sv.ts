@@ -40,7 +40,10 @@ export default {
     daysAgo: "för {{count}} dag(ar) sedan",
     sort: 'Sortera',
     sortAsc: 'Stigande',
-    sortDesc: 'Fallande'
+    sortDesc: 'Fallande',
+    selectEmoji: 'Välj emoji',
+    copySuffix: '(Kopia)',
+    visibility: 'Synlighet'
   },
 
   // Navigation
@@ -82,7 +85,12 @@ export default {
     emailInvalid: "Ange en giltig e-postadress.",
     passwordMin: "Lösenordet måste vara minst 6 tecken.",
     confirmPasswordRequired: "Bekräfta ditt lösenord.",
-    passwordsDontMatch: "Lösenorden matchar inte."
+    passwordsDontMatch: "Lösenorden matchar inte.",
+    loginFailed: 'Inloggning misslyckades',
+    registerFailed: 'Registrering misslyckades',
+    networkError: 'Nätverksfel',
+    serverError: 'Serverfel',
+    unknownError: 'Okänt fel'
   },
 
   // Uppgift
@@ -144,7 +152,11 @@ export default {
     priorityFilter: 'Prioritet',
     publicFilter: 'Offentlig',
     createdAt: 'Skapandedatum',
-    update: 'Uppdatera'
+    update: 'Uppdatera',
+    titleMaxLength: 'Titeln får vara högst 100 tecken',
+    descriptionMaxLength: 'Beskrivningen får vara högst 500 tecken',
+    templateButton: 'Mall',
+    emojiButton: 'Emoji'
   },
 
   // Hem
@@ -262,5 +274,86 @@ export default {
     success: 'Framgång',
     warning: 'Varning',
     info: 'Information'
+  },
+
+  templateExamples: {
+    diet3days: {
+      name: '3-dagarsdiet',
+      title: '3-dagarsdiet',
+      description: 'Hälsosam diet i 3 dagar',
+      tags: ['Hälsa', 'Diet', 'Måltid']
+    },
+    dietWeek: {
+      name: '1-veckasdiet',
+      title: '1-veckasdiet',
+      description: 'Hälsosam kropp med kontinuerlig diet i 1 vecka',
+      tags: ['Hälsa', 'Diet', 'Träning']
+    },
+    dietMonth: {
+      name: '1-månadsdiet',
+      title: '1-månadsdiet',
+      description: 'Nå ditt mål med en systematisk diet i 1 månad',
+      tags: ['Hälsa', 'Diet', 'Mål']
+    },
+    exerciseDaily: {
+      name: 'Daglig träning',
+      title: 'Träna dagligen',
+      description: 'Hälsosam livsstil med minst 30 minuters träning varje dag',
+      tags: ['Hälsa', 'Träning', 'Vana']
+    },
+    waterIntake: {
+      name: 'Dricka vatten',
+      title: 'Drick 2 liter vatten dagligen',
+      description: 'Drick mer än 2 liter vatten varje dag för en hälsosam kropp',
+      tags: ['Hälsa', 'Vätska', 'Vana']
+    },
+    studyDaily: {
+      name: 'Daglig studier',
+      title: 'Studera dagligen',
+      description: 'Få kunskap genom att studera minst 1 timme varje dag',
+      tags: ['Studier', 'Kunskap', 'Vana']
+    },
+    languageStudy: {
+      name: 'Språkinlärning',
+      title: 'Studera främmande språk',
+      description: 'Förbättra dina språkkunskaper genom att studera ett främmande språk 30 minuter dagligen',
+      tags: ['Studier', 'Språk', 'Främmande']
+    },
+    workPlanning: {
+      name: 'Arbetsplanering',
+      title: 'Arbetsplanering',
+      description: 'Planera och utför ditt arbete varje dag',
+      tags: ['Arbete', 'Planering', 'Produktivitet']
+    },
+    skillImprovement: {
+      name: 'Kompetensutveckling',
+      title: 'Teknisk kompetensutveckling',
+      description: 'Lär dig nya färdigheter och tillämpa dem i ditt arbete',
+      tags: ['Arbete', 'Kompetens', 'Utveckling']
+    },
+    reading: {
+      name: 'Läsa',
+      title: 'Läsa böcker',
+      description: 'Läs böcker minst 30 minuter varje dag',
+      tags: ['Hobby', 'Läsa', 'Kunskap']
+    },
+    musicPractice: {
+      name: 'Musikträning',
+      title: 'Musikträning',
+      description: 'Förbättra dina musikaliska färdigheter genom att öva instrument varje dag',
+      tags: ['Hobby', 'Musik', 'Träning']
+    },
+    earlySleep: {
+      name: 'Lägga sig tidigt',
+      title: 'Lägga sig tidigt',
+      description: 'Gå och lägg dig före kl 23 varje dag',
+      tags: ['Dagligen', 'Sömn', 'Hälsa']
+    },
+    gratitude: {
+      name: 'Tacksamhetsdagbok',
+      title: 'Skriv tacksamhetsdagbok',
+      description: 'Skriv ner 3 saker du är tacksam för varje dag',
+      tags: ['Dagligen', 'Tacksamhet', 'Sinnet']
+    }
   }
 }; 

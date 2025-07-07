@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { EmojiCategory } from '@/types/task'
 import { EMOJI_CATEGORIES } from '@/utils/constants'
 
@@ -8,6 +9,7 @@ interface EmojiPickerProps {
 }
 
 export function EmojiPicker({ onSelectEmoji, onClose }: EmojiPickerProps) {
+  const { t } = useTranslation()
   const [selectedCategory, setSelectedCategory] = useState<string>('faces')
 
   const currentCategory = EMOJI_CATEGORIES.find(cat => cat.id === selectedCategory)
@@ -18,7 +20,7 @@ export function EmojiPicker({ onSelectEmoji, onClose }: EmojiPickerProps) {
         <div className="p-4 border-b border-neutral-200 dark:border-neutral-700">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
-              이모지 선택
+              {t('common.selectEmoji')}
             </h2>
             <button
               onClick={onClose}
@@ -40,7 +42,7 @@ export function EmojiPicker({ onSelectEmoji, onClose }: EmojiPickerProps) {
                     : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600'
                 }`}
               >
-                {category.name}
+                {t(`common.emojiCategory.${category.id}`)}
               </button>
             ))}
           </div>

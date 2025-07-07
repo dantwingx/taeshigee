@@ -39,7 +39,8 @@ export default {
     daysAgo: "{{count}} दिन पहले",
     sort: 'क्रमबद्ध करें',
     sortAsc: 'आरोही',
-    sortDesc: 'अवरोही'
+    sortDesc: 'अवरोही',
+    selectEmoji: 'इमोजी चुनें'
   },
 
   navigation: {
@@ -78,7 +79,12 @@ export default {
     emailInvalid: "कृपया एक मान्य ईमेल पता दर्ज करें।",
     passwordMin: "पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।",
     confirmPasswordRequired: "कृपया अपना पासवर्ड पुष्टि करें।",
-    passwordsDontMatch: "पासवर्ड मेल नहीं खाते।"
+    passwordsDontMatch: "पासवर्ड मेल नहीं खाते।",
+    loginFailed: 'लॉगिन विफल',
+    registerFailed: 'पंजीकरण विफल',
+    networkError: 'नेटवर्क त्रुटि',
+    serverError: 'सर्वर त्रुटि',
+    unknownError: 'अज्ञात त्रुटि'
   },
 
   task: {
@@ -141,7 +147,11 @@ export default {
     priorityFilter: "प्राथमिकता",
     publicFilter: "सार्वजनिक",
     createdAt: "बनाने की तारीख",
-    update: "अपडेट करें"
+    update: "अपडेट करें",
+    titleMaxLength: 'शीर्षक 100 अक्षरों से कम होना चाहिए',
+    descriptionMaxLength: 'विवरण 500 अक्षरों से कम होना चाहिए',
+    templateButton: 'टेम्पलेट',
+    emojiButton: 'इमोजी'
   },
 
   home: {
@@ -259,5 +269,86 @@ export default {
     warning: "चेतावनी",
     info: "जानकारी",
     taskDuplicated: "कार्य डुप्लिकेट हो गया"
+  },
+
+  templateExamples: {
+    diet3days: {
+      name: '3 दिन की डाइट',
+      title: '3 दिन की डाइट',
+      description: '3 दिनों तक स्वस्थ आहार',
+      tags: ['स्वास्थ्य', 'डाइट', 'भोजन']
+    },
+    dietWeek: {
+      name: '1 सप्ताह की डाइट',
+      title: '1 सप्ताह की डाइट',
+      description: '1 सप्ताह तक लगातार डाइट से स्वस्थ शरीर',
+      tags: ['स्वास्थ्य', 'डाइट', 'व्यायाम']
+    },
+    dietMonth: {
+      name: '1 महीने की डाइट',
+      title: '1 महीने की डाइट',
+      description: '1 महीने की व्यवस्थित डाइट से लक्ष्य प्राप्त करें',
+      tags: ['स्वास्थ्य', 'डाइट', 'लक्ष्य']
+    },
+    exerciseDaily: {
+      name: 'रोज़ाना व्यायाम',
+      title: 'रोज़ व्यायाम करें',
+      description: 'हर दिन कम से कम 30 मिनट व्यायाम करके स्वस्थ जीवनशैली',
+      tags: ['स्वास्थ्य', 'व्यायाम', 'आदत']
+    },
+    waterIntake: {
+      name: 'पानी पीना',
+      title: 'रोज़ 2 लीटर पानी पिएं',
+      description: 'स्वस्थ शरीर के लिए रोज़ 2 लीटर से अधिक पानी पिएं',
+      tags: ['स्वास्थ्य', 'हाइड्रेशन', 'आदत']
+    },
+    studyDaily: {
+      name: 'रोज़ाना पढ़ाई',
+      title: 'रोज़ पढ़ाई करें',
+      description: 'हर दिन कम से कम 1 घंटे पढ़ाई करके ज्ञान अर्जित करें',
+      tags: ['पढ़ाई', 'सीखना', 'आदत']
+    },
+    languageStudy: {
+      name: 'भाषा अध्ययन',
+      title: 'विदेशी भाषा अध्ययन',
+      description: 'हर दिन 30 मिनट विदेशी भाषा पढ़कर अपनी भाषा कौशल सुधारें',
+      tags: ['पढ़ाई', 'भाषा', 'विदेशी']
+    },
+    workPlanning: {
+      name: 'कार्य योजना',
+      title: 'कार्य योजना बनाएं',
+      description: 'हर दिन अपने कार्य की योजना बनाएं और उसे पूरा करें',
+      tags: ['काम', 'योजना', 'उत्पादकता']
+    },
+    skillImprovement: {
+      name: 'कौशल सुधार',
+      title: 'तकनीकी कौशल सुधारें',
+      description: 'नई कौशल सीखें और अपने काम में लागू करें',
+      tags: ['काम', 'कौशल', 'विकास']
+    },
+    reading: {
+      name: 'पढ़ना',
+      title: 'किताबें पढ़ें',
+      description: 'हर दिन कम से कम 30 मिनट किताबें पढ़ें',
+      tags: ['शौक', 'पढ़ना', 'ज्ञान']
+    },
+    musicPractice: {
+      name: 'संगीत अभ्यास',
+      title: 'संगीत का अभ्यास करें',
+      description: 'हर दिन वाद्ययंत्र का अभ्यास करके अपने संगीत कौशल सुधारें',
+      tags: ['शौक', 'संगीत', 'अभ्यास']
+    },
+    earlySleep: {
+      name: 'जल्दी सोना',
+      title: 'जल्दी सोना',
+      description: 'हर दिन रात 11 बजे से पहले सोएं',
+      tags: ['दैनिक', 'नींद', 'स्वास्थ्य']
+    },
+    gratitude: {
+      name: 'आभार डायरी',
+      title: 'आभार डायरी लिखें',
+      description: 'हर दिन 3 चीजें लिखें जिनके लिए आप आभारी हैं',
+      tags: ['दैनिक', 'आभार', 'मन']
+    }
   }
 }; 

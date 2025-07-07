@@ -38,7 +38,18 @@ export default {
     daysAgo: "{{count}} ngày trước",
     sort: 'Sắp xếp',
     sortAsc: 'Tăng dần',
-    sortDesc: 'Giảm dần'
+    sortDesc: 'Giảm dần',
+    selectEmoji: 'Chọn emoji',
+    copySuffix: '(Bản sao)',
+    visibility: 'Hiển thị',
+    emojiCategory: {
+      faces: 'Khuôn mặt',
+      animals: 'Động vật',
+      food: 'Thức ăn',
+      activities: 'Hoạt động',
+      objects: 'Đồ vật',
+      symbols: 'Biểu tượng'
+    }
   },
 
   // Điều hướng
@@ -79,7 +90,12 @@ export default {
     emailInvalid: "Vui lòng nhập địa chỉ email hợp lệ.",
     passwordMin: "Mật khẩu phải có ít nhất 6 ký tự.",
     confirmPasswordRequired: "Vui lòng xác nhận mật khẩu của bạn.",
-    passwordsDontMatch: "Mật khẩu không khớp."
+    passwordsDontMatch: "Mật khẩu không khớp.",
+    loginFailed: 'Đăng nhập thất bại',
+    registerFailed: 'Đăng ký thất bại',
+    networkError: 'Lỗi mạng',
+    serverError: 'Lỗi máy chủ',
+    unknownError: 'Lỗi không xác định'
   },
 
   // Nhiệm vụ
@@ -141,7 +157,11 @@ export default {
     priorityFilter: 'Ưu tiên',
     publicFilter: 'Công khai',
     createdAt: 'Ngày tạo',
-    update: 'Cập nhật'
+    update: 'Cập nhật',
+    titleMaxLength: 'Tiêu đề phải có tối đa 100 ký tự',
+    descriptionMaxLength: 'Mô tả phải có tối đa 500 ký tự',
+    templateButton: 'Mẫu',
+    emojiButton: 'Biểu tượng cảm xúc'
   },
 
   // Trang chủ
@@ -257,5 +277,86 @@ export default {
     success: 'Thành công',
     warning: 'Cảnh báo',
     info: 'Thông tin'
+  },
+
+  templateExamples: {
+    diet3days: {
+      name: 'Ăn kiêng 3 ngày',
+      title: 'Ăn kiêng 3 ngày',
+      description: 'Ăn kiêng lành mạnh trong 3 ngày',
+      tags: ['Sức khỏe', 'Ăn kiêng', 'Bữa ăn']
+    },
+    dietWeek: {
+      name: 'Ăn kiêng 1 tuần',
+      title: 'Ăn kiêng 1 tuần',
+      description: 'Cơ thể khỏe mạnh với ăn kiêng liên tục 1 tuần',
+      tags: ['Sức khỏe', 'Ăn kiêng', 'Tập luyện']
+    },
+    dietMonth: {
+      name: 'Ăn kiêng 1 tháng',
+      title: 'Ăn kiêng 1 tháng',
+      description: 'Đạt mục tiêu với ăn kiêng có hệ thống trong 1 tháng',
+      tags: ['Sức khỏe', 'Ăn kiêng', 'Mục tiêu']
+    },
+    exerciseDaily: {
+      name: 'Tập thể dục hàng ngày',
+      title: 'Tập thể dục hàng ngày',
+      description: 'Lối sống lành mạnh với ít nhất 30 phút tập thể dục mỗi ngày',
+      tags: ['Sức khỏe', 'Tập thể dục', 'Thói quen']
+    },
+    waterIntake: {
+      name: 'Uống nước',
+      title: 'Uống 2 lít nước mỗi ngày',
+      description: 'Uống hơn 2 lít nước mỗi ngày để có cơ thể khỏe mạnh',
+      tags: ['Sức khỏe', 'Nước', 'Thói quen']
+    },
+    studyDaily: {
+      name: 'Học hàng ngày',
+      title: 'Học hàng ngày',
+      description: 'Tích lũy kiến thức bằng cách học ít nhất 1 giờ mỗi ngày',
+      tags: ['Học', 'Kiến thức', 'Thói quen']
+    },
+    languageStudy: {
+      name: 'Học ngoại ngữ',
+      title: 'Học ngoại ngữ',
+      description: 'Cải thiện kỹ năng ngôn ngữ bằng cách học ngoại ngữ 30 phút mỗi ngày',
+      tags: ['Học', 'Ngôn ngữ', 'Ngoại ngữ']
+    },
+    workPlanning: {
+      name: 'Lập kế hoạch công việc',
+      title: 'Lập kế hoạch công việc',
+      description: 'Lập kế hoạch và thực hiện công việc mỗi ngày',
+      tags: ['Công việc', 'Kế hoạch', 'Năng suất']
+    },
+    skillImprovement: {
+      name: 'Phát triển kỹ năng',
+      title: 'Phát triển kỹ năng kỹ thuật',
+      description: 'Học kỹ năng mới và áp dụng vào công việc',
+      tags: ['Công việc', 'Kỹ năng', 'Phát triển']
+    },
+    reading: {
+      name: 'Đọc sách',
+      title: 'Đọc sách',
+      description: 'Đọc sách ít nhất 30 phút mỗi ngày',
+      tags: ['Sở thích', 'Đọc', 'Kiến thức']
+    },
+    musicPractice: {
+      name: 'Luyện tập âm nhạc',
+      title: 'Luyện tập âm nhạc',
+      description: 'Cải thiện kỹ năng âm nhạc bằng cách luyện tập nhạc cụ mỗi ngày',
+      tags: ['Sở thích', 'Âm nhạc', 'Luyện tập']
+    },
+    earlySleep: {
+      name: 'Ngủ sớm',
+      title: 'Ngủ sớm',
+      description: 'Đi ngủ trước 23h mỗi ngày',
+      tags: ['Hàng ngày', 'Ngủ', 'Sức khỏe']
+    },
+    gratitude: {
+      name: 'Nhật ký biết ơn',
+      title: 'Viết nhật ký biết ơn',
+      description: 'Viết 3 điều bạn biết ơn mỗi ngày',
+      tags: ['Hàng ngày', 'Biết ơn', 'Tâm trí']
+    }
   }
 }; 

@@ -78,7 +78,7 @@ export function LoginPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0Z" />
                 </svg>
                 <p className="text-sm text-red-800 font-bold">
-                  {errors.root?.message || error || t('auth.invalidCredentials')}
+                  {errors.root?.message || (error && error.startsWith('auth.') ? t(error) : error) || t('auth.invalidCredentials')}
                 </p>
               </div>
             )}
@@ -166,7 +166,7 @@ export function LoginPage() {
         {/* 하단 정보 */}
         <div className="text-center mt-6">
           <p className="text-xs text-neutral-500">
-            안전하고 효율적인 태스크 관리를 경험해보세요
+            한글을 배우고 싶을 땐 phoLingo
           </p>
         </div>
       </div>

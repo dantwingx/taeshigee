@@ -40,7 +40,18 @@ export default {
     daysAgo: "{{count}} dag geleden",
     sort: 'Sorteren',
     sortAsc: 'Oplopend',
-    sortDesc: 'Aflopend'
+    sortDesc: 'Aflopend',
+    selectEmoji: 'Emoji selecteren',
+    copySuffix: '(Kopie)',
+    visibility: 'Zichtbaarheid',
+    emojiCategory: {
+      faces: 'Gezichten',
+      animals: 'Dieren',
+      food: 'Eten',
+      activities: 'Activiteiten',
+      objects: 'Objecten',
+      symbols: 'Symbolen'
+    }
   },
 
   // Navigatie
@@ -82,7 +93,12 @@ export default {
     emailInvalid: "Voer een geldig e-mailadres in.",
     passwordMin: "Wachtwoord moet minimaal 6 tekens bevatten.",
     confirmPasswordRequired: "Bevestig uw wachtwoord.",
-    passwordsDontMatch: "Wachtwoorden komen niet overeen."
+    passwordsDontMatch: "Wachtwoorden komen niet overeen.",
+    loginFailed: 'Inloggen mislukt',
+    registerFailed: 'Registreren mislukt',
+    networkError: 'Netwerkfout',
+    serverError: 'Serverfout',
+    unknownError: 'Onbekende fout'
   },
 
   // Taak
@@ -144,7 +160,11 @@ export default {
     priorityFilter: 'Prioriteit',
     publicFilter: 'Openbaar',
     createdAt: 'Aanmaakdatum',
-    update: 'Bijwerken'
+    update: 'Bijwerken',
+    titleMaxLength: 'Titel mag maximaal 100 tekens bevatten',
+    descriptionMaxLength: 'Beschrijving mag maximaal 500 tekens bevatten',
+    templateButton: 'Sjabloon',
+    emojiButton: 'Emoji'
   },
 
   // Home
@@ -264,5 +284,86 @@ export default {
     info: 'Informatie',
     showMore: "Meer weergeven",
     showLess: "Minder weergeven"
+  },
+
+  templateExamples: {
+    diet3days: {
+      name: '3 Dagen Dieet',
+      title: '3 Dagen Dieet',
+      description: 'Gezond dieet voor 3 dagen',
+      tags: ['Gezondheid', 'Dieet', 'Maaltijd']
+    },
+    dietWeek: {
+      name: '1 Week Dieet',
+      title: '1 Week Dieet',
+      description: 'Gezond lichaam met een week lang dieet',
+      tags: ['Gezondheid', 'Dieet', 'Beweging']
+    },
+    dietMonth: {
+      name: '1 Maand Dieet',
+      title: '1 Maand Dieet',
+      description: 'Bereik je doel met een gestructureerd dieet van 1 maand',
+      tags: ['Gezondheid', 'Dieet', 'Doel']
+    },
+    exerciseDaily: {
+      name: 'Dagelijkse Oefening',
+      title: 'Dagelijks Oefenen',
+      description: 'Gezonde levensstijl door minimaal 30 minuten per dag te bewegen',
+      tags: ['Gezondheid', 'Oefening', 'Gewoonte']
+    },
+    waterIntake: {
+      name: 'Water Drinken',
+      title: '2 Liter Water Per Dag',
+      description: 'Drink meer dan 2 liter water per dag voor een gezond lichaam',
+      tags: ['Gezondheid', 'Hydratatie', 'Gewoonte']
+    },
+    studyDaily: {
+      name: 'Dagelijks Studeren',
+      title: 'Dagelijks Studeren',
+      description: 'Vergroot je kennis door minimaal 1 uur per dag te studeren',
+      tags: ['Studie', 'Kennis', 'Gewoonte']
+    },
+    languageStudy: {
+      name: 'Taalstudie',
+      title: 'Vreemde Taal Studeren',
+      description: 'Verbeter je taalvaardigheid door 30 minuten per dag een vreemde taal te leren',
+      tags: ['Studie', 'Taal', 'Vreemd']
+    },
+    workPlanning: {
+      name: 'Werkplanning',
+      title: 'Werkplanning',
+      description: 'Plan en voer je werk elke dag uit',
+      tags: ['Werk', 'Planning', 'Productiviteit']
+    },
+    skillImprovement: {
+      name: 'Vaardigheden Verbeteren',
+      title: 'Technische Vaardigheden Verbeteren',
+      description: 'Leer nieuwe vaardigheden en pas ze toe in je werk',
+      tags: ['Werk', 'Vaardigheden', 'Verbetering']
+    },
+    reading: {
+      name: 'Lezen',
+      title: 'Boeken Lezen',
+      description: 'Lees elke dag minimaal 30 minuten boeken',
+      tags: ['Hobby', 'Lezen', 'Kennis']
+    },
+    musicPractice: {
+      name: 'Muziek Oefenen',
+      title: 'Muziek Oefenen',
+      description: 'Verbeter je muzikale vaardigheden door elke dag een instrument te oefenen',
+      tags: ['Hobby', 'Muziek', 'Oefenen']
+    },
+    earlySleep: {
+      name: 'Vroeg Slapen',
+      title: 'Vroeg Slapen',
+      description: 'Elke dag voor 23:00 uur naar bed gaan',
+      tags: ['Dagelijks', 'Slaap', 'Gezondheid']
+    },
+    gratitude: {
+      name: 'Dankbaarheidsdagboek',
+      title: 'Dankbaarheidsdagboek Schrijven',
+      description: 'Schrijf elke dag 3 dingen op waarvoor je dankbaar bent',
+      tags: ['Dagelijks', 'Dankbaarheid', 'Geest']
+    }
   }
 }; 

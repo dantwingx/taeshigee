@@ -82,8 +82,12 @@ export function RegisterPage() {
             {/* 이름 */}
             {/* 에러 메시지 */}
             {errors.root && (
-              <div className="p-3 rounded-lg bg-error-50 border border-error-200">
-                <p className="text-sm text-error-700">{errors.root.message}</p>
+              <div className="p-3 rounded-lg bg-red-200 border border-red-400 flex items-center gap-2">
+                {/* 에러 아이콘 */}
+                <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0Z" />
+                </svg>
+                <p className="text-sm text-red-800 font-bold">{errors.root.message && errors.root.message.startsWith('auth.') ? t(errors.root.message) : errors.root.message}</p>
               </div>
             )}
 
@@ -196,7 +200,7 @@ export function RegisterPage() {
         {/* 하단 정보 */}
         <div className="text-center mt-6">
           <p className="text-xs text-neutral-500">
-            안전하고 효율적인 태스크 관리를 경험해보세요
+          한글을 배우고 싶을 땐 phoLingo
           </p>
         </div>
       </div>

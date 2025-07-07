@@ -38,6 +38,15 @@ export default {
     sort: 'ترتيب',
     sortAsc: 'تصاعدي',
     sortDesc: 'تنازلي',
+    selectEmoji: 'اختر الرمز التعبيري',
+    emojiCategory: {
+      faces: 'وجوه',
+      animals: 'حيوانات',
+      food: 'طعام',
+      activities: 'أنشطة',
+      objects: 'أشياء',
+      symbols: 'رموز'
+    },
   },
 
   navigation: {
@@ -76,7 +85,12 @@ export default {
     emailInvalid: "يرجى إدخال عنوان بريد إلكتروني صالح.",
     passwordMin: "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.",
     confirmPasswordRequired: "يرجى تأكيد كلمة المرور الخاصة بك.",
-    passwordsDontMatch: "كلمتا المرور غير متطابقتين."
+    passwordsDontMatch: "كلمتا المرور غير متطابقتين.",
+    loginFailed: 'فشل تسجيل الدخول',
+    registerFailed: 'فشل التسجيل',
+    networkError: 'خطأ في الشبكة',
+    serverError: 'خطأ في الخادم',
+    unknownError: 'خطأ غير معروف'
   },
 
   task: {
@@ -142,7 +156,11 @@ export default {
     update: "تحديث",
     completed: 'مكتمل',
     incomplete: 'غير مكتمل',
-    toggleComplete: 'تبديل مكتمل/غير مكتمل'
+    toggleComplete: 'تبديل مكتمل/غير مكتمل',
+    titleMaxLength: 'يجب ألا يزيد العنوان عن 100 حرف',
+    descriptionMaxLength: 'يجب ألا تزيد الوصف عن 500 حرف',
+    templateButton: 'قالب',
+    emojiButton: 'إيموجي',
   },
 
   home: {
@@ -255,5 +273,86 @@ export default {
     warning: "تحذير",
     info: "معلومات",
     taskDuplicated: "تم تكرار المهمة"
+  },
+
+  templateExamples: {
+    diet3days: {
+      name: 'حمية 3 أيام',
+      title: 'حمية 3 أيام',
+      description: 'حمية صحية لمدة 3 أيام',
+      tags: ['صحة', 'حمية', 'وجبة']
+    },
+    dietWeek: {
+      name: 'حمية أسبوع',
+      title: 'حمية أسبوع',
+      description: 'جسم صحي مع حمية مستمرة لمدة أسبوع',
+      tags: ['صحة', 'حمية', 'تمرين']
+    },
+    dietMonth: {
+      name: 'حمية شهر',
+      title: 'حمية شهر',
+      description: 'حقق هدفك مع حمية منهجية لمدة شهر',
+      tags: ['صحة', 'حمية', 'هدف']
+    },
+    exerciseDaily: {
+      name: 'تمرين يومي',
+      title: 'ممارسة التمارين يومياً',
+      description: 'أسلوب حياة صحي بممارسة التمارين لمدة 30 دقيقة على الأقل يومياً',
+      tags: ['صحة', 'تمرين', 'عادة']
+    },
+    waterIntake: {
+      name: 'شرب الماء',
+      title: 'شرب 2 لتر ماء يومياً',
+      description: 'اشرب أكثر من 2 لتر ماء يومياً لجسم صحي',
+      tags: ['صحة', 'ترطيب', 'عادة']
+    },
+    studyDaily: {
+      name: 'دراسة يومية',
+      title: 'الدراسة يومياً',
+      description: 'اكتساب المعرفة بالدراسة لمدة ساعة واحدة على الأقل يومياً',
+      tags: ['دراسة', 'تعلم', 'عادة']
+    },
+    languageStudy: {
+      name: 'دراسة لغة',
+      title: 'دراسة لغة أجنبية',
+      description: 'حسّن مهاراتك اللغوية بدراسة لغة أجنبية لمدة 30 دقيقة يومياً',
+      tags: ['دراسة', 'لغة', 'أجنبي']
+    },
+    workPlanning: {
+      name: 'تخطيط العمل',
+      title: 'تخطيط العمل',
+      description: 'خطط ونفذ عملك يومياً',
+      tags: ['عمل', 'تخطيط', 'إنتاجية']
+    },
+    skillImprovement: {
+      name: 'تطوير المهارات',
+      title: 'تطوير المهارات التقنية',
+      description: 'تعلم مهارات جديدة وطبقها في عملك',
+      tags: ['عمل', 'مهارات', 'تطوير']
+    },
+    reading: {
+      name: 'قراءة',
+      title: 'قراءة الكتب',
+      description: 'اقرأ الكتب لمدة 30 دقيقة على الأقل يومياً',
+      tags: ['هواية', 'قراءة', 'معرفة']
+    },
+    musicPractice: {
+      name: 'ممارسة الموسيقى',
+      title: 'ممارسة الموسيقى',
+      description: 'حسّن مهاراتك الموسيقية بممارسة آلة موسيقية يومياً',
+      tags: ['هواية', 'موسيقى', 'ممارسة']
+    },
+    earlySleep: {
+      name: 'النوم مبكراً',
+      title: 'النوم مبكراً',
+      description: 'النوم قبل الساعة 11 مساءً يومياً',
+      tags: ['يومي', 'نوم', 'صحة']
+    },
+    gratitude: {
+      name: 'مذكرة الامتنان',
+      title: 'كتابة مذكرة الامتنان',
+      description: 'اكتب 3 أشياء تشعر بالامتنان لها يومياً',
+      tags: ['يومي', 'امتنان', 'عقل']
+    }
   }
 }; 
