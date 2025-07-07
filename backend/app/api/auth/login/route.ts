@@ -6,10 +6,14 @@ import { createApiErrorResponse, createValidationError, handleUnexpectedError } 
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('[Login API] POST /api/auth/login - Request received');
+    
     const { email, password } = await request.json();
+    console.log('[Login API] Login attempt for email:', email);
 
     // Validate input
     if (!email || !password) {
+      console.error('[Login API] Missing credentials');
       return createValidationError('credentials', '이메일과 비밀번호를 입력해주세요.');
     }
 
@@ -21,14 +25,20 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error || !user) {
+      console.error('[Login API] User not found or database error:', error);
       return createApiErrorResponse('INVALID_CREDENTIALS');
     }
+
+    console.log('[Login API] User found:', user.id);
 
     // Verify password using bcrypt
     const isPasswordValid = await bcrypt.compare(password, user.password_hash);
     if (!isPasswordValid) {
+      console.error('[Login API] Invalid password for user:', user.id);
       return createApiErrorResponse('INVALID_CREDENTIALS');
     }
+
+    console.log('[Login API] Password verified successfully for user:', user.id);
 
     // Generate JWT token
     const token = signToken({
@@ -37,6 +47,8 @@ export async function POST(request: NextRequest) {
       email: user.email,
       name: user.name,
     });
+
+    console.log('[Login API] Login successful for user:', user.id);
 
     return Response.json({
       success: true,

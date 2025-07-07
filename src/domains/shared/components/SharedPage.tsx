@@ -165,7 +165,12 @@ export function SharedPage() {
     setIsDetailOpen(true)
   }
 
-  const handleDuplicate = async (id: string) => {
+  const handleDuplicate = async (id: string, e?: React.MouseEvent) => {
+    // 이벤트가 있으면 전파 방지
+    if (e) {
+      e.stopPropagation()
+    }
+    
     try {
       await duplicateTask(id)
       showToast('success', t('toast.taskDuplicated'))
@@ -174,8 +179,12 @@ export function SharedPage() {
     }
   }
 
-  const handleLike = async (taskId: string, e: React.MouseEvent) => {
-    e.stopPropagation()
+  const handleLike = async (taskId: string, e?: React.MouseEvent) => {
+    // 이벤트가 있으면 전파 방지
+    if (e) {
+      e.stopPropagation()
+    }
+    
     if (!currentUserNumber) {
       showToast('error', t('auth.invalidCredentials'))
       return
@@ -396,7 +405,7 @@ export function SharedPage() {
                 {/* 복제 버튼 */}
                 <button
                   className="opacity-100 bg-neutral-100 dark:bg-neutral-700 rounded-full p-1 transition-opacity flex items-center text-xs text-neutral-700 dark:text-neutral-200 hover:bg-primary-100 dark:hover:bg-primary-700"
-                  onClick={e => { e.stopPropagation(); handleDuplicate(task.id) }}
+                  onClick={e => handleDuplicate(task.id, e)}
                   title={t('common.duplicate')}
                 >
                   <Copy className="h-4 w-4 mr-1" />
@@ -513,12 +522,46 @@ export function SharedPage() {
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">{t('shared.viewTaskDetails')}</h2>
-                <button
-                  onClick={() => setIsDetailOpen(false)}
-                  className="text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
-                >
-                  ✕
-                </button>
+                <div className="flex items-center gap-2">
+                  {/* 좋아요 버튼 */}
+                  <button
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                      currentUserNumber && isTaskLikedByUser(selectedTask.id, currentUserNumber)
+                        ? 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/30'
+                        : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600'
+                    } ${useTaskStore.getState().isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    onClick={() => handleLike(selectedTask.id)}
+                    title={currentUserNumber && isTaskLikedByUser(selectedTask.id, currentUserNumber) ? t('task.unlike') : t('task.like')}
+                    disabled={useTaskStore.getState().isLoading}
+                  >
+                    <Heart 
+                      className={`h-4 w-4 ${
+                        currentUserNumber && isTaskLikedByUser(selectedTask.id, currentUserNumber) 
+                          ? 'text-red-500 fill-current' 
+                          : 'text-neutral-500'
+                      }`} 
+                    />
+                    <span>{getTaskLikeCount(selectedTask.id)}</span>
+                  </button>
+                  
+                  {/* 복제 버튼 */}
+                  <button
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium bg-primary-100 text-primary-700 dark:bg-primary-900/20 dark:text-primary-300 hover:bg-primary-200 dark:hover:bg-primary-900/30 transition-colors"
+                    onClick={() => handleDuplicate(selectedTask.id)}
+                    title={t('common.duplicate')}
+                  >
+                    <Copy className="h-4 w-4" />
+                    <span>{t('common.duplicate')}</span>
+                  </button>
+                  
+                  {/* 닫기 버튼 */}
+                  <button
+                    onClick={() => setIsDetailOpen(false)}
+                    className="text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 p-1"
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-4">

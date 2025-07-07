@@ -237,15 +237,42 @@ export const useAuthStore = create<AuthState>()(
           return { success: false, error: 'Name cannot be empty' }
         }
 
-        // 실제 API에서는 사용자 이름 변경이 제한적일 수 있으므로
-        // 현재는 로컬 상태만 업데이트
-        const updatedUser = { ...currentUser, name: newName.trim(), lastUpdated: new Date().toISOString() }
+        try {
+          set({ isLoading: true, error: null })
+          
+          console.log('[AuthStore] Changing user name to:', newName)
+          console.log('[AuthStore] Current user ID:', currentUser.id)
+          
+          // API 호출하여 이름 변경
+          const response = await userService.updateUserName(newName.trim())
+          
+          if (response.success && response.settings) {
+            const updatedUser = { 
+              ...currentUser, 
+              name: response.settings.name || newName.trim(),
+              lastUpdated: new Date().toISOString()
+            }
 
-        set({
-          currentUser: updatedUser
-        })
+            set({
+              currentUser: updatedUser,
+              isLoading: false,
+              error: null
+            })
 
-        return { success: true }
+            console.log('[AuthStore] User name changed successfully:', updatedUser.name)
+            return { success: true }
+          } else {
+            throw new Error('Failed to update user name')
+          }
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : '이름 변경에 실패했습니다.'
+          console.error('[AuthStore] Name change error:', error)
+          set({ 
+            error: errorMessage, 
+            isLoading: false 
+          })
+          return { success: false, error: errorMessage }
+        }
       },
 
       createTestAccount: () => {

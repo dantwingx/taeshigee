@@ -14,6 +14,7 @@ export interface User {
 export interface UserSettings {
   darkMode: boolean
   language: string
+  name?: string // 사용자 이름 (선택적)
 }
 
 export interface AuthState {

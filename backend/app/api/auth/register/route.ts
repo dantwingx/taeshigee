@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { supabase } from '@/lib/supabase';
 import { signToken } from '@/lib/jwt';
-import { generateRandomName, createErrorResponse } from '@/lib/auth';
+import { createErrorResponse } from '@/lib/auth';
 
 // 이메일에서 기본 ID 생성 함수
 function generateUserIdFromEmail(email: string): string {
@@ -70,14 +70,14 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Generate random name
-    const name = generateRandomName();
-
     // 이메일에서 기본 ID 생성
     const baseUserId = generateUserIdFromEmail(email);
     
     // 중복되지 않는 고유 ID 생성
     const uniqueUserId = await generateUniqueUserId(baseUserId);
+
+    // 사용자 이름을 ID와 동일하게 설정
+    const name = uniqueUserId;
 
     // Create user with custom ID
     const { data: user, error } = await supabase

@@ -21,7 +21,6 @@ export async function GET(
         users!tasks_user_id_fkey(name, user_number)
       `)
       .eq('id', id)
-      .eq('user_id', user.userId)
       .single();
 
     if (error) {
@@ -30,8 +29,14 @@ export async function GET(
     }
 
     if (!task) {
-      console.error(`[GET /api/tasks/${id}] 태스크를 찾을 수 없음 - 사용자: ${user.userId}`);
+      console.error(`[GET /api/tasks/${id}] 태스크를 찾을 수 없음`);
       return createErrorResponse('Task not found', 404);
+    }
+
+    // Check if user owns the task
+    if (task.user_id !== user.userId) {
+      console.error(`[GET /api/tasks/${id}] 권한 없음 - 태스크 소유자: ${task.user_id}, 요청자: ${user.userId}`);
+      return createErrorResponse('Permission denied', 403);
     }
 
     const transformedTask = {
@@ -83,9 +88,8 @@ export async function PUT(
     // Check if task exists and belongs to user
     const { data: existingTask, error: checkError } = await supabase
       .from('tasks')
-      .select('id')
+      .select('id, user_id')
       .eq('id', id)
-      .eq('user_id', user.userId)
       .single();
 
     if (checkError) {
@@ -94,8 +98,14 @@ export async function PUT(
     }
 
     if (!existingTask) {
-      console.error(`[PUT /api/tasks/${id}] 태스크를 찾을 수 없음 - 사용자: ${user.userId}`);
+      console.error(`[PUT /api/tasks/${id}] 태스크를 찾을 수 없음`);
       return createErrorResponse('Task not found', 404);
+    }
+
+    // Check if user owns the task
+    if (existingTask.user_id !== user.userId) {
+      console.error(`[PUT /api/tasks/${id}] 권한 없음 - 태스크 소유자: ${existingTask.user_id}, 요청자: ${user.userId}`);
+      return createErrorResponse('Permission denied', 403);
     }
 
     // Validate input
@@ -246,9 +256,8 @@ export async function DELETE(
     // Check if task exists and belongs to user
     const { data: existingTask, error: checkError } = await supabase
       .from('tasks')
-      .select('id')
+      .select('id, user_id')
       .eq('id', id)
-      .eq('user_id', user.userId)
       .single();
 
     if (checkError) {
@@ -257,8 +266,14 @@ export async function DELETE(
     }
 
     if (!existingTask) {
-      console.error(`[DELETE /api/tasks/${id}] 태스크를 찾을 수 없음 - 사용자: ${user.userId}`);
+      console.error(`[DELETE /api/tasks/${id}] 태스크를 찾을 수 없음`);
       return createErrorResponse('Task not found', 404);
+    }
+
+    // Check if user owns the task
+    if (existingTask.user_id !== user.userId) {
+      console.error(`[DELETE /api/tasks/${id}] 권한 없음 - 태스크 소유자: ${existingTask.user_id}, 요청자: ${user.userId}`);
+      return createErrorResponse('Permission denied', 403);
     }
 
     // Delete task tags first (due to foreign key constraint)
