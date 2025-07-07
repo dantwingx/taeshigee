@@ -33,8 +33,7 @@ export function SettingsPage() {
     changeUserName, 
     createTestAccount,
     updateUserSettings,
-    getUserSettings,
-    changeUserId
+    getUserSettings
   } = useAuthStore()
   const { clearAllData } = useTaskStore()
   const setTaskStoreCurrentUser = useTaskStore(state => state.setCurrentUser)
@@ -49,10 +48,7 @@ export function SettingsPage() {
   const [isEditingName, setIsEditingName] = useState(false)
   const [editingName, setEditingName] = useState('')
   const [nameError, setNameError] = useState('')
-  // 사용자 ID 편집 상태
-  const [isEditingUserId, setIsEditingUserId] = useState(false)
-  const [editingUserId, setEditingUserId] = useState('')
-  const [userIdError, setUserIdError] = useState('')
+
 
   // 컴포넌트 마운트 시 사용자 설정 로드
   useEffect(() => {
@@ -127,28 +123,7 @@ export function SettingsPage() {
     }
   }
 
-  // 사용자 ID 변경 처리
-  const handleUserIdChange = async () => {
-    const userId = editingUserId.trim()
-    // 사용자 ID 포맷: 영문+숫자 6자 이상 30자 미만
-    if (!/^[A-Za-z0-9_]{6,30}$/.test(userId)) {
-      setUserIdError(t('settings.invalidUserIdFormat'))
-      return
-    }
-    const result = await changeUserId(userId)
-    if (result.success) {
-      setIsEditingUserId(false)
-      setEditingUserId('')
-      setUserIdError('')
-      showToast('success', t('settings.userIdChanged'))
-      // taskStore의 currentUserId/currentUserNumber 동기화
-      if (currentUser) {
-        setTaskStoreCurrentUser(userId, currentUser.userNumber)
-      }
-    } else {
-      setUserIdError(result.error || t('settings.userIdChangeFailed'))
-    }
-  }
+
 
   // 로그아웃 처리
   const handleLogout = () => {
@@ -267,53 +242,9 @@ export function SettingsPage() {
             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
               {t('settings.userId')}
             </label>
-            {isEditingUserId ? (
-              <div className="space-y-2">
-                <input
-                  type="text"
-                  value={editingUserId}
-                  onChange={(e) => setEditingUserId(e.target.value)}
-                  className="input"
-                  placeholder={t('settings.userIdPlaceholder')}
-                />
-                {userIdError && <p className="text-red-500 text-sm">{userIdError}</p>}
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleUserIdChange}
-                    className="flex items-center gap-1 px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600"
-                  >
-                    <Check className="w-4 h-4" />
-                    {t('common.save')}
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsEditingUserId(false)
-                      setEditingUserId('')
-                      setUserIdError('')
-                    }}
-                    className="flex items-center gap-1 px-3 py-1 bg-neutral-500 text-white rounded text-sm hover:bg-neutral-600"
-                  >
-                    <X className="w-4 h-4" />
-                    {t('common.cancel')}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center justify-between">
-                <div className="text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-700 px-3 py-2 rounded-lg flex-1">
-                  {currentUser.id}
-                </div>
-                <button
-                  onClick={() => {
-                    setIsEditingUserId(true)
-                    setEditingUserId(currentUser.id)
-                  }}
-                  className="ml-2 p-2 text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
-                >
-                  <Edit className="w-4 h-4" />
-                </button>
-              </div>
-            )}
+            <div className="text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-700 px-3 py-2 rounded-lg">
+              {currentUser.id}
+            </div>
           </div>
 
           {/* 가입일시 */}
