@@ -24,6 +24,8 @@ export default {
     nextWeek: "अगले सप्ताह",
     overdue: "समय से बाहर",
     completed: "पूर्ण",
+    incomplete: "अपूर्ण",
+    toggleComplete: "पूर्ण/अपूर्ण टॉगल करें",
     pending: "लंबित",
     inProgress: "प्रगति में",
     reset: "रीसेट करें",
@@ -34,7 +36,10 @@ export default {
     justNow: "अभी अभी",
     minutesAgo: "{{count}} मिनट पहले",
     hoursAgo: "{{count}} घंटे पहले",
-    daysAgo: "{{count}} दिन पहले"
+    daysAgo: "{{count}} दिन पहले",
+    sort: 'क्रमबद्ध करें',
+    sortAsc: 'आरोही',
+    sortDesc: 'अवरोही'
   },
 
   navigation: {

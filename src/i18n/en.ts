@@ -25,6 +25,8 @@ export default {
     nextWeek: 'Next Week',
     overdue: 'Overdue',
     completed: 'Completed',
+    incomplete: 'Incomplete',
+    toggleComplete: 'Toggle complete',
     pending: 'Pending',
     inProgress: 'In Progress',
     reset: 'Reset',
@@ -35,7 +37,10 @@ export default {
     justNow: "Just now",
     minutesAgo: "{{count}} minute(s) ago",
     hoursAgo: "{{count}} hour(s) ago",
-    daysAgo: "{{count}} day(s) ago"
+    daysAgo: "{{count}} day(s) ago",
+    sort: 'Sort',
+    sortAsc: 'Ascending',
+    sortDesc: 'Descending'
   },
 
   // Navigation
@@ -195,6 +200,7 @@ export default {
     my: 'My',
     manageYourInfo: 'Manage your info and settings',
     darkMode: 'Dark Mode',
+    lightMode: 'Light Mode',
     switchToDarkTheme: 'Switch to dark theme',
     languageSettings: 'Language Settings',
     signUpDate: 'Sign Up Date',

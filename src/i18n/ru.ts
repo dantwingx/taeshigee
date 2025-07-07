@@ -34,7 +34,10 @@ export default {
     justNow: "Только что",
     minutesAgo: "{{count}} минут(ы) назад",
     hoursAgo: "{{count}} час(ов) назад",
-    daysAgo: "{{count}} дней назад"
+    daysAgo: "{{count}} дней назад",
+    sort: 'Сортировка',
+    sortAsc: 'По возрастанию',
+    sortDesc: 'По убыванию'
   },
 
   navigation: {

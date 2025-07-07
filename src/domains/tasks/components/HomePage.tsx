@@ -126,6 +126,13 @@ export function HomePage() {
     navigate('/tasks')
   }
 
+  // 완료된 태스크로 이동하는 함수
+  const handleNavigateToCompletedTasks = () => {
+    const { setDefaultFilter } = useTaskStore.getState()
+    setDefaultFilter({ statusFilter: 'completed' })
+    navigate('/tasks')
+  }
+
   const handleCreateTask = async (data: CreateTaskData) => {
     try {
       await createTask(data)
@@ -261,7 +268,10 @@ export function HomePage() {
           <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-1 text-sm">{t('home.todayTasks')}</h3>
           <p className="text-xl font-bold text-primary-600 dark:text-primary-400">{todayUserTasks.length}</p>
         </div>
-        <div className="card p-4">
+        <div 
+          className="card p-4 cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+          onClick={handleNavigateToCompletedTasks}
+        >
           <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-1 text-sm">{t('home.completedTasks')}</h3>
           <p className="text-xl font-bold text-success-600 dark:text-success-400">{stats.completed}</p>
         </div>

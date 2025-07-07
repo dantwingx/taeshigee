@@ -34,7 +34,10 @@ export default {
     justNow: "Proprio adesso",
     minutesAgo: "{{count}} minuto/i fa",
     hoursAgo: "{{count}} ora/e fa",
-    daysAgo: "{{count}} giorno/i fa"
+    daysAgo: "{{count}} giorno/i fa",
+    sort: 'Ordina',
+    sortAsc: 'Crescente',
+    sortDesc: 'Decrescente'
   },
 
   navigation: {
@@ -135,7 +138,10 @@ export default {
     priorityFilter: "Priorità",
     publicFilter: "Pubblico",
     createdAt: "Data di creazione",
-    update: "Aggiorna"
+    update: "Aggiorna",
+    completed: 'Completato',
+    incomplete: 'Incompleto',
+    toggleComplete: 'Attiva/disattiva completato'
   },
 
   home: {

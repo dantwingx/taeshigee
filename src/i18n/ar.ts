@@ -34,7 +34,10 @@ export default {
     justNow: "الآن",
     minutesAgo: "منذ {{count}} دقيقة",
     hoursAgo: "منذ {{count}} ساعة",
-    daysAgo: "منذ {{count}} يوم"
+    daysAgo: "منذ {{count}} يوم",
+    sort: 'ترتيب',
+    sortAsc: 'تصاعدي',
+    sortDesc: 'تنازلي',
   },
 
   navigation: {
@@ -136,7 +139,10 @@ export default {
     priorityFilter: "الأولوية",
     publicFilter: "عام",
     createdAt: "تاريخ الإنشاء",
-    update: "تحديث"
+    update: "تحديث",
+    completed: 'مكتمل',
+    incomplete: 'غير مكتمل',
+    toggleComplete: 'تبديل مكتمل/غير مكتمل'
   },
 
   home: {

@@ -15,7 +15,7 @@ type SortOrder = 'asc' | 'desc'
 type FilterStatus = 'all' | 'completed' | 'pending' | 'overdue'
 
 export function TasksPage() {
-  const { user } = useAuthStore()
+  const { currentUser } = useAuthStore()
   const {
     isLoading,
     error,
@@ -30,11 +30,14 @@ export function TasksPage() {
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false)
   const [editingTask, setEditingTask] = useState<Task | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState<FilterStatus>('all')
-  const [categoryFilter, setCategoryFilter] = useState('')
-  const [importanceFilter, setImportanceFilter] = useState('all')
-  const [priorityFilter, setPriorityFilter] = useState('all')
-  const [publicFilter, setPublicFilter] = useState('all')
+  const { defaultFilter } = useTaskStore()
+  const [statusFilter, setStatusFilter] = useState<FilterStatus>(defaultFilter.statusFilter as FilterStatus)
+  const [categoryFilter, setCategoryFilter] = useState(defaultFilter.categoryFilter)
+  const [importanceFilter, setImportanceFilter] = useState(defaultFilter.importanceFilter)
+  const [priorityFilter, setPriorityFilter] = useState(defaultFilter.priorityFilter)
+  const [publicFilter, setPublicFilter] = useState(defaultFilter.publicFilter)
+  const [dueDateFrom, setDueDateFrom] = useState('')
+  const [dueDateTo, setDueDateTo] = useState('')
   const [sortField, setSortField] = useState<SortField>('createdAt')
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc')
   const [isFilterExpanded, setIsFilterExpanded] = useState(false)
@@ -45,13 +48,25 @@ export function TasksPage() {
   // taskStore에서 currentUserNumber 직접 사용
   const currentUserNumber = useTaskStore(state => state.currentUserNumber)
   
+  // 컴포넌트 마운트 시 defaultFilter 초기화
+  useEffect(() => {
+    const { setDefaultFilter } = useTaskStore.getState()
+    setDefaultFilter({
+      statusFilter: 'all',
+      categoryFilter: '',
+      importanceFilter: 'all',
+      priorityFilter: 'all',
+      publicFilter: 'all'
+    })
+  }, [])
+  
   // 사용자별 태스크 필터링 - currentUserNumber를 사용하여 태스크 가져오기
   const userTasks = currentUserNumber ? getTasksByUserNumber(currentUserNumber) : []
   
   // 디버그 로그 추가
   console.log('[TasksPage] 사용자별 태스크 필터링:', {
     currentUserNumber,
-    currentUser: user ? { id: user.id, userNumber: user.userNumber, email: user.email } : null,
+    currentUser: currentUser ? { id: currentUser.id, userNumber: currentUser.userNumber, email: currentUser.email } : null,
     userTasksCount: userTasks.length,
     userTasks: userTasks.map(task => ({ id: task.id, title: task.title, userNumber: task.userNumber }))
   })
@@ -112,6 +127,27 @@ export function TasksPage() {
     if (publicFilter !== 'all') {
       const isPublic = publicFilter === 'public'
       filtered = filtered.filter(task => task.isPublic === isPublic)
+    }
+
+    // 마감일 기간 필터
+    if (dueDateFrom || dueDateTo) {
+      filtered = filtered.filter(task => {
+        if (!task.dueDate) return false
+        
+        const taskDueDate = new Date(task.dueDate)
+        const fromDate = dueDateFrom ? new Date(dueDateFrom) : null
+        const toDate = dueDateTo ? new Date(dueDateTo) : null
+        
+        if (fromDate && toDate) {
+          return taskDueDate >= fromDate && taskDueDate <= toDate
+        } else if (fromDate) {
+          return taskDueDate >= fromDate
+        } else if (toDate) {
+          return taskDueDate <= toDate
+        }
+        
+        return true
+      })
     }
 
     return filtered
@@ -176,8 +212,6 @@ export function TasksPage() {
 
   const handleDeleteTask = async (id: string) => {
     try {
-      // window.confirm -> toast + auto-delete for demo (replace with modal for real confirm)
-      showToast('warning', t('task.confirmDeleteTask'))
       await deleteTask(id)
       showToast('success', t('toast.taskDeleted'))
     } catch (error) {
@@ -215,6 +249,8 @@ export function TasksPage() {
     setImportanceFilter('all')
     setPriorityFilter('all')
     setPublicFilter('all')
+    setDueDateFrom('')
+    setDueDateTo('')
   }
 
   const toggleFilterExpansion = () => {
@@ -270,86 +306,109 @@ export function TasksPage() {
         </button>
       </div>
 
-      {/* 필터 전체 영역 (빨간 박스) */}
+      {/* 필터 영역 */}
       {isFilterExpanded && (
-        <div className="flex flex-wrap gap-2 items-center mb-2">
-          {/* 상태, 중요도, 우선순위, 공개여부, 정렬, 작성일 등 모든 필터를 한 번에 노출 */}
-          <Select
-            value={statusFilter}
-            onChange={v => setStatusFilter(v as FilterStatus)}
-            options={[
-              { value: 'all', label: t('task.filterByStatus') + ': ' + t('common.all') },
-              { value: 'pending', label: t('task.filterByStatus') + ': ' + t('common.pending') },
-              { value: 'completed', label: t('task.filterByStatus') + ': ' + t('common.completed') },
-              { value: 'overdue', label: t('task.filterByStatus') + ': ' + t('common.overdue') },
-            ]}
-            className="min-w-[120px] w-auto"
-          />
-          {/* 중요도 */}
-          <Select
-            value={importanceFilter}
-            onChange={v => setImportanceFilter(v)}
-            options={[
-              { value: 'all', label: t('task.importance') + ': ' + t('common.all') },
-              { value: 'low', label: t('task.importance') + ': ' + t('task.importanceLow') },
-              { value: 'medium', label: t('task.importance') + ': ' + t('task.importanceMedium') },
-              { value: 'high', label: t('task.importance') + ': ' + t('task.importanceHigh') },
-            ]}
-            className="min-w-[120px] w-auto"
-          />
-          {/* 우선순위 */}
-          <Select
-            value={priorityFilter}
-            onChange={v => setPriorityFilter(v)}
-            options={[
-              { value: 'all', label: t('task.priority') + ': ' + t('common.all') },
-              { value: 'low', label: t('task.priority') + ': ' + t('task.priorityLow') },
-              { value: 'medium', label: t('task.priority') + ': ' + t('task.priorityMedium') },
-              { value: 'high', label: t('task.priority') + ': ' + t('task.priorityHigh') },
-            ]}
-            className="min-w-[120px] w-auto"
-          />
-          {/* 공개여부 */}
-          <Select
-            value={publicFilter}
-            onChange={v => setPublicFilter(v)}
-            options={[
-              { value: 'all', label: t('task.isPublic') + ': ' + t('common.all') },
-              { value: 'private', label: t('task.isPublic') + ': ' + t('common.private') },
-              { value: 'public', label: t('task.isPublic') + ': ' + t('common.public') },
-            ]}
-            className="min-w-[120px] w-auto"
-          />
-          {/* 정렬 */}
-          <Select
-            value={sortField}
-            onChange={(value) => setSortField(value as SortField)}
-            options={[
-              { value: 'createdAt', label: t('task.createdAt') },
-              { value: 'dueDate', label: t('task.dueDate') },
-              { value: 'title', label: t('task.title') },
-              { value: 'importance', label: t('task.importance') },
-              { value: 'priority', label: t('task.priority') },
-            ]}
-            className="min-w-[100px] w-auto"
-          />
-          <button
-            onClick={toggleSortOrder}
-            className="p-2 rounded-lg hover:bg-neutral-100 transition-colors"
-          >
-            {sortOrder === 'asc' ? (
-              <SortAsc className="h-4 w-4 text-neutral-500" />
-            ) : (
-              <SortDesc className="h-4 w-4 text-neutral-500" />
-            )}
-          </button>
-          {/* 리셋 버튼만 남김 */}
-          <div className="flex-1 flex justify-end gap-2 min-w-[120px]">
+        <div className="space-y-3 mb-4">
+          {/* 필터 조건들 */}
+          <div className="flex flex-wrap gap-2 items-center">
+            <Select
+              value={statusFilter}
+              onChange={v => setStatusFilter(v as FilterStatus)}
+              options={[
+                { value: 'all', label: t('task.filterByStatus') + ': ' + t('common.all') },
+                { value: 'pending', label: t('task.filterByStatus') + ': ' + t('task.incomplete') },
+                { value: 'completed', label: t('task.filterByStatus') + ': ' + t('task.completed') },
+                { value: 'overdue', label: t('task.filterByStatus') + ': ' + t('common.overdue') },
+              ]}
+              className="min-w-[120px] w-auto"
+            />
+            <Select
+              value={importanceFilter}
+              onChange={v => setImportanceFilter(v)}
+              options={[
+                { value: 'all', label: t('task.importance') + ': ' + t('common.all') },
+                { value: 'low', label: t('task.importance') + ': ' + t('task.importanceLow') },
+                { value: 'medium', label: t('task.importance') + ': ' + t('task.importanceMedium') },
+                { value: 'high', label: t('task.importance') + ': ' + t('task.importanceHigh') },
+              ]}
+              className="min-w-[120px] w-auto"
+            />
+            <Select
+              value={priorityFilter}
+              onChange={v => setPriorityFilter(v)}
+              options={[
+                { value: 'all', label: t('task.priority') + ': ' + t('common.all') },
+                { value: 'low', label: t('task.priority') + ': ' + t('task.priorityLow') },
+                { value: 'medium', label: t('task.priority') + ': ' + t('task.priorityMedium') },
+                { value: 'high', label: t('task.priority') + ': ' + t('task.priorityHigh') },
+              ]}
+              className="min-w-[120px] w-auto"
+            />
+            <Select
+              value={publicFilter}
+              onChange={v => setPublicFilter(v)}
+              options={[
+                { value: 'all', label: t('task.isPublic') + ': ' + t('common.all') },
+                { value: 'private', label: t('task.isPublic') + ': ' + t('common.private') },
+                { value: 'public', label: t('task.isPublic') + ': ' + t('common.public') },
+              ]}
+              className="min-w-[120px] w-auto"
+            />
+            <div className="flex-1 flex justify-end">
+              <button
+                onClick={clearFilters}
+                className="text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+              >
+                {t('common.reset')}
+              </button>
+            </div>
+          </div>
+
+          {/* 마감일 기간 검색 */}
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('task.dueDate')}:</span>
+            <input
+              type="date"
+              value={dueDateFrom}
+              onChange={(e) => setDueDateFrom(e.target.value)}
+              className="px-3 py-1 text-sm border border-neutral-300 dark:border-neutral-600 rounded-md bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
+              placeholder={t('task.dueDate') + ' (시작)'}
+            />
+            <span className="text-sm text-neutral-500">~</span>
+            <input
+              type="date"
+              value={dueDateTo}
+              onChange={(e) => setDueDateTo(e.target.value)}
+              className="px-3 py-1 text-sm border border-neutral-300 dark:border-neutral-600 rounded-md bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
+              placeholder={t('task.dueDate') + ' (종료)'}
+            />
+          </div>
+
+          {/* 정렬 옵션들 */}
+          <div className="flex flex-wrap gap-2 items-center pt-2 border-t border-neutral-200 dark:border-neutral-700">
+            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('common.sort')}:</span>
+            <Select
+              value={sortField}
+              onChange={(value) => setSortField(value as SortField)}
+              options={[
+                { value: 'createdAt', label: t('task.createdAt') },
+                { value: 'dueDate', label: t('task.dueDate') },
+                { value: 'title', label: t('task.title') },
+                { value: 'importance', label: t('task.importance') },
+                { value: 'priority', label: t('task.priority') },
+              ]}
+              className="min-w-[100px] w-auto"
+            />
             <button
-              onClick={clearFilters}
-              className="text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+              onClick={toggleSortOrder}
+              className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+              title={sortOrder === 'asc' ? t('common.sortAsc') : t('common.sortDesc')}
             >
-              {t('common.reset')}
+              {sortOrder === 'asc' ? (
+                <SortAsc className="h-4 w-4 text-neutral-500" />
+              ) : (
+                <SortDesc className="h-4 w-4 text-neutral-500" />
+              )}
             </button>
           </div>
         </div>

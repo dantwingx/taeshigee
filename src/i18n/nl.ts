@@ -25,6 +25,8 @@ export default {
     nextWeek: 'Volgende week',
     overdue: 'Achterstallig',
     completed: 'Voltooid',
+    incomplete: 'Onvoltooid',
+    toggleComplete: 'Voltooid/Onvoltooid wisselen',
     pending: 'In afwachting',
     inProgress: 'In uitvoering',
     reset: 'Resetten',
@@ -35,7 +37,10 @@ export default {
     justNow: "Zojuist",
     minutesAgo: "{{count}} minuut geleden",
     hoursAgo: "{{count}} uur geleden",
-    daysAgo: "{{count}} dag geleden"
+    daysAgo: "{{count}} dag geleden",
+    sort: 'Sorteren',
+    sortAsc: 'Oplopend',
+    sortDesc: 'Aflopend'
   },
 
   // Navigatie

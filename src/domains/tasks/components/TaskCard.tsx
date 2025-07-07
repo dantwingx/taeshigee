@@ -91,6 +91,13 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation()
     if (!currentUserNumber) return
+    
+    // 중복 클릭 방지
+    if (isLoading) {
+      console.log('[TaskCard] 좋아요 요청이 이미 진행 중입니다.')
+      return
+    }
+    
     await toggleTaskLike(task.id)
   }
   const liked = currentUserNumber && isTaskLikedByUser(task.id, currentUserNumber)
@@ -100,10 +107,11 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
     <div className={`bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 p-4 transition-all duration-200 ${
       task.isCompleted ? 'opacity-75' : ''
     } ${isOverdue ? 'border-error-300 bg-error-50 dark:border-error-600 dark:bg-error-900/20' : ''}`}>
-      {/* 제목 + 좋아요 + 메뉴 */}
+      {/* 제목 + 상태 표시 + 좋아요 + 메뉴 */}
       <div className="flex items-center space-x-2 mb-1">
-        {/* 내 태스크일 때만 체크박스 */}
-        {task.userNumber === currentUserNumber && (
+        {/* 상태 표시: 내 태스크는 체크박스, 공개 태스크는 상태 아이콘 */}
+        {task.userNumber === currentUserNumber ? (
+          // 내 태스크: 체크박스로 상태 변경 가능
           <input
             type="checkbox"
             checked={task.isCompleted}
@@ -112,6 +120,21 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
             aria-label={t('task.toggleComplete')}
             disabled={isLoading}
           />
+        ) : (
+          // 공개 태스크: 상태 아이콘으로 표시만
+          <div className="mr-2 flex items-center">
+            {task.isCompleted ? (
+              <CheckCircle 
+                className="h-5 w-5 text-success-600 dark:text-success-400" 
+                aria-label={t('task.completed')}
+              />
+            ) : (
+              <Circle 
+                className="h-5 w-5 text-neutral-400 dark:text-neutral-500" 
+                aria-label={t('task.incomplete')}
+              />
+            )}
+          </div>
         )}
         <h3 className={`font-medium text-neutral-900 dark:text-neutral-100 truncate ${
           task.isCompleted ? 'line-through text-neutral-500 dark:text-neutral-400' : ''
@@ -125,8 +148,9 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
         {/* 좋아요 버튼 */}
         <button
           onClick={handleLike}
-          className="flex items-center space-x-1 group"
+          className={`flex items-center space-x-1 group ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
           title={liked ? t('task.unlike') : t('task.like')}
+          disabled={isLoading}
         >
           <Heart className={`h-5 w-5 ${liked ? 'fill-red-500 text-red-500' : 'text-neutral-400 group-hover:text-red-400'} transition-colors`} />
           <span className="text-xs text-neutral-600 dark:text-neutral-300">{likeCount}</span>

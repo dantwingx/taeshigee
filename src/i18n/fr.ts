@@ -24,6 +24,8 @@ export default {
     nextWeek: "Semaine prochaine",
     overdue: "En retard",
     completed: "Terminé",
+    incomplete: "Incomplet",
+    toggleComplete: "Basculer terminé",
     pending: "En attente",
     inProgress: "En cours",
     reset: "Réinitialiser",
@@ -34,7 +36,10 @@ export default {
     justNow: "À l'instant",
     minutesAgo: "il y a {{count}} minute(s)",
     hoursAgo: "il y a {{count}} heure(s)",
-    daysAgo: "il y a {{count}} jour(s)"
+    daysAgo: "il y a {{count}} jour(s)",
+    sort: 'Trier',
+    sortAsc: 'Croissant',
+    sortDesc: 'Décroissant'
   },
 
   navigation: {

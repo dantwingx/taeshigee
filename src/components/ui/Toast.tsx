@@ -51,13 +51,21 @@ export function Toast({ id, type, message, duration = 5000, onClose }: ToastProp
         isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
       }`}
     >
-      <div className={`flex items-start space-x-3 p-4 rounded-lg border shadow-lg ${toastStyles[type]}`}>
+      <div
+        className={`flex items-start space-x-3 p-4 rounded-lg border shadow-lg ${toastStyles[type]}`}
+        onClick={() => {
+          setIsVisible(false)
+          setTimeout(() => onClose(id), 300)
+        }}
+        style={{ cursor: 'pointer' }}
+      >
         <Icon className="h-5 w-5 flex-shrink-0 mt-0.5" />
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium">{message}</p>
         </div>
         <button
-          onClick={() => {
+          onClick={e => {
+            e.stopPropagation()
             setIsVisible(false)
             setTimeout(() => onClose(id), 300)
           }}

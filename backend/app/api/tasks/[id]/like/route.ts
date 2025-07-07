@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { authenticateRequest, createErrorResponse } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
+import crypto from 'crypto'
 
 // POST /api/tasks/[id]/like - Toggle task like
 export async function POST(
@@ -58,18 +59,19 @@ export async function POST(
 
       const { error: updateCountError } = await supabase
         .from('tasks')
-        .update({ likes_count: task.likes_count - 1 })
+        .update({ likes_count: Math.max(0, task.likes_count - 1) })
         .eq('id', id);
 
       if (updateCountError) {
         console.error(`[POST /api/tasks/${id}/like] 좋아요 카운트 감소 실패:`, updateCountError);
       }
 
-      console.log(`[POST /api/tasks/${id}/like] 좋아요 취소 완료`);
+      const newLikesCount = Math.max(0, task.likes_count - 1)
+      console.log(`[POST /api/tasks/${id}/like] 좋아요 취소 완료 - 새로운 카운트: ${newLikesCount}`);
       return Response.json({
         success: true,
         liked: false,
-        likesCount: task.likes_count - 1,
+        likesCount: newLikesCount,
       });
     } else {
       console.log(`[POST /api/tasks/${id}/like] 좋아요 추가 - 현재 카운트: ${task.likes_count}`);
@@ -78,6 +80,7 @@ export async function POST(
       const { error: insertLikeError } = await supabase
         .from('task_likes')
         .insert({
+          id: crypto.randomUUID(), // 명시적으로 UUID 생성
           task_id: id,
           user_id: user.userId,
           user_number: user.userNumber,

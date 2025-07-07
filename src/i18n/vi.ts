@@ -35,7 +35,10 @@ export default {
     justNow: "Vừa xong",
     minutesAgo: "{{count}} phút trước",
     hoursAgo: "{{count}} giờ trước",
-    daysAgo: "{{count}} ngày trước"
+    daysAgo: "{{count}} ngày trước",
+    sort: 'Sắp xếp',
+    sortAsc: 'Tăng dần',
+    sortDesc: 'Giảm dần'
   },
 
   // Điều hướng

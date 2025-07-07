@@ -35,7 +35,10 @@ export default {
     justNow: '방금 전',
     minutesAgo: '{{count}}분 전',
     hoursAgo: '{{count}}시간 전',
-    daysAgo: '{{count}}일 전'
+    daysAgo: '{{count}}일 전',
+    sort: '정렬',
+    sortAsc: '오름차순',
+    sortDesc: '내림차순',
   },
 
   // 네비게이션
@@ -145,7 +148,10 @@ export default {
     unlike: '좋아요 취소',
     likeCount: '좋아요 {{count}}개',
     likeTask: '태스크 좋아요',
-    unlikeTask: '좋아요 취소'
+    unlikeTask: '좋아요 취소',
+    completed: '완료',
+    incomplete: '미완료',
+    toggleComplete: '완료/미완료 전환'
   },
 
   // 홈
@@ -194,6 +200,7 @@ export default {
     my: '마이',
     manageYourInfo: '내 정보와 설정을 관리하세요',
     darkMode: '다크모드',
+    lightMode: '라이트모드',
     switchToDarkTheme: '어두운 테마로 변경',
     languageSettings: '언어 설정',
     signUpDate: '가입일',

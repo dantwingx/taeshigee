@@ -25,6 +25,8 @@ export default {
     nextWeek: 'Gelecek hafta',
     overdue: 'Gecikmiş',
     completed: 'Tamamlandı',
+    incomplete: 'Tamamlanmadı',
+    toggleComplete: 'Tamamlandı/Tamamlanmadı değiştir',
     pending: 'Beklemede',
     inProgress: 'Devam ediyor',
     reset: 'Sıfırla',
@@ -35,7 +37,10 @@ export default {
     justNow: "Az önce",
     minutesAgo: "{{count}} dakika önce",
     hoursAgo: "{{count}} saat önce",
-    daysAgo: "{{count}} gün önce"
+    daysAgo: "{{count}} gün önce",
+    sort: 'Sırala',
+    sortAsc: 'Artan',
+    sortDesc: 'Azalan',
   },
 
   // Navigasyon

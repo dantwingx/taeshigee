@@ -24,6 +24,8 @@ export default {
     nextWeek: "来週",
     overdue: "期限切れ",
     completed: "完了",
+    incomplete: "未完了",
+    toggleComplete: "完了/未完了を切り替え",
     pending: "保留中",
     inProgress: "進行中",
     reset: "リセット",
@@ -34,7 +36,10 @@ export default {
     justNow: "たった今",
     minutesAgo: "{{count}}分前",
     hoursAgo: "{{count}}時間前",
-    daysAgo: "{{count}}日前"
+    daysAgo: "{{count}}日前",
+    sort: '並び替え',
+    sortAsc: '昇順',
+    sortDesc: '降順',
   },
 
   navigation: {
@@ -163,6 +168,7 @@ export default {
     my: "マイ",
     manageYourInfo: "あなたの情報と設定を管理してください",
     darkMode: "ダークモード",
+    lightMode: "ライトモード",
     switchToDarkTheme: "ダークテーマに切り替え",
     languageSettings: "言語設定",
     signUpDate: "登録日",

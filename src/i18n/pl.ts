@@ -25,6 +25,8 @@ export default {
     nextWeek: 'Następny tydzień',
     overdue: 'Przeterminowane',
     completed: 'Ukończone',
+    incomplete: 'Nieukończone',
+    toggleComplete: 'Przełącz ukończone',
     pending: 'Oczekujące',
     inProgress: 'W trakcie',
     reset: 'Resetuj',
@@ -35,7 +37,10 @@ export default {
     justNow: "Przed chwilą",
     minutesAgo: "{{count}} minut temu",
     hoursAgo: "{{count}} godzin temu",
-    daysAgo: "{{count}} dni temu"
+    daysAgo: "{{count}} dni temu",
+    sort: 'Sortuj',
+    sortAsc: 'Rosnąco',
+    sortDesc: 'Malejąco'
   },
 
   // Nawigacja

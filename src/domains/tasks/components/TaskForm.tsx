@@ -36,6 +36,7 @@ const taskSchema = z.object({
   category: z.string().optional(),
   tags: z.array(z.string()).default([]),
   isPublic: z.boolean().default(false),
+  isCompleted: z.boolean().default(false), // 추가
 })
 
 type TaskFormData = z.infer<typeof taskSchema>
@@ -98,6 +99,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
       category: 'other', // 기타로 기본 설정
       tags: [],
       isPublic: false,
+      isCompleted: false, // 추가
     },
   })
 
@@ -115,6 +117,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
         category: task.category || '',
         tags: task.tags || [],
         isPublic: task.isPublic || false,
+        isCompleted: task.isCompleted || false, // 추가
       })
     } else {
       // 새 태스크 생성 시 - 기본값 설정
@@ -128,6 +131,7 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
         category: 'other', // 기타로 기본 설정
         tags: [],
         isPublic: false,
+        isCompleted: false, // 추가
       })
     }
   }, [task, reset])
@@ -225,6 +229,23 @@ export function TaskForm({ isOpen, onClose, task, onSubmit, isLoading }: TaskFor
               <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.description.message}</p>
             )}
           </div>
+
+          {/* 완료 여부 체크박스 */}
+          {task && (
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="isCompleted"
+                {...register('isCompleted')}
+                className="form-checkbox h-5 w-5 text-primary-600"
+                disabled={isLoading}
+              />
+              <label htmlFor="isCompleted" className="text-sm font-medium text-neutral-700 dark:text-neutral-300 select-none">
+                <CheckCircle className="inline h-4 w-4 mr-1 text-success-500 align-text-bottom" />
+                {t('task.completed')}
+              </label>
+            </div>
+          )}
 
           {/* 마감일 및 마감시간 */}
           <div className="grid grid-cols-2 gap-4">

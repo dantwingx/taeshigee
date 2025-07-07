@@ -24,6 +24,8 @@ export default {
     nextWeek: "下周",
     overdue: "逾期",
     completed: "已完成",
+    incomplete: '未完成',
+    toggleComplete: '切换完成状态',
     pending: "待处理",
     inProgress: "进行中",
     reset: "重置",
@@ -34,7 +36,10 @@ export default {
     justNow: "刚刚",
     minutesAgo: "{{count}}分钟前",
     hoursAgo: "{{count}}小时前",
-    daysAgo: "{{count}}天前"
+    daysAgo: "{{count}}天前",
+    sort: '排序',
+    sortAsc: '升序',
+    sortDesc: '降序',
   },
 
   navigation: {
@@ -184,6 +189,7 @@ export default {
     my: "我的",
     manageYourInfo: "管理您的信息和设置",
     darkMode: "深色模式",
+    lightMode: "浅色模式",
     switchToDarkTheme: "切换到深色主题",
     languageSettings: "语言设置",
     signUpDate: "注册日期",

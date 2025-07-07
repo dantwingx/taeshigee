@@ -25,6 +25,8 @@ export default {
     nextWeek: 'Minggu depan',
     overdue: 'Terlambat',
     completed: 'Selesai',
+    incomplete: 'Belum selesai',
+    toggleComplete: 'Tandai selesai/belum selesai',
     pending: 'Tertunda',
     inProgress: 'Sedang dikerjakan',
     reset: 'Reset',
@@ -35,7 +37,10 @@ export default {
     justNow: "Baru saja",
     minutesAgo: "{{count}} menit yang lalu",
     hoursAgo: "{{count}} jam yang lalu",
-    daysAgo: "{{count}} hari yang lalu"
+    daysAgo: "{{count}} hari yang lalu",
+    sort: 'Urutkan',
+    sortAsc: 'Naik',
+    sortDesc: 'Turun'
   },
 
   // Navigasi

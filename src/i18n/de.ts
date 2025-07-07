@@ -24,6 +24,8 @@ export default {
     nextWeek: "Nächste Woche",
     overdue: "Überfällig",
     completed: "Abgeschlossen",
+    incomplete: "Unvollständig",
+    toggleComplete: "Abgeschlossen/Unerledigt umschalten",
     pending: "Ausstehend",
     inProgress: "In Bearbeitung",
     reset: "Zurücksetzen",
@@ -34,7 +36,10 @@ export default {
     justNow: "Gerade eben",
     minutesAgo: "vor {{count}} Minute(n)",
     hoursAgo: "vor {{count}} Stunde(n)",
-    daysAgo: "vor {{count}} Tag(en)"
+    daysAgo: "vor {{count}} Tag(en)",
+    sort: 'Sortieren',
+    sortAsc: 'Aufsteigend',
+    sortDesc: 'Absteigend'
   },
 
   navigation: {

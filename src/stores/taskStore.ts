@@ -13,14 +13,24 @@ interface TaskStore {
   isLoading: boolean
   error: string | null
   
-  // Actions
-  setCurrentUser: (userId: string | null, userNumber: number | null) => void
-  createTask: (data: CreateTaskData) => Promise<void>
-  updateTask: (id: string, data: UpdateTaskData) => Promise<void>
-  deleteTask: (id: string) => Promise<void>
-  duplicateTask: (id: string) => Promise<void>
-  toggleTaskCompletion: (id: string) => Promise<void>
-  toggleTaskLike: (taskId: string) => Promise<void>
+  // 필터 상태 관리
+  defaultFilter: {
+    statusFilter: 'all' | 'completed' | 'pending' | 'overdue'
+    categoryFilter: string
+    importanceFilter: string
+    priorityFilter: string
+    publicFilter: string
+  }
+  
+        // Actions
+      setCurrentUser: (userId: string | null, userNumber: number | null) => void
+      createTask: (data: CreateTaskData) => Promise<void>
+      updateTask: (id: string, data: UpdateTaskData) => Promise<void>
+      deleteTask: (id: string) => Promise<void>
+      duplicateTask: (id: string) => Promise<void>
+      toggleTaskCompletion: (id: string) => Promise<void>
+      toggleTaskLike: (taskId: string) => Promise<void>
+      setDefaultFilter: (filter: Partial<TaskStore['defaultFilter']>) => void
   
   // Data fetching
   fetchUserTasks: (search?: string, filter?: string, force?: boolean) => Promise<void>
@@ -54,6 +64,13 @@ export const useTaskStore = create<TaskStore>()(
       currentUserNumber: null,
       isLoading: false,
       error: null,
+      defaultFilter: {
+        statusFilter: 'all',
+        categoryFilter: '',
+        importanceFilter: 'all',
+        priorityFilter: 'all',
+        publicFilter: 'all'
+      },
 
       setCurrentUser: (userId: string | null, userNumber: number | null) => {
         console.log('[TaskStore] setCurrentUser 호출:', { userId, userNumber })
@@ -71,7 +88,23 @@ export const useTaskStore = create<TaskStore>()(
           currentUserNumber: null,
           isLoading: false,
           error: null,
+          defaultFilter: {
+            statusFilter: 'all',
+            categoryFilter: '',
+            importanceFilter: 'all',
+            priorityFilter: 'all',
+            publicFilter: 'all'
+          }
         })
+      },
+
+      setDefaultFilter: (filter: Partial<TaskStore['defaultFilter']>) => {
+        set((state) => ({
+          defaultFilter: {
+            ...state.defaultFilter,
+            ...filter
+          }
+        }))
       },
 
       fetchUserTasks: async (search?: string, filter?: string, force?: boolean) => {
@@ -346,6 +379,16 @@ export const useTaskStore = create<TaskStore>()(
           throw new Error('로그인이 필요합니다.')
         }
 
+        // 중복 요청 방지를 위한 상태 확인
+        const state = get()
+        const isProcessing = state.isLoading
+        if (isProcessing) {
+          console.log('[TaskStore] 좋아요 요청이 이미 진행 중입니다.')
+          return
+        }
+
+        set({ isLoading: true, error: null })
+
         try {
           const response = await taskService.toggleLike(taskId)
           
@@ -359,7 +402,8 @@ export const useTaskStore = create<TaskStore>()(
                       ...task,
                       likes: response.liked 
                         ? [...(task.likes || []), currentUserNumber]
-                        : (task.likes || []).filter(num => num !== currentUserNumber)
+                        : (task.likes || []).filter(num => num !== currentUserNumber),
+                      likesCount: response.likesCount // 백엔드 likesCount로 동기화
                     }
                   }
                   return task
@@ -372,18 +416,21 @@ export const useTaskStore = create<TaskStore>()(
                     ...task,
                     likes: response.liked 
                       ? [...(task.likes || []), currentUserNumber]
-                      : (task.likes || []).filter(num => num !== currentUserNumber)
+                      : (task.likes || []).filter(num => num !== currentUserNumber),
+                    likesCount: response.likesCount // 백엔드 likesCount로 동기화
                   }
                 }
                 return task
-              })
+              }),
+              isLoading: false,
+              error: null
             }))
           } else {
             throw new Error('Failed to toggle like')
           }
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : '좋아요 처리에 실패했습니다.'
-          set({ error: errorMessage })
+          set({ error: errorMessage, isLoading: false })
           throw error
         }
       },
@@ -399,7 +446,8 @@ export const useTaskStore = create<TaskStore>()(
         const allTasks = Object.values(get().userTasks).flat()
         const publicTasks = get().publicTasks
         const task = allTasks.find((t) => t.id === taskId) || publicTasks.find((t) => t.id === taskId)
-        return task ? (task.likes || []).length : 0
+        // 백엔드에서 동기화된 likesCount를 우선 사용, 없으면 likes 배열 길이 사용
+        return task ? (task.likesCount || (task.likes || []).length) : 0
       },
 
       getTasksByUserNumber: (userNumber: number) => {

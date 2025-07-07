@@ -25,6 +25,8 @@ export default {
     nextWeek: 'Nästa vecka',
     overdue: 'Förfallen',
     completed: 'Slutförd',
+    incomplete: 'Ej slutförd',
+    toggleComplete: 'Växla slutförd',
     pending: 'Väntande',
     inProgress: 'Pågående',
     reset: 'Återställ',
@@ -35,7 +37,10 @@ export default {
     justNow: "Precis nu",
     minutesAgo: "för {{count}} minut(er) sedan",
     hoursAgo: "för {{count}} timme(r) sedan",
-    daysAgo: "för {{count}} dag(ar) sedan"
+    daysAgo: "för {{count}} dag(ar) sedan",
+    sort: 'Sortera',
+    sortAsc: 'Stigande',
+    sortDesc: 'Fallande'
   },
 
   // Navigation
