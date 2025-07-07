@@ -9,7 +9,7 @@ import { initializeDarkMode } from './utils/darkMode'
 // i18n 초기화
 import './i18n'
 
-// 다크모드 초기화
+// 다크모드 초기화 (앱 시작 시 즉시 실행)
 initializeDarkMode()
 
 const queryClient = new QueryClient({

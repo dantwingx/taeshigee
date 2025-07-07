@@ -87,7 +87,9 @@ i18n
     },
     react: {
       useSuspense: false, // React 18+ 호환성을 위해 false로 설정
-    }
+    },
+    // 즉시 초기화를 위한 설정
+    initImmediate: false,
   });
 
 export default i18n;

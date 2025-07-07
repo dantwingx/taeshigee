@@ -71,6 +71,9 @@ export function SettingsPage() {
     // i18n 언어 변경
     await i18n.changeLanguage(languageCode)
     
+    // localStorage에 즉시 저장
+    localStorage.setItem('i18nextLng', languageCode)
+    
     // 사용자 설정 업데이트
     const result = await updateUserSettings({ language: languageCode })
     if (result.success) {
@@ -85,7 +88,7 @@ export function SettingsPage() {
     const newDarkMode = !isDarkMode
     setIsDarkMode(newDarkMode)
     
-    // 다크모드 적용
+    // 다크모드 적용 및 localStorage에 즉시 저장
     applyDarkMode(newDarkMode)
     
     // 사용자 설정 업데이트

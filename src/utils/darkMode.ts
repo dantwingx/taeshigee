@@ -2,6 +2,16 @@ import { useAuthStore } from '@/stores/authStore'
 
 // 다크모드 초기화 (앱 시작 시 호출)
 export function initializeDarkMode(): void {
+  // 먼저 localStorage에서 저장된 설정 확인
+  const savedDarkMode = localStorage.getItem('darkMode')
+  
+  if (savedDarkMode !== null) {
+    // localStorage에 저장된 설정이 있으면 그것을 사용
+    applyDarkMode(savedDarkMode === 'true')
+    return
+  }
+  
+  // localStorage에 없으면 사용자 설정 확인
   const { getUserSettings } = useAuthStore.getState()
   const userSettings = getUserSettings()
   

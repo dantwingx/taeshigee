@@ -20,11 +20,19 @@ function App() {
   // 앱 시작 시 초기화
   useEffect(() => {
     const initializeApp = async () => {
-      // 다크모드 초기화
+      // 다크모드 초기화 (즉시 실행)
       initializeDarkMode()
       
       // 인증 상태 초기화
       await initializeAuth()
+      
+      // 인증 후 사용자 설정과 동기화
+      const { getUserSettings } = useAuthStore.getState()
+      const userSettings = getUserSettings()
+      if (userSettings?.darkMode !== undefined) {
+        // 사용자 설정이 있으면 localStorage와 동기화
+        localStorage.setItem('darkMode', userSettings.darkMode.toString())
+      }
     }
 
     initializeApp()
