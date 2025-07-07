@@ -5,9 +5,10 @@ import { supabase } from '@/lib/supabase';
 // GET /api/tasks/[id] - Get specific task
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
     const user = await authenticateRequest(request);
     
     const { data: task, error } = await supabase
@@ -17,7 +18,7 @@ export async function GET(
         task_tags(tag_name),
         users!tasks_user_id_fkey(name)
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.userId)
       .single();
 
@@ -51,9 +52,10 @@ export async function GET(
 // PUT /api/tasks/[id] - Update task
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
     const user = await authenticateRequest(request);
     const { title, description, importance, priority, isPublic, tags } = await request.json();
 
@@ -61,7 +63,7 @@ export async function PUT(
     const { data: existingTask, error: checkError } = await supabase
       .from('tasks')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.userId)
       .single();
 
@@ -93,7 +95,7 @@ export async function PUT(
     const { data: task, error: updateError } = await supabase
       .from('tasks')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
 
@@ -107,12 +109,12 @@ export async function PUT(
       await supabase
         .from('task_tags')
         .delete()
-        .eq('task_id', params.id);
+        .eq('task_id', id);
 
       // Insert new tags
       if (Array.isArray(tags) && tags.length > 0) {
         const tagInserts = tags.map((tag: string) => ({
-          task_id: params.id,
+          task_id: id,
           tag_name: tag.trim(),
         }));
 
@@ -130,7 +132,7 @@ export async function PUT(
         task_tags(tag_name),
         users!tasks_user_id_fkey(name)
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (fetchError) {
@@ -163,16 +165,17 @@ export async function PUT(
 // DELETE /api/tasks/[id] - Delete task
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
     const user = await authenticateRequest(request);
 
     // Check if task exists and belongs to user
     const { data: existingTask, error: checkError } = await supabase
       .from('tasks')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.userId)
       .single();
 
@@ -184,19 +187,19 @@ export async function DELETE(
     await supabase
       .from('task_tags')
       .delete()
-      .eq('task_id', params.id);
+      .eq('task_id', id);
 
     // Delete task likes
     await supabase
       .from('task_likes')
       .delete()
-      .eq('task_id', params.id);
+      .eq('task_id', id);
 
     // Delete task
     const { error: deleteError } = await supabase
       .from('tasks')
       .delete()
-      .eq('id', params.id);
+      .eq('id', id);
 
     if (deleteError) {
       return createErrorResponse('Failed to delete task', 500);

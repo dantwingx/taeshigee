@@ -5,9 +5,10 @@ import { supabase } from '@/lib/supabase';
 // POST /api/tasks/[id]/duplicate - Duplicate task
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
     const user = await authenticateRequest(request);
 
     // Get the original task with tags
@@ -17,7 +18,7 @@ export async function POST(
         *,
         task_tags(tag_name)
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (taskError || !originalTask) {

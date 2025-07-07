@@ -5,16 +5,17 @@ import { supabase } from '@/lib/supabase';
 // POST /api/tasks/[id]/like - Toggle task like
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
     const user = await authenticateRequest(request);
 
     // Check if task exists
     const { data: task, error: taskError } = await supabase
       .from('tasks')
       .select('id, likes_count')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (taskError || !task) {
@@ -25,7 +26,7 @@ export async function POST(
     const { data: existingLike, error: likeError } = await supabase
       .from('task_likes')
       .select('id')
-      .eq('task_id', params.id)
+      .eq('task_id', id)
       .eq('user_id', user.userId)
       .single();
 
@@ -34,13 +35,13 @@ export async function POST(
       await supabase
         .from('task_likes')
         .delete()
-        .eq('task_id', params.id)
+        .eq('task_id', id)
         .eq('user_id', user.userId);
 
       await supabase
         .from('tasks')
         .update({ likes_count: task.likes_count - 1 })
-        .eq('id', params.id);
+        .eq('id', id);
 
       return Response.json({
         success: true,
@@ -52,7 +53,7 @@ export async function POST(
       await supabase
         .from('task_likes')
         .insert({
-          task_id: params.id,
+          task_id: id,
           user_id: user.userId,
           user_number: user.userNumber,
         });
@@ -60,7 +61,7 @@ export async function POST(
       await supabase
         .from('tasks')
         .update({ likes_count: task.likes_count + 1 })
-        .eq('id', params.id);
+        .eq('id', id);
 
       return Response.json({
         success: true,
