@@ -102,6 +102,17 @@ export function TaskCard({ task, onToggleComplete, onEdit, onDelete, onDuplicate
     } ${isOverdue ? 'border-error-300 bg-error-50 dark:border-error-600 dark:bg-error-900/20' : ''}`}>
       {/* 제목 + 좋아요 + 메뉴 */}
       <div className="flex items-center space-x-2 mb-1">
+        {/* 내 태스크일 때만 체크박스 */}
+        {task.userNumber === currentUserNumber && (
+          <input
+            type="checkbox"
+            checked={task.isCompleted}
+            onChange={() => onToggleComplete(task.id)}
+            className="form-checkbox h-5 w-5 text-primary-600 mr-2 cursor-pointer"
+            aria-label={t('task.toggleComplete')}
+            disabled={isLoading}
+          />
+        )}
         <h3 className={`font-medium text-neutral-900 dark:text-neutral-100 truncate ${
           task.isCompleted ? 'line-through text-neutral-500 dark:text-neutral-400' : ''
         }`}>
