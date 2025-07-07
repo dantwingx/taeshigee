@@ -30,10 +30,15 @@ export async function POST(
       .from('tasks')
       .insert({
         user_id: user.userId,
+        user_number: user.userNumber,
         title: `${originalTask.title} (Copy)`,
         description: originalTask.description,
+        due_date: originalTask.due_date,
+        due_time: originalTask.due_time,
         importance: originalTask.importance,
         priority: originalTask.priority,
+        category: originalTask.category,
+        is_completed: false, // 복제된 태스크는 미완료 상태로 시작
         is_public: false, // Duplicated tasks are private by default
         likes_count: 0,
       })
@@ -41,6 +46,7 @@ export async function POST(
       .single();
 
     if (createError) {
+      console.error('Failed to create duplicated task:', createError);
       return createErrorResponse('Failed to duplicate task', 500);
     }
 
@@ -66,12 +72,13 @@ export async function POST(
       .select(`
         *,
         task_tags(tag_name),
-        users!tasks_user_id_fkey(name)
+        users!tasks_user_id_fkey(name, user_number)
       `)
       .eq('id', newTask.id)
       .single();
 
     if (fetchError) {
+      console.error('Failed to fetch duplicated task:', fetchError);
       return createErrorResponse('Failed to fetch duplicated task', 500);
     }
 
@@ -79,12 +86,17 @@ export async function POST(
       id: completeTask.id,
       title: completeTask.title,
       description: completeTask.description,
+      dueDate: completeTask.due_date,
+      dueTime: completeTask.due_time,
       importance: completeTask.importance,
       priority: completeTask.priority,
+      category: completeTask.category,
+      isCompleted: completeTask.is_completed,
       isPublic: completeTask.is_public,
       likesCount: completeTask.likes_count,
       tags: completeTask.task_tags.map((tag: any) => tag.tag_name),
       author: completeTask.users.name,
+      userNumber: completeTask.users.user_number,
       createdAt: completeTask.created_at,
       updatedAt: completeTask.updated_at,
     };
@@ -94,6 +106,7 @@ export async function POST(
       task: transformedTask,
     });
   } catch (error) {
-    return createErrorResponse('Authentication failed', 401);
+    console.error('Duplicate task error:', error);
+    return createErrorResponse('Internal server error', 500);
   }
 } 

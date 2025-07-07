@@ -247,7 +247,12 @@ export const useTaskStore = create<TaskStore>()(
           const response = await taskService.duplicateTask(id)
           
           if (response.success && response.task) {
-            const duplicatedTask = response.task
+            const duplicatedTask = {
+              ...response.task,
+              userId: currentUserId, // 현재 사용자 ID로 설정
+              userNumber: currentUserNumber, // 현재 사용자 번호로 설정
+              likes: [], // 새로운 태스크는 좋아요가 없음
+            } as Task
             
             set((state) => ({
               userTasks: {
