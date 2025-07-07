@@ -34,8 +34,9 @@ export async function GET(request: NextRequest) {
     const { data: tasks, error } = await query.order('created_at', { ascending: false });
 
     if (error) {
+      console.error('Supabase public-tasks 쿼리 에러:', error);
       return Response.json(
-        { success: false, error: 'Failed to fetch public tasks' },
+        { success: false, error: 'Failed to fetch public tasks', detail: error.message || String(error) },
         { status: 500 }
       );
     }
