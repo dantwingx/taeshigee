@@ -338,7 +338,13 @@ type TaskFormData = z.infer<typeof taskSchema>
                   className={`input text-base ${errors.title ? 'border-error-500 dark:border-error-400' : ''}`}
                   placeholder={t('task.titleRequired')}
                   disabled={isLoading}
-                  style={{ textIndent: '0' }}
+                  style={{ 
+                    textIndent: '0',
+                    paddingLeft: '12px',
+                    paddingRight: '12px',
+                    textAlign: 'left',
+                    direction: 'ltr'
+                  }}
                 />
               </div>
               {errors.title && (
