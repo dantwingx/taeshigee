@@ -233,6 +233,13 @@ export const useTaskStore = create<TaskStore>()(
                   return task
                 }),
               },
+              // 공개 태스크 목록도 업데이트 (태그 정보 포함)
+              publicTasks: state.publicTasks.map((task) => {
+                if (task.id === id) {
+                  return updatedTask
+                }
+                return task
+              }),
               isLoading: false,
               error: null
             }))
@@ -248,6 +255,8 @@ export const useTaskStore = create<TaskStore>()(
                 ...state.userTasks,
                 [currentUserNumber]: (state.userTasks[currentUserNumber] || []).filter((task) => task.id !== id),
               },
+              // 공개 태스크 목록에서도 제거
+              publicTasks: state.publicTasks.filter((task) => task.id !== id),
               isLoading: false,
               error: null
             }))
@@ -279,6 +288,8 @@ export const useTaskStore = create<TaskStore>()(
                 ...state.userTasks,
                 [currentUserNumber]: (state.userTasks[currentUserNumber] || []).filter((task) => task.id !== id),
               },
+              // 공개 태스크 목록에서도 제거
+              publicTasks: state.publicTasks.filter((task) => task.id !== id),
               isLoading: false,
               error: null
             }))
@@ -294,6 +305,8 @@ export const useTaskStore = create<TaskStore>()(
                 ...state.userTasks,
                 [currentUserNumber]: (state.userTasks[currentUserNumber] || []).filter((task) => task.id !== id),
               },
+              // 공개 태스크 목록에서도 제거
+              publicTasks: state.publicTasks.filter((task) => task.id !== id),
               isLoading: false,
               error: null
             }))
@@ -374,7 +387,14 @@ export const useTaskStore = create<TaskStore>()(
               }
               return task
             }),
-          }
+          },
+          // 공개 태스크 목록도 업데이트
+          publicTasks: state.publicTasks.map((task) => {
+            if (task.id === id) {
+              return { ...task, isCompleted: optimisticUpdate }
+            }
+            return task
+          })
         }))
 
         try {
@@ -389,6 +409,8 @@ export const useTaskStore = create<TaskStore>()(
                 ...state.userTasks,
                 [currentUserNumber]: (state.userTasks[currentUserNumber] || []).filter((task) => task.id !== id),
               },
+              // 공개 태스크 목록에서도 제거
+              publicTasks: state.publicTasks.filter((task) => task.id !== id),
               error: null
             }))
             return // 에러를 던지지 않고 조용히 처리
@@ -404,7 +426,14 @@ export const useTaskStore = create<TaskStore>()(
                 }
                 return task
               }),
-            }
+            },
+            // 공개 태스크 목록도 원래 상태로 되돌리기
+            publicTasks: state.publicTasks.map((task) => {
+              if (task.id === id) {
+                return { ...task, isCompleted: !optimisticUpdate }
+              }
+              return task
+            })
           }))
           
           const errorMessage = error instanceof Error ? error.message : '태스크 상태 변경에 실패했습니다.'
