@@ -335,9 +335,10 @@ type TaskFormData = z.infer<typeof taskSchema>
                     titleInputRef.current = e;
                   }}
                   onFocus={() => setFocusedField('title')}
-                  className={`input text-lg ${errors.title ? 'border-error-500 dark:border-error-400' : ''}`}
+                  className={`input text-base ${errors.title ? 'border-error-500 dark:border-error-400' : ''}`}
                   placeholder={t('task.titleRequired')}
                   disabled={isLoading}
+                  style={{ textIndent: '0' }}
                 />
               </div>
               {errors.title && (

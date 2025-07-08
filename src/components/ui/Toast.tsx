@@ -25,18 +25,18 @@ const toastIcons = {
   warning: AlertTriangle,
 }
 
-export function Toast({ id, type, message, duration = 200, onClose }: ToastProps) {
+export function Toast({ id, type, message, duration = 1500, onClose }: ToastProps) {
   const [isVisible, setIsVisible] = useState(false)
   const Icon = toastIcons[type]
 
   useEffect(() => {
     // 애니메이션을 위한 지연
-    const showTimer = setTimeout(() => setIsVisible(true), 100)
+    const showTimer = setTimeout(() => setIsVisible(true), 50)
     
     // 자동 닫기
     const hideTimer = setTimeout(() => {
       setIsVisible(false)
-      setTimeout(() => onClose(id), 300) // 애니메이션 완료 후 제거
+      setTimeout(() => onClose(id), 200) // 애니메이션 완료 후 제거
     }, duration)
 
     return () => {
@@ -47,7 +47,7 @@ export function Toast({ id, type, message, duration = 200, onClose }: ToastProps
 
   return (
     <div
-      className={`fixed top-4 right-4 z-50 max-w-sm w-full transform transition-all duration-300 ${
+      className={`fixed top-4 right-4 z-50 max-w-xs w-full transform transition-all duration-200 ${
         isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
       }`}
     >
@@ -55,7 +55,7 @@ export function Toast({ id, type, message, duration = 200, onClose }: ToastProps
         className={`flex items-start space-x-3 p-4 rounded-lg border shadow-lg ${toastStyles[type]}`}
         onClick={() => {
           setIsVisible(false)
-          setTimeout(() => onClose(id), 300)
+          setTimeout(() => onClose(id), 200)
         }}
         style={{ cursor: 'pointer' }}
       >
@@ -67,7 +67,7 @@ export function Toast({ id, type, message, duration = 200, onClose }: ToastProps
           onClick={e => {
             e.stopPropagation()
             setIsVisible(false)
-            setTimeout(() => onClose(id), 300)
+            setTimeout(() => onClose(id), 200)
           }}
           className="flex-shrink-0 p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
         >
