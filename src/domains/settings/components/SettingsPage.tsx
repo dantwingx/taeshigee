@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '@/stores/authStore'
 import { languages, getLanguageByCode } from '@/i18n/languages'
+import { getCurrentLanguage } from '@/i18n'
 import { 
   User, 
   Settings, 
@@ -65,20 +66,29 @@ export function SettingsPage() {
 
   // 언어 변경 처리
   const handleLanguageChange = async (languageCode: string) => {
-    setSelectedLanguage(languageCode)
-    setIsLanguageDropdownOpen(false)
-    
-    // i18n 언어 변경
-    await i18n.changeLanguage(languageCode)
-    
-    // localStorage에 즉시 저장
-    localStorage.setItem('i18nextLng', languageCode)
-    
-    // 사용자 설정 업데이트
-    const result = await updateUserSettings({ language: languageCode })
-    if (result.success) {
-      showToast('success', t('settings.languageChanged'))
-    } else {
+    try {
+      setSelectedLanguage(languageCode)
+      setIsLanguageDropdownOpen(false)
+      
+      // i18n 언어 변경
+      await i18n.changeLanguage(languageCode)
+      
+      // localStorage에 즉시 저장
+      localStorage.setItem('i18nextLng', languageCode)
+      
+      // 사용자 설정 업데이트
+      const result = await updateUserSettings({ language: languageCode })
+      if (result.success) {
+        showToast('success', t('settings.languageChanged'))
+      } else {
+        showToast('error', t('settings.languageChangeFailed'))
+        // 실패 시 이전 언어로 되돌리기
+        const previousLanguage = getCurrentLanguage()
+        await i18n.changeLanguage(previousLanguage)
+        setSelectedLanguage(previousLanguage)
+      }
+    } catch (error) {
+      console.error('Language change error:', error)
       showToast('error', t('settings.languageChangeFailed'))
     }
   }

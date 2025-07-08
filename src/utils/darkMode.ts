@@ -49,4 +49,22 @@ export function isDarkModeEnabled(): boolean {
   return document.documentElement.classList.contains('dark')
 }
 
+// 시스템 다크모드 변경 감지
+export function watchSystemDarkMode(): () => void {
+  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+  
+  const handleChange = (e: MediaQueryListEvent) => {
+    // 사용자가 명시적으로 설정하지 않은 경우에만 시스템 설정을 따름
+    const savedDarkMode = localStorage.getItem('darkMode')
+    if (savedDarkMode === null) {
+      applyDarkMode(e.matches)
+    }
+  }
+  
+  mediaQuery.addEventListener('change', handleChange)
+  
+  // 클린업 함수 반환
+  return () => mediaQuery.removeEventListener('change', handleChange)
+}
+
  

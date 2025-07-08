@@ -11,7 +11,8 @@ import { RegisterPage } from '@/domains/auth/components/RegisterPage'
 import { useToastStore } from '@/stores'
 import { useAuthStore } from '@/stores/authStore'
 import { useEffect } from 'react'
-import { initializeDarkMode } from '@/utils/darkMode'
+import { applyDarkMode } from '@/utils/darkMode'
+import { changeLanguage } from '@/i18n'
 
 function App() {
   const { toasts, removeToast } = useToastStore()
@@ -20,9 +21,6 @@ function App() {
   // 앱 시작 시 초기화
   useEffect(() => {
     const initializeApp = async () => {
-      // 다크모드 초기화 (즉시 실행)
-      initializeDarkMode()
-      
       // 인증 상태 초기화
       await initializeAuth()
       
@@ -30,12 +28,17 @@ function App() {
       try {
         const { getUserSettings } = useAuthStore.getState()
         const userSettings = getUserSettings()
-        if (userSettings?.darkMode !== undefined) {
-          // 사용자 설정이 있으면 localStorage와 동기화
-          localStorage.setItem('darkMode', userSettings.darkMode.toString())
-          // 다크모드 재적용
-          const { applyDarkMode } = await import('@/utils/darkMode')
-          applyDarkMode(userSettings.darkMode)
+        
+        if (userSettings) {
+          // 다크모드 동기화
+          if (userSettings.darkMode !== undefined) {
+            applyDarkMode(userSettings.darkMode)
+          }
+          
+          // 언어 설정 동기화
+          if (userSettings.language) {
+            await changeLanguage(userSettings.language)
+          }
         }
       } catch (error) {
         console.warn('Failed to sync user settings:', error)

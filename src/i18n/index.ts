@@ -69,12 +69,36 @@ languages.forEach(lang => {
   }
 });
 
+// 초기 언어 설정
+const getInitialLanguage = (): string => {
+  // 1. localStorage에서 저장된 언어 확인
+  const savedLanguage = localStorage.getItem('i18nextLng');
+  if (savedLanguage && isLanguageSupported(savedLanguage)) {
+    return savedLanguage;
+  }
+  
+  // 2. 브라우저 언어 확인
+  const browserLang = navigator.language.split('-')[0];
+  if (isLanguageSupported(browserLang)) {
+    return browserLang;
+  }
+  
+  // 3. 기본값
+  return 'ko';
+};
+
+// 언어가 지원되는지 확인
+const isLanguageSupported = (language: string): boolean => {
+  return languages.map(lang => lang.code).includes(language);
+};
+
 // i18n 초기화
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
+    lng: getInitialLanguage(), // 초기 언어 설정
     fallbackLng: 'ko',
     debug: false, // 개발 시에만 true로 설정
     interpolation: {
@@ -120,7 +144,5 @@ export const getCurrentLanguage = (): string => {
 // 지원하는 언어 목록
 export const supportedLanguages = languages.map(lang => lang.code);
 
-// 언어가 지원되는지 확인
-export const isLanguageSupported = (language: string): boolean => {
-  return supportedLanguages.includes(language);
-}; 
+// 언어가 지원되는지 확인 (외부에서 사용 가능하도록 export)
+export { isLanguageSupported }; 
