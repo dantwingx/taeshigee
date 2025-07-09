@@ -71,7 +71,7 @@ languages.forEach(lang => {
 
 // 초기 언어 설정
 const getInitialLanguage = (): string => {
-  // 1. localStorage에서 저장된 언어 확인
+  // 1. localStorage에서 저장된 언어 확인 (사용자 설정 우선)
   const savedLanguage = localStorage.getItem('i18nextLng');
   if (savedLanguage && isLanguageSupported(savedLanguage)) {
     return savedLanguage;

@@ -30,7 +30,7 @@ export function syncDarkModeWithUserSettings(): void {
   }
 }
 
-// 다크모드 적용
+// 다크모드 적용 (사용자 설정 우선)
 export function applyDarkMode(isDark: boolean): void {
   const root = document.documentElement
   
@@ -40,7 +40,7 @@ export function applyDarkMode(isDark: boolean): void {
     root.classList.remove('dark')
   }
   
-  // localStorage에 저장 (시스템 설정용)
+  // localStorage에 저장 (사용자 설정이 우선)
   localStorage.setItem('darkMode', isDark.toString())
 }
 

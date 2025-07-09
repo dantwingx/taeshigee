@@ -16,37 +16,34 @@ import { changeLanguage } from '@/i18n'
 
 function App() {
   const { toasts, removeToast } = useToastStore()
-  const { initializeAuth } = useAuthStore()
+  const { initializeAuth, currentUser } = useAuthStore()
 
   // 앱 시작 시 초기화
   useEffect(() => {
     const initializeApp = async () => {
       // 인증 상태 초기화
       await initializeAuth()
-      
-      // 인증 후 사용자 설정과 동기화
-      try {
-        const { getUserSettings } = useAuthStore.getState()
-        const userSettings = getUserSettings()
-        
-        if (userSettings) {
-          // 다크모드 동기화
-          if (userSettings.darkMode !== undefined) {
-            applyDarkMode(userSettings.darkMode)
-          }
-          
-          // 언어 설정 동기화
-          if (userSettings.language) {
-            await changeLanguage(userSettings.language)
-          }
-        }
-      } catch (error) {
-        console.warn('Failed to sync user settings:', error)
-      }
     }
 
     initializeApp()
   }, [initializeAuth])
+
+  // 사용자 설정 동기화 (currentUser가 변경될 때마다)
+  useEffect(() => {
+    if (currentUser?.userSettings) {
+      const { language, darkMode } = currentUser.userSettings
+      
+      // 언어 설정 적용
+      if (language) {
+        changeLanguage(language)
+      }
+      
+      // 다크모드 설정 적용
+      if (darkMode !== undefined) {
+        applyDarkMode(darkMode)
+      }
+    }
+  }, [currentUser])
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-200">

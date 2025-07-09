@@ -68,7 +68,8 @@ export const useAuthStore = create<AuthState>()(
                 isLoading: false 
               })
               useTaskStore.getState().setCurrentUser(user.id, user.userNumber)
-              // 사용자 설정 적용
+              
+              // 사용자 설정 적용 (백엔드에서 가져온 값 우선)
               if (userSettings.language) {
                 changeLanguage(userSettings.language)
               }
@@ -85,6 +86,22 @@ export const useAuthStore = create<AuthState>()(
               currentUserNumber: null, 
               isLoading: false 
             })
+          }
+        } else {
+          // 인증되지 않은 경우 localStorage 기반 초기화
+          const savedDarkMode = localStorage.getItem('darkMode')
+          const savedLanguage = localStorage.getItem('i18nextLng')
+          
+          if (savedDarkMode !== null) {
+            applyDarkMode(savedDarkMode === 'true')
+          } else {
+            // 시스템 설정 확인
+            const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+            applyDarkMode(isSystemDark)
+          }
+          
+          if (savedLanguage) {
+            changeLanguage(savedLanguage)
           }
         }
       },
