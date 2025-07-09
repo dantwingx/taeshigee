@@ -88,21 +88,8 @@ export const useAuthStore = create<AuthState>()(
             })
           }
         } else {
-          // 인증되지 않은 경우 localStorage 기반 초기화
-          const savedDarkMode = localStorage.getItem('darkMode')
-          const savedLanguage = localStorage.getItem('i18nextLng')
-          
-          if (savedDarkMode !== null) {
-            applyDarkMode(savedDarkMode === 'true')
-          } else {
-            // 시스템 설정 확인
-            const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-            applyDarkMode(isSystemDark)
-          }
-          
-          if (savedLanguage) {
-            changeLanguage(savedLanguage)
-          }
+          // 인증되지 않은 경우 - main.tsx에서 이미 초기화되었으므로 추가 작업 불필요
+          set({ isLoading: false })
         }
       },
 

@@ -8,6 +8,13 @@ import './styles/globals.css'
 // i18n 초기화
 import './i18n'
 
+// 다크모드 초기화 (렌더링 전에 실행)
+import { initializeDarkMode } from './utils/darkMode'
+
+// 앱 렌더링 전에 다크모드 초기화
+// localStorage 기반 설정을 우선적으로 적용
+initializeDarkMode()
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

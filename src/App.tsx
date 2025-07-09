@@ -11,8 +11,8 @@ import { RegisterPage } from '@/domains/auth/components/RegisterPage'
 import { useToastStore } from '@/stores'
 import { useAuthStore } from '@/stores/authStore'
 import { useEffect } from 'react'
-import { applyDarkMode } from '@/utils/darkMode'
-import { changeLanguage } from '@/i18n'
+import { applyDarkMode, syncDarkModeWithUserSettings } from '@/utils/darkMode'
+import { changeLanguage, getCurrentLanguage } from '@/i18n'
 
 function App() {
   const { toasts, removeToast } = useToastStore()
@@ -28,21 +28,23 @@ function App() {
     initializeApp()
   }, [initializeAuth])
 
-  // 사용자 설정 동기화 (currentUser가 변경될 때마다)
+  // 인증된 사용자의 설정 동기화 (currentUser가 변경될 때마다)
   useEffect(() => {
-    if (currentUser?.userSettings) {
+    // 인증된 사용자만 설정 적용
+    if (currentUser && currentUser.userSettings) {
       const { language, darkMode } = currentUser.userSettings
       
-      // 언어 설정 적용
+      // 언어 설정 적용 (사용자 설정 우선)
       if (language) {
         changeLanguage(language)
       }
       
-      // 다크모드 설정 적용
+      // 다크모드 설정 적용 (사용자 설정 우선)
       if (darkMode !== undefined) {
         applyDarkMode(darkMode)
       }
     }
+    // 인증되지 않은 경우 localStorage 기반 설정 유지 (main.tsx에서 이미 초기화됨)
   }, [currentUser])
 
   return (
